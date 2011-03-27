@@ -75,7 +75,7 @@ class ScalaConsoleModel extends Publisher {
 
     ready_(false)
     status_("Running...")
-    println("Running :" + code)
+    println("Running:\n" + code)
 
     // TODO: Can scala.swing.SwingWorker be used here?
 
