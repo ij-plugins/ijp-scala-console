@@ -32,7 +32,7 @@ import net.sf.ij_plugins.scala.{BufferedPrintStream, ScalaInterpreter}
  *
  *
  */
-class ScalaConsoleModel extends Publisher {
+class ScalaInterpreterModel extends Publisher {
 
   private val interpreter = new ScalaInterpreter();
   //  private val out = ScalaUtils.redirectSystemOut()

@@ -25,6 +25,8 @@ package net.sf.ij_plugins.scala
 import collection.mutable.ArrayBuffer
 import ij.Menus
 import java.io._
+import tools.nsc.io.Path
+import scala.Array
 
 
 /**
@@ -41,6 +43,13 @@ object ScalaUtils {
     }
 
     System.setProperty("java.class.path", classpath)
+  }
+
+
+  def listAllJarFiles(root: File) : Array[File] = {
+    val r = new ArrayBuffer[File]()
+    Path(root).walk.filter(e => e.toString().contains(".jar")).foreach(p => r.append(p.jfile))
+    return r.toArray
   }
 
 

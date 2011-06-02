@@ -35,7 +35,7 @@ import javax.swing.SwingUtilities
  */
 object ScalaConsoleApp extends SimpleSwingApplication {
 
-  val model = new ScalaConsoleModel
+  val model = new ScalaInterpreterModel
 
   val outputArea = new TextArea {
     columns = 80

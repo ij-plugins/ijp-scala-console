@@ -23,7 +23,7 @@
 package net.sf.ij_plugins.scala.console.event
 
 import swing.event.Event
-import net.sf.ij_plugins.scala.console.ScalaConsoleModel
+import net.sf.ij_plugins.scala.console.ScalaInterpreterModel
 
 
-case class Changed(source: ScalaConsoleModel) extends Event
+case class Changed(source: ScalaInterpreterModel) extends Event
