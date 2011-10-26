@@ -1,6 +1,23 @@
 <!--
-  ~ Copyright (c) 2000-2011 Jarek Sacha. All Rights Reserved.
-  ~ Author's e-mail: jarek at ieee.org
+  ~ Image/J Plugins
+  ~ Copyright (C) 2002-2011 Jarek Sacha
+  ~ Author's email: jsacha at users dot sourceforge dot net
+  ~
+  ~ This library is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU Lesser General Public
+  ~ License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or (at your option) any later version.
+  ~
+  ~ This library is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this library; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ Latest release available at http://sourceforge.net/projects/ij-plugins/
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,7 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>scala-console</groupId>
     <artifactId>scala_console</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>${project.artifactId}</name>
     <description>Scala Console for ImageJ</description>
     <inceptionYear>2011</inceptionYear>
@@ -26,7 +43,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
-        <scala.version>2.9.0</scala.version>
+        <scala.version>2.9.1</scala.version>
         <dist.dir>${project.build.directory}/dist</dist.dir>
     </properties>
 
@@ -75,7 +92,7 @@
         <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>RSyntaxTextArea</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/rsyntaxtextarea.jar</systemPath>
         </dependency>
