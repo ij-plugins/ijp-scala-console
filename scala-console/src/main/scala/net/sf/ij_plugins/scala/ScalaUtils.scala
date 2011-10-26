@@ -33,69 +33,69 @@ import scala.Array
  */
 object ScalaUtils {
 
-  def addPluginsJarsToClassPath() {
-    // TODO do not add existing entries to the classpath again
-    var classpath = System.getProperty("java.class.path")
+    def addPluginsJarsToClassPath() {
+        // TODO do not add existing entries to the classpath again
+        var classpath = System.getProperty("java.class.path")
 
-    val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
-    for (jar <- jars) {
-      classpath = jar.getAbsolutePath + File.pathSeparator + classpath;
+        val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
+        for (jar <- jars) {
+            classpath = jar.getAbsolutePath + File.pathSeparator + classpath;
+        }
+
+        System.setProperty("java.class.path", classpath)
     }
 
-    System.setProperty("java.class.path", classpath)
-  }
 
-
-  def listAllJarFiles(root: File) : Array[File] = {
-    val r = new ArrayBuffer[File]()
-    Path(root).walk.filter(e => e.toString().contains(".jar")).foreach(p => r.append(p.jfile))
-    return r.toArray
-  }
-
-
-  def listPluginDirectories() {
-    val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
-    for (jar <- jars) {
-      println("jar: " + jar.getAbsolutePath)
-    }
-  }
-
-
-  def listDirectories(root: File): Array[File] = {
-    val dirFilter = new FileFilter() {
-      override def accept(file: File) = file.isDirectory
+    def listAllJarFiles(root: File): Array[File] = {
+        val r = new ArrayBuffer[File]()
+        Path(root).walk.filter(e => e.toString().contains(".jar")).foreach(p => r.append(p.jfile))
+        r.toArray
     }
 
-    val r = ArrayBuffer(root)
-    for (dir <- root.listFiles(dirFilter)) {
-      r.appendAll(listDirectories(dir))
-    }
-    return r.toArray;
-  }
 
-
-  def listJarFiles(dirs: Array[File]): Array[File] = {
-    val r = ArrayBuffer[File]()
-    for (dir <- dirs) {
-      r.appendAll(listJarFiles(dir))
-    }
-    return r.toArray;
-  }
-
-
-  def listJarFiles(dir: File): Array[File] = {
-    val jarFilter = new FilenameFilter() {
-      override def accept(dir: File, name: String) = name.toLowerCase.endsWith(".jar")
+    def listPluginDirectories() {
+        val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
+        for (jar <- jars) {
+            println("jar: " + jar.getAbsolutePath)
+        }
     }
 
-    return dir.listFiles(jarFilter)
-  }
 
+    def listDirectories(root: File): Array[File] = {
+        val dirFilter = new FileFilter() {
+            override def accept(file: File) = file.isDirectory
+        }
 
-  def redirectSystemOut(): BufferedPrintStream = {
-    if (!System.out.isInstanceOf[BufferedPrintStream]) {
-      System.setOut(new BufferedPrintStream())
+        val r = ArrayBuffer(root)
+        for (dir <- root.listFiles(dirFilter)) {
+            r.appendAll(listDirectories(dir))
+        }
+        r.toArray;
     }
-    System.out.asInstanceOf[BufferedPrintStream]
-  }
+
+
+    def listJarFiles(dirs: Array[File]): Array[File] = {
+        val r = ArrayBuffer[File]()
+        for (dir <- dirs) {
+            r.appendAll(listJarFiles(dir))
+        }
+        r.toArray;
+    }
+
+
+    def listJarFiles(dir: File): Array[File] = {
+        val jarFilter = new FilenameFilter() {
+            override def accept(dir: File, name: String) = name.toLowerCase.endsWith(".jar")
+        }
+
+        dir.listFiles(jarFilter)
+    }
+
+
+    def redirectSystemOut(): BufferedPrintStream = {
+        if (!System.out.isInstanceOf[BufferedPrintStream]) {
+            System.setOut(new BufferedPrintStream())
+        }
+        System.out.asInstanceOf[BufferedPrintStream]
+    }
 }

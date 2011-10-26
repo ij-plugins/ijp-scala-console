@@ -22,16 +22,17 @@
 
 package net.sf.ij_plugins.scala.console
 
-import event.Changed
+import net.sf.ij_plugins.scala.console.event.Changed
 import swing._
-import javax.swing._
 import java.awt.event.ActionEvent
 import java.awt.BorderLayout._
 import java.awt.{Cursor, Color}
+import java.util.ArrayList
 import java.net.URL
 import java.util.logging.{Level, Logger}
-import java.util.ArrayList
-
+import javax.swing._
+import filechooser.FileFilter
+import java.io.File
 
 /*
 * Implementation of a Scala Console as 'regular' Swing JFrame, Scala.swing is still too buggy.
@@ -63,11 +64,24 @@ object ScalaConsoleFrame {
  */
 class ScalaConsoleFrame extends JFrame with Reactor {
 
+    private val defaultTitle = "Scala Console"
+
     private val logger: Logger = Logger.getLogger(this.getClass.getName)
 
     private val editor = new Editor
 
     private val model = new ScalaInterpreterModel
+
+    private lazy val fileChooser = new JFileChooser() {
+        setFileFilter(new FileFilter() {
+            def accept(f: File) = f != null && !f.isDirectory && f.getName.endsWith(".scala")
+
+            def getDescription = "*.scala"
+        })
+
+        this.setMultiSelectionEnabled(false)
+    }
+
 
     private val outputArea = new JTextArea(10, 80) {
         setText("")
@@ -80,32 +94,54 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     private val fileNewAction = new AbstractAction("New...") {
         def actionPerformed(e: ActionEvent) {
 
-            // Check if current document needs to be saved
-
-            // If not cancelled, save
+            if (editor.needsSave) {
+                // Check if current document needs to be saved
+                val status = JOptionPane.showConfirmDialog(ScalaConsoleFrame.this, "Do you want to save current file?", "New", JOptionPane.YES_NO_OPTION)
+                // If not cancelled, save
+                val saveCurrent = status match {
+                    case JOptionPane.YES_OPTION => {
+                        // Save
+                        save()
+                    }
+                    case JOptionPane.NO_OPTION => {
+                        /* Do nothing*/
+                    }
+                    case _ => return
+                }
+            }
 
             // Reset editor
-
-            JOptionPane.showMessageDialog(ScalaConsoleFrame.this, "Not implemented.", "", JOptionPane.WARNING_MESSAGE)
+            editor.reset()
         }
-
     }
 
     private val fileOpenAction = new AbstractAction("Open...") {
         def actionPerformed(e: ActionEvent) {
-            JOptionPane.showMessageDialog(ScalaConsoleFrame.this, "Not implemented.", "", JOptionPane.WARNING_MESSAGE)
+
+            val status = fileChooser.showOpenDialog(ScalaConsoleFrame.this)
+            if (status != JFileChooser.APPROVE_OPTION) {
+                return
+            }
+
+            val file = fileChooser.getSelectedFile
+            if (file == null) {
+                return
+            }
+
+            editor.read(file)
+            setTitle(defaultTitle + " - " + file.getCanonicalPath)
         }
     }
 
     private val fileSaveAction = new AbstractAction("Save") {
         def actionPerformed(e: ActionEvent) {
-            JOptionPane.showMessageDialog(ScalaConsoleFrame.this, "Not implemented.", "", JOptionPane.WARNING_MESSAGE)
+            save()
         }
     }
 
     private val fileSaveAsAction = new AbstractAction("Save As...") {
         def actionPerformed(e: ActionEvent) {
-            JOptionPane.showMessageDialog(ScalaConsoleFrame.this, "Not implemented.", "", JOptionPane.WARNING_MESSAGE)
+            saveAs()
         }
     }
 
@@ -129,14 +165,20 @@ class ScalaConsoleFrame extends JFrame with Reactor {
 
     val fileNewMenuItem = new JMenuItem(fileNewAction)
     fileMenu.add(fileNewMenuItem)
+
     val fileOpenMenuItem = new JMenuItem(fileOpenAction)
     fileMenu.add(fileOpenMenuItem)
+
     fileMenu.addSeparator()
+
     val fileSaveMenuItem = new JMenuItem(fileSaveAction)
     fileMenu.add(fileSaveMenuItem)
+
     val fileSaveAsMenuItem = new JMenuItem(fileSaveAsAction)
     fileMenu.add(fileSaveAsMenuItem)
+
     fileMenu.addSeparator()
+
     val fileExitMenuItem = new JMenuItem(fileExitAction)
     fileMenu.add(fileExitMenuItem)
 
@@ -152,7 +194,7 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     private val enablable = Array(this, runButton)
 
 
-    setTitle("Scala Console")
+    setTitle(defaultTitle)
     setIconImages(loadIcons())
 
     setJMenuBar(topMenu)
@@ -169,11 +211,11 @@ class ScalaConsoleFrame extends JFrame with Reactor {
 
     listenTo(model)
     reactions += {
-        case Changed(model) => onEDT({
-            enablable.foreach(_.setEnabled(model.ready))
-            setCursor(if (model.ready) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR))
-            outputArea.setText(model.output)
-            statusLine.setText(model.status)
+        case Changed(m) => onEDT({
+            enablable.foreach(_.setEnabled(m.ready))
+            setCursor(if (m.ready) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR))
+            outputArea.setText(m.output)
+            statusLine.setText(m.status)
         })
     }
 
@@ -226,4 +268,32 @@ class ScalaConsoleFrame extends JFrame with Reactor {
             null
         }
     }
+
+    private def save() {
+        editor.sourceFile match {
+            case Some(file) => {
+                editor.save(file)
+                setTitle(defaultTitle + " - " + file.getCanonicalPath)
+            }
+            case None => saveAs()
+        }
+
+    }
+
+    private def saveAs(): Boolean = {
+        val status = fileChooser.showSaveDialog(this)
+        if (status != JFileChooser.APPROVE_OPTION) {
+            return false
+        }
+
+        val file = fileChooser.getSelectedFile
+        if (file == null) {
+            return false;
+        }
+
+        editor.save(file)
+
+        true
+    }
+
 }

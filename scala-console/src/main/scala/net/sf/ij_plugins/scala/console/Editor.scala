@@ -25,60 +25,78 @@ package net.sf.ij_plugins.scala.console
 import javax.swing.JComponent
 import org.fife.ui.rsyntaxtextarea.{SyntaxConstants, RSyntaxTextArea}
 import org.fife.ui.rtextarea.RTextScrollPane
-import tools.nsc.io.File
-
+import java.io.{FileWriter, File}
 
 class Editor {
 
-  private val viewTextArea = new RSyntaxTextArea(25, 80) {
-    setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA)
-    setText("import ij._\n" +
-            "val img = WindowManager.getCurrentImage()")
-  }
+    private val viewTextArea = new RSyntaxTextArea(25, 80) {
+        setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA)
+    }
 
-  private val viewScrollPane = new RTextScrollPane(viewTextArea)
+    private val viewScrollPane = new RTextScrollPane(viewTextArea)
 
-  private var sourceFileOption: Option[File] = None
+    private var sourceFileOption: Option[File] = None
 
-  /**
-   * Return a component displaying content of this editor
-   */
-  def view: JComponent = {
-    viewScrollPane
-  }
+    // Initialize editor
+    reset()
 
 
-  /**
-   * Return a text content of this editor
-   */
-  def text: String = {
-    viewTextArea.getText
-  }
+    /**
+     * Return a component displaying content of this editor
+     */
+    def view: JComponent = {
+        viewScrollPane
+    }
+
+
+    /**
+     * Return a text content of this editor
+     */
+    def text: String = {
+        viewTextArea.getText
+    }
 
     def selection: String = {
         viewTextArea.getSelectedText
     }
 
 
-  def needsSave: Boolean = {
-    // TODO: detect changes and return 'true' only of document was modified
-    true
-  }
+    def needsSave: Boolean = {
+        // TODO: detect changes and return 'true' only of document was modified
+        true
+    }
 
 
-  /**
-   * Associated file from which the file was loaded or saved last time.
-   */
-  def sourceFile = sourceFileOption
+    /**
+     * Associated file from which the file was loaded or saved last time.
+     */
+    def sourceFile = sourceFileOption
 
 
-  def read(file: File) {
-    throw new UnsupportedOperationException("Not implemented")
-  }
+    def reset() {
+        viewTextArea.setText("import ij._\n" +
+                "val img = WindowManager.getCurrentImage()")
+        sourceFileOption = None
+    }
+
+    def read(file: File) {
+        val source = scala.io.Source.fromFile(file)
+        val lines = source.mkString
+        source.close()
+
+        viewTextArea.setText(lines)
+        sourceFileOption = Some(file)
+    }
 
 
-  def save(file: File) {
-    throw new UnsupportedOperationException("Not implemented")
-  }
+    def save(file: File) {
+        sourceFileOption = Some(file)
+        val writer = new FileWriter(file)
+        try {
+            writer.write(text)
+        } finally {
+            writer.close()
+        }
+    }
 
 }
