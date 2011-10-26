@@ -31,7 +31,9 @@ import javax.swing.WindowConstants
 
 private object ScalaConsolePlugin {
 
-  var console: Option[ScalaConsoleFrame] = None
+    ScalaUtils.addPluginsJarsToClassPath()
+
+    var console: Option[ScalaConsoleFrame] = None
 }
 
 
@@ -40,19 +42,19 @@ private object ScalaConsolePlugin {
  */
 class ScalaConsolePlugin extends PlugIn {
 
-  def run(arg: String) {
-    ScalaConsolePlugin.console match {
-      case None => {
-        IJ.showStatus("Starting Scala Console...")
-        val frame = new ScalaConsoleFrame()
-        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE)
-        frame.pack()
-        frame.setVisible(true)
-        ScalaConsolePlugin.console = Some(frame)
-        IJ.showStatus("")
-      }
-      case Some(frame) => frame.setVisible(true)
+    def run(arg: String) {
+        ScalaConsolePlugin.console match {
+            case None => {
+                IJ.showStatus("Starting Scala Console...")
+                val frame = new ScalaConsoleFrame()
+                frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE)
+                frame.pack()
+                frame.setVisible(true)
+                ScalaConsolePlugin.console = Some(frame)
+                IJ.showStatus("")
+            }
+            case Some(frame) => frame.setVisible(true)
+        }
     }
-  }
 
 }
