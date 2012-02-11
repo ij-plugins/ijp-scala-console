@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2011 Jarek Sacha
+ * Copyright (C) 2002-2012 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,22 +20,22 @@
  * Latest release available at http://sourceforge.net/projects/ij-plugins/
  */
 
-package net.sf.ij_plugins.scala
+package net.sf.ij_plugins.scala.console
 
-import java.io.{ByteArrayOutputStream, PrintStream}
+import org.junit._
 
+/**
+ * @author Jarek Sacha
+ */
+class SlowTest {
 
-class BufferedPrintStream(private val arrayStream: ByteArrayOutputStream) extends PrintStream(arrayStream) {
+    @Test
+    def printNumbers() {
+        for (i <- 1 to 10) {
+            var t = Thread.currentThread()
+            println("" + i + "... [" + t + "]")
+            Thread.sleep(1000)
+        }
+    }
 
-  def this() {
-    this (new ByteArrayOutputStream)
-  }
-
-
-  override def toString = arrayStream.toString
-
-
-  def reset() {
-    arrayStream.reset()
-  }
 }

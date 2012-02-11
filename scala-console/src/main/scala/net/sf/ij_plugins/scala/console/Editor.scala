@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2011 Jarek Sacha
+ * Copyright (C) 2002-2012 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,11 +22,14 @@
 
 package net.sf.ij_plugins.scala.console
 
-import javax.swing.JComponent
 import org.fife.ui.rsyntaxtextarea.{SyntaxConstants, RSyntaxTextArea}
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.io.{FileWriter, File}
+import javax.swing.JComponent
 
+/**
+ * Input area of the console.
+ */
 class Editor {
 
     private val viewTextArea = new RSyntaxTextArea(25, 80) {

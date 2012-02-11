@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2011 Jarek Sacha
+ * Copyright (C) 2002-2012 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +30,7 @@ import scala.Array
 
 
 /**
+ * @author Jarek Sacha
  */
 object ScalaUtils {
 
@@ -89,13 +90,5 @@ object ScalaUtils {
         }
 
         dir.listFiles(jarFilter)
-    }
-
-
-    def redirectSystemOut(): BufferedPrintStream = {
-        if (!System.out.isInstanceOf[BufferedPrintStream]) {
-            System.setOut(new BufferedPrintStream())
-        }
-        System.out.asInstanceOf[BufferedPrintStream]
     }
 }

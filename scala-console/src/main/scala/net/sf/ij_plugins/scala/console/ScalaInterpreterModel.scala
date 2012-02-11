@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2011 Jarek Sacha
+ * Copyright (C) 2002-2012 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,84 +22,76 @@
 
 package net.sf.ij_plugins.scala.console
 
-import event.Changed
-import swing.Publisher
-import java.io.PrintWriter
-import net.sf.ij_plugins.scala.BufferedPrintStream
+import net.sf.ij_plugins.scala.console.event.Changed
+
+import java.io.{OutputStream, Writer}
+import scala.swing.Publisher
+import scala.tools.nsc.interpreter.Results.Result
+import scala.tools.nsc.interpreter._
+import scala.tools.nsc.{NewLinePrintWriter, Settings}
 
 
 /**
  *
  *
  */
-class ScalaInterpreterModel extends Publisher {
+class ScalaInterpreterModel(val outStream: OutputStream,
+                            val errStream: OutputStream,
+                            val interpreterOut: Writer) extends Publisher {
 
-    private val interpreter = new ScalaInterpreter();
-    //  private val out = ScalaUtils.redirectSystemOut()
-    private val out = new BufferedPrintStream()
-    private val flusher = new PrintWriter(out)
+    val interpreterSettings = new Settings() {
+        usejavacp.value = true
+        //            classpath.value +=
+    }
 
-    private var statusText = "Welcome to Scala Console"
-    private var outputText = ""
-    private var readyFlag = false
+    // Create interpreter
+    val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(interpreterOut, true))
+
+    private var _statusText = "Welcome to Scala Console"
+    private var _isReady = false
 
 
-    def status: String = statusText
+    def statusText: String = _statusText
 
 
-    def status_(text: String) {
-        statusText = text
-        publish(new Changed(this))
+    def statusText_=(text: String) {
+        _statusText = text
+        publish(new Changed(this, "status"))
     }
 
 
-    def output = outputText
+    def isReady = _isReady
 
 
-    def output_(text: String) {
-        outputText = text
-        publish(new Changed(this))
-    }
-
-
-    def ready = readyFlag
-
-
-    def ready_(state: Boolean) {
-        readyFlag = state
-        publish(new Changed(this))
+    def isReady_=(ready: Boolean) {
+        _isReady = ready
+        publish(new Changed(this, "ready"))
     }
 
 
     def run(code: String) {
 
-        ready_(false)
-        status_("Running...")
+        isReady = false
+        statusText = "Running..."
         println("Running:\n" + code)
 
         // TODO: Can scala.swing.SwingWorker be used here?
 
         // Setup
-        val worker = new javax.swing.SwingWorker[((String, String, String), String), Void] {
-            override def doInBackground(): ((String, String, String), String) = {
-                flusher.flush()
-                out.reset()
+        val worker = new javax.swing.SwingWorker[Result, Void] {
+            override def doInBackground(): Result = {
+                Console.setOut(outStream)
+                Console.setErr(errStream)
 
-                val r = interpreter.interpret(code)
-
-                flusher.flush()
-                val stdOut = out.toString
-                out.reset()
-
-                (r, stdOut)
+                interpreter.interpret(code)
             }
 
 
             override def done() {
-                val ((outputNew, error, result), stdOut) = get
-                output_("\n" + stdOut + "\n---\n" + outputNew + "\n+++\n" + error)
-                status_(result)
-                ready_(true)
+                //                val r = get
+                //                statusText = r.toString
+                statusText = "Done"
+                isReady = true
             }
         }
 

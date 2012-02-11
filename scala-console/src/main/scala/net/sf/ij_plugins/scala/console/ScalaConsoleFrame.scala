@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2011 Jarek Sacha
+ * Copyright (C) 2002-2012 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,44 +23,34 @@
 package net.sf.ij_plugins.scala.console
 
 import net.sf.ij_plugins.scala.console.event.Changed
-import swing._
-import java.awt.event.ActionEvent
+
 import java.awt.BorderLayout._
-import java.awt.{Cursor, Color}
-import java.util.ArrayList
+import java.awt.Cursor
+import java.awt.event.ActionEvent
+import java.io.File
 import java.net.URL
+import java.util.ArrayList
 import java.util.logging.{Level, Logger}
 import javax.swing._
+import swing._
 import filechooser.FileFilter
-import java.io.File
-
-/*
-* Implementation of a Scala Console as 'regular' Swing JFrame, Scala.swing is still too buggy.
-*
-*/
-object ScalaConsoleFrame {
 
 
-    def main(args: Array[String]) {
-        Swing.onEDT {
-            try {
-                val laf = UIManager.getSystemLookAndFeelClassName
-                UIManager.setLookAndFeel(laf);
-            } catch {
-                case _ =>
-            }
-
-            val frame = new ScalaConsoleFrame
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            frame.pack()
-            frame.setVisible(true)
-        }
+/**
+ * Starts Scala Console as a stand alone application.
+ */
+object ScalaConsoleFrame extends App {
+    Swing.onEDT {
+        val frame = new ScalaConsoleFrame
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        frame.pack()
+        frame.setVisible(true)
     }
 }
 
 
 /**
- * Implements the view part of the Scala Console.
+ * The main frame of the Scala Console.
  */
 class ScalaConsoleFrame extends JFrame with Reactor {
 
@@ -70,7 +60,9 @@ class ScalaConsoleFrame extends JFrame with Reactor {
 
     private val editor = new Editor
 
-    private val model = new ScalaInterpreterModel
+    private val outputArea = new OutputArea()
+
+    private val model = new ScalaInterpreterModel(outputArea.consoleOut, outputArea.consoleErr, outputArea.interpreterOut)
 
     private lazy val fileChooser = new JFileChooser() {
         setFileFilter(new FileFilter() {
@@ -83,20 +75,16 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     }
 
 
-    private val outputArea = new JTextArea(10, 80) {
-        setText("")
-        setEditable(false)
-        setBackground(new Color(255, 255, 218))
-    }
-
     private val statusLine = new JLabel("Welcome to Scala Console")
 
-    private val fileNewAction = new AbstractAction("New...") {
+    private val fileNewAction = new AbstractAction("New...", loadIcon(this.getClass, "resources/icons/page.png")) {
+
         def actionPerformed(e: ActionEvent) {
 
             if (editor.needsSave) {
                 // Check if current document needs to be saved
-                val status = JOptionPane.showConfirmDialog(ScalaConsoleFrame.this, "Do you want to save current file?", "New", JOptionPane.YES_NO_OPTION)
+                val status = JOptionPane.showConfirmDialog(
+                    ScalaConsoleFrame.this, "Do you want to save current file?", "New", JOptionPane.YES_NO_OPTION)
                 // If not cancelled, save
                 val saveCurrent = status match {
                     case JOptionPane.YES_OPTION => {
@@ -115,7 +103,7 @@ class ScalaConsoleFrame extends JFrame with Reactor {
         }
     }
 
-    private val fileOpenAction = new AbstractAction("Open...") {
+    private val fileOpenAction = new AbstractAction("Open...", loadIcon(this.getClass, "resources/icons/folder_page.png")) {
         def actionPerformed(e: ActionEvent) {
 
             val status = fileChooser.showOpenDialog(ScalaConsoleFrame.this)
@@ -133,7 +121,7 @@ class ScalaConsoleFrame extends JFrame with Reactor {
         }
     }
 
-    private val fileSaveAction = new AbstractAction("Save") {
+    private val fileSaveAction = new AbstractAction("Save", loadIcon(this.getClass, "resources/icons/disk.png")) {
         def actionPerformed(e: ActionEvent) {
             save()
         }
@@ -152,7 +140,7 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     }
 
 
-    private val runAction = new AbstractAction("Run") {
+    private val runAction = new AbstractAction("Run", loadIcon(this.getClass, "resources/icons/script_go.png")) {
         def actionPerformed(e: ActionEvent) {
             run()
         }
@@ -182,16 +170,27 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     val fileExitMenuItem = new JMenuItem(fileExitAction)
     fileMenu.add(fileExitMenuItem)
 
-    val scriptMenu = new JMenu("Script")
-    topMenu.add(scriptMenu)
+    //    val scriptMenu = new JMenu("Script")
+    //    topMenu.add(scriptMenu)
 
-    val scriptRunMenuItem = new JMenuItem(runAction)
-    scriptMenu.add(scriptRunMenuItem)
+    //    val scriptRunMenuItem = new JMenuItem(runAction)
+    //    scriptMenu.add(scriptRunMenuItem)
 
 
+    private val fileNewButton = new JButton(fileNewAction)
+    fileNewButton.setText("")
+    fileNewButton.setToolTipText("New Scala Script")
+    private val fileOpenButton = new JButton(fileOpenAction)
+    fileOpenButton.setText("")
+    fileOpenButton.setToolTipText("Open Scala Script")
+    private val fileSaveButton = new JButton(fileSaveAction)
+    fileSaveButton.setText("")
+    fileSaveButton.setToolTipText("Save Scala Script")
     private val runButton = new JButton(runAction)
+    runButton.setText("")
+    runButton.setToolTipText("Execute Scala Script")
 
-    private val enablable = Array(this, runButton)
+    private val enablable = Array(runButton)
 
 
     setTitle(defaultTitle)
@@ -200,23 +199,25 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     setJMenuBar(topMenu)
 
     val toolBar = new JToolBar
+    toolBar.add(fileNewButton)
+    toolBar.add(fileOpenButton)
+    toolBar.add(fileSaveButton)
+    toolBar.addSeparator()
     toolBar.add(runButton)
 
     add(toolBar, NORTH)
     add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, editor.view, new JScrollPane(outputArea)), CENTER)
     add(statusLine, SOUTH)
 
-
-
-
     listenTo(model)
     reactions += {
-        case Changed(m) => onEDT({
-            enablable.foreach(_.setEnabled(m.ready))
-            setCursor(if (m.ready) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR))
-            outputArea.setText(m.output)
-            statusLine.setText(m.status)
-        })
+        case Changed(m, "status") => {
+            statusLine.setText(m.statusText)
+        }
+        case Changed(m, "ready") => {
+            enablable.foreach(_.setEnabled(m.isReady))
+            setCursor(if (m.isReady) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR))
+        }
     }
 
 
@@ -228,15 +229,6 @@ class ScalaConsoleFrame extends JFrame with Reactor {
     }
 
 
-    private def onEDT(op: => Unit) {
-        if (SwingUtilities.isEventDispatchThread) {
-            op
-        } else {
-            Swing.onEDTWait(op)
-        }
-    }
-
-
     private def loadIcons(): java.util.List[Image] = {
         val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
         val icons = new ArrayList[Image]
@@ -244,10 +236,25 @@ class ScalaConsoleFrame extends JFrame with Reactor {
         icons
     }
 
+    private def loadIcon(aClass: Class[_], path: String): ImageIcon = {
+        try {
+            val url: URL = aClass.getResource(path)
+            if (url == null) {
+                logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.")
+                return null
+            }
+            new ImageIcon(url)
+        } catch {
+            case t: Throwable => {
+                logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.", t)
+            }
+            null
+        }
+    }
 
     /**
      * Load image as a resource for given class without throwing exceptions.
-     * Intended for use with {@link JFrame#setIconImage}
+     * Intended for use with [[javax.swing.JFrame# s e t I c o n I m a g e]]
      *
      * @param aClass Class requesting resource.
      * @param path   Image file path.
@@ -295,5 +302,4 @@ class ScalaConsoleFrame extends JFrame with Reactor {
 
         true
     }
-
 }

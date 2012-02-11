@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2011 Jarek Sacha
+ * Copyright (C) 2002-2012 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +22,7 @@
 
 package net.sf.ij_plugins.scala.console.event
 
-import swing.event.Event
 import net.sf.ij_plugins.scala.console.ScalaInterpreterModel
+import swing.event.Event
 
-
-case class Changed(source: ScalaInterpreterModel) extends Event
+case class Changed(source: ScalaInterpreterModel, eventName: String) extends Event
