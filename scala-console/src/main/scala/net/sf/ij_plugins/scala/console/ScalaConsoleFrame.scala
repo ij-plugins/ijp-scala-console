@@ -44,9 +44,6 @@ private class ScalaConsoleFrame(val editor: Editor,
                                 val controller: ScalaConsoleController,
                                 val model: ScalaInterpreter) extends Frame {
 
-    // TODO Add Exit action
-    // TODO Add tool bar buttons for actions with icons
-
     private val defaultTitle = "Scala Console"
     title = defaultTitle
 
@@ -71,9 +68,16 @@ private class ScalaConsoleFrame(val editor: Editor,
         }
     }
 
+    // Menu bar
     menuBar = new MenuBar {
         contents += new Menu("File") {
             contents ++= editor.fileActions.map(new MenuItem(_))
+
+            contents += new Separator()
+
+            contents += new MenuItem(Action("Exit") {
+                controller.exit()
+            })
         }
         contents += new Menu("Script") {
             contents += new MenuItem(runAction)
@@ -81,8 +85,14 @@ private class ScalaConsoleFrame(val editor: Editor,
 
     }
 
+    // Tool bar
     val toolBar = new ToolBar
-
+    // Add editor actions that have icons
+    val fileToolActions = editor.fileActions.filter(a => a.icon != null && a.icon != Swing.EmptyIcon)
+    fileToolActions.foreach(toolBar += _)
+    if (!fileToolActions.isEmpty)
+        toolBar.addSeparator()
+    // Add script run
     toolBar += runAction
 
     contents = new BorderPanel {

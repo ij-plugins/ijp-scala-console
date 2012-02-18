@@ -41,7 +41,9 @@ private class ScalaConsoleController {
 
     def view: Frame = _view
 
-
+    /**
+     * Interpret current editor selection. If selection is empty the whole editor text.
+     */
     private[console] def run() {
         _view.outputArea.clear()
         _view.statusLine.text = "Running..."
@@ -49,4 +51,12 @@ private class ScalaConsoleController {
         val code = if (selection != null && !selection.isEmpty) selection else editor.text
         _model.run(code)
     }
+
+    /**
+     * Hide console frame, and possibly exit application.
+     */
+    private[console] def exit() {
+        _view.visible = false
+    }
+
 }

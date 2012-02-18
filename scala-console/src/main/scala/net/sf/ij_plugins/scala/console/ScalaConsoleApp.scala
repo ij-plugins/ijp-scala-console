@@ -28,7 +28,7 @@ import swing.SimpleSwingApplication
 
 /**
  * Runs Scala Console as a stand alone application.
- * When the main frame is closed it Shuts down the framework and quits the application.
+ * When the main frame is closed it shuts down the framework and quits the application.
  *
  * @author Jarek Sacha
  * @since 2/11/12
