@@ -38,11 +38,11 @@ import net.sf.ij_plugins.scala.console
 /**
  * Main view for the Scala Console.
  * @author Jarek Sacha
- * @since 2/11/12 11:06 PM
+ * @since 2/11/12
  */
-private class ScalaConsoleFrameS(val editor: Editor,
-                                 val controller: ScalaConsoleController,
-                                 val model: ScalaInterpreter) extends Frame {
+private class ScalaConsoleFrame(val editor: Editor,
+                                val controller: ScalaConsoleController,
+                                val model: ScalaInterpreter) extends Frame {
 
     // TODO Add Exit action
     // TODO Add tool bar buttons for actions with icons

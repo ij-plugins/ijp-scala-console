@@ -37,7 +37,7 @@ private class ScalaConsoleController {
 
     private val _model = new ScalaInterpreter()
 
-    private val _view = new ScalaConsoleFrameS(editor, this, _model)
+    private val _view = new ScalaConsoleFrame(editor, this, _model)
 
     def view: Frame = _view
 
