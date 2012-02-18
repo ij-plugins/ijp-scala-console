@@ -22,11 +22,10 @@
 
 package net.sf.ij_plugins.scala.console
 
-import java.awt.{BorderLayout, Color}
-import javax.swing.{JPanel, JTextArea}
-import java.util.concurrent.locks.ReentrantLock
+import javax.swing._
 import swing.Swing
-import java.io.{Writer, OutputStream}
+import text.{StyleConstants, StyleContext, StyledDocument}
+import java.awt.{Dimension, BorderLayout, Color}
 
 
 /**
@@ -35,67 +34,64 @@ import java.io.{Writer, OutputStream}
  * @author Jarek Sacha
  * @since 2/10/12
  */
-class OutputArea extends JPanel {
+private class OutputArea extends JPanel {
 
     /**
-     * Redirects standard console output stream the output area. Usage:
+     * Document style identifiers.
      */
-    lazy val consoleOut: OutputStream = new LogOutputStream()
+    object Style extends Enumeration {
+        val Regular = Value("regular")
+        val Error = Value("error")
+        val Log = Value("log")
+    }
 
-    /**
-     * Redirects standard console error stream the output area. Usage:
-     }*/
-    lazy val consoleErr: OutputStream = new LogOutputStream()
-
-    /**
-     * Used for reporting internal interpreter messages. Usage:
-     */
-    lazy val interpreterOut: Writer = new LogWriter()
-
-    private val outputLock = new ReentrantLock(true)
-
-    private val outputArea = new JTextArea(10, 80) {
+    private val outputArea = new JTextPane() {
         setText("")
         setEditable(false)
         setBackground(new Color(255, 255, 218))
+        setPreferredSize(new Dimension(200, 200))
     }
 
     setLayout(new BorderLayout())
     add(outputArea, BorderLayout.CENTER)
 
+    def clear() {
+        outputArea.setText("")
+    }
 
-    /**
-     * Append text to the output area.
-     */
-    def appendText(text: String) {
+    def appendOutStream(text: String) {
+        appendText(text, Style.Regular)
+    }
+
+    def appendErrStream(text: String) {
+        appendText(text, Style.Error)
+    }
+
+    def appendInterpreterOut(text: String) {
+        appendText(text, Style.Log)
+    }
+
+    private def appendText(text: String, style: Style.Value) {
         Swing.onEDT({
-            //            try {
-            //                outputLock.lock()
-            outputArea.setText(outputArea.getText + text)
-            //            } finally {
-            //                outputLock.unlock()
-            //            }
+            val doc = outputArea.getStyledDocument
+            addStylesToDocument(doc)
+            doc.insertString(doc.getLength, text, doc.getStyle(style.toString))
         })
     }
 
-    private class LogOutputStream extends OutputStream {
-        override def write(b: Array[Byte], off: Int, len: Int) {
-            appendText(new String(b, off, len))
-        }
+    /**
+     * Initialize document styles.
+     */
+    private def addStylesToDocument(doc: StyledDocument) {
+        val default = StyleContext.getDefaultStyleContext.getStyle(StyleContext.DEFAULT_STYLE)
 
-        def write(b: Int) {
-            write(Array(b.toByte), 0, 1)
-        }
+        val regular = doc.addStyle(Style.Regular.toString, default)
+        StyleConstants.setFontFamily(default, "Consolas")
+
+        val error = doc.addStyle(Style.Error.toString, regular)
+        StyleConstants.setForeground(error, Color.RED)
+
+        val log = doc.addStyle(Style.Log.toString, regular)
+        StyleConstants.setForeground(log, Color.GRAY)
     }
-
-    private class LogWriter extends Writer {
-        def close() {}
-
-        def flush() {}
-
-        def write(buf: Array[Char], off: Int, len: Int) {
-            appendText(new String(buf, off, len))
-        }
-    }
-
 }

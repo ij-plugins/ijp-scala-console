@@ -20,34 +20,33 @@
  * Latest release available at http://sourceforge.net/projects/ij-plugins/
  */
 
-package net.sf.ij_plugins.scala
+package net.sf.ij_plugins.scala.console
 
-import console.ScalaConsole
-import ij.plugin.PlugIn
-import java.lang.String
-import ij.IJ
-import scala.swing.Frame
-
-
-private object ScalaConsolePlugin {
-
-    lazy val scalaConsoleFrame: Frame = {
-        IJ.showStatus("Starting Scala Console...")
-        console.addPluginsJarsToClassPath()
-        val frame = new ScalaConsole().view
-        IJ.showStatus("")
-        frame
-    }
-}
-
+import editor.Editor
+import swing.Frame
 
 /**
- * ImageJ plugin for starting Scala Console
+ * Controller for the Scala Console.
+ *
+ * @author Jarek Sacha
+ * @since 2/15/12 9:51 PM
  */
-class ScalaConsolePlugin extends PlugIn {
+private class ScalaConsoleController {
 
-    def run(arg: String) {
-        ScalaConsolePlugin.scalaConsoleFrame.visible = true
+    private[console] val editor = new Editor
+
+    private val _model = new ScalaInterpreter()
+
+    private val _view = new ScalaConsoleFrameS(editor, this, _model)
+
+    def view: Frame = _view
+
+
+    private[console] def run() {
+        _view.outputArea.clear()
+        _view.statusLine.text = "Running..."
+        val selection = editor.selection
+        val code = if (selection != null && !selection.isEmpty) selection else editor.text
+        _model.run(code)
     }
-
 }

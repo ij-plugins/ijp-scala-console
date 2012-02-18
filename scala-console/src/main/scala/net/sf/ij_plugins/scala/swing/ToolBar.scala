@@ -20,34 +20,38 @@
  * Latest release available at http://sourceforge.net/projects/ij-plugins/
  */
 
-package net.sf.ij_plugins.scala
+package net.sf.ij_plugins.scala.swing
 
-import console.ScalaConsole
-import ij.plugin.PlugIn
-import java.lang.String
-import ij.IJ
-import scala.swing.Frame
-
-
-private object ScalaConsolePlugin {
-
-    lazy val scalaConsoleFrame: Frame = {
-        IJ.showStatus("Starting Scala Console...")
-        console.addPluginsJarsToClassPath()
-        val frame = new ScalaConsole().view
-        IJ.showStatus("")
-        frame
-    }
-}
-
+import swing._
+import java.awt.Insets
+import javax.swing.JToolBar
 
 /**
- * ImageJ plugin for starting Scala Console
+ * A tool bar, wrapper for [[javax.swing.JToolBar]]
+ *
+ * @author Jarek Sacha
+ * @since 2/11/12
+ * @see javax.swing.JToolBar
+ * @param removeActionText if `true` buttons created from actions that have icons will use only icons.
  */
-class ScalaConsolePlugin extends PlugIn {
+class ToolBar(removeActionText: Boolean = true,
+              insets: Insets = new Insets(2, 4, 2, 4)) extends Component with SequentialContainer.Wrapper {
 
-    def run(arg: String) {
-        ScalaConsolePlugin.scalaConsoleFrame.visible = true
+    override lazy val peer: JToolBar = new JToolBar
+
+    //    def buttons: Seq[Button] = contents.filter(_.isInstanceOf[Button]).map(_.asInstanceOf[Button])
+
+    def +=(a: Action) = contents += new Button(a) {
+        if (removeActionText && icon != null) {
+            tooltip = text
+            text = ""
+        }
+        margin = insets
     }
 
+    def +=(b: Button) = contents += b
+
+    def addSeparator() {
+        peer.addSeparator()
+    }
 }

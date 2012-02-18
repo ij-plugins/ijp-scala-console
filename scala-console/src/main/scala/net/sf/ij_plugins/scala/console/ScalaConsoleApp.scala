@@ -20,34 +20,22 @@
  * Latest release available at http://sourceforge.net/projects/ij-plugins/
  */
 
-package net.sf.ij_plugins.scala
+package net.sf.ij_plugins.scala.console
 
-import console.ScalaConsole
-import ij.plugin.PlugIn
-import java.lang.String
-import ij.IJ
-import scala.swing.Frame
-
-
-private object ScalaConsolePlugin {
-
-    lazy val scalaConsoleFrame: Frame = {
-        IJ.showStatus("Starting Scala Console...")
-        console.addPluginsJarsToClassPath()
-        val frame = new ScalaConsole().view
-        IJ.showStatus("")
-        frame
-    }
-}
+import javax.swing.JFrame
+import swing.SimpleSwingApplication
 
 
 /**
- * ImageJ plugin for starting Scala Console
+ * Runs Scala Console as a stand alone application.
+ * When the main frame is closed it Shuts down the framework and quits the application.
+ *
+ * @author Jarek Sacha
+ * @since 2/11/12
  */
-class ScalaConsolePlugin extends PlugIn {
+object ScalaConsoleApp extends SimpleSwingApplication {
+    private val view = new ScalaConsole().view
+    view.peer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 
-    def run(arg: String) {
-        ScalaConsolePlugin.scalaConsoleFrame.visible = true
-    }
-
+    def top = view
 }

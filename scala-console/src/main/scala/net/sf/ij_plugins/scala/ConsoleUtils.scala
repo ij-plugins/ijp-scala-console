@@ -22,32 +22,11 @@
 
 package net.sf.ij_plugins.scala
 
-import console.ScalaConsole
-import ij.plugin.PlugIn
-import java.lang.String
-import ij.IJ
-import scala.swing.Frame
-
-
-private object ScalaConsolePlugin {
-
-    lazy val scalaConsoleFrame: Frame = {
-        IJ.showStatus("Starting Scala Console...")
-        console.addPluginsJarsToClassPath()
-        val frame = new ScalaConsole().view
-        IJ.showStatus("")
-        frame
-    }
-}
-
 
 /**
- * ImageJ plugin for starting Scala Console
+ * @author Jarek Sacha
+ * @since 2/17/12 4:32 PM
  */
-class ScalaConsolePlugin extends PlugIn {
-
-    def run(arg: String) {
-        ScalaConsolePlugin.scalaConsoleFrame.visible = true
-    }
+object ConsoleUtils {
 
 }

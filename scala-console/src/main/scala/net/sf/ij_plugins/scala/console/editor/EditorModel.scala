@@ -20,35 +20,37 @@
  * Latest release available at http://sourceforge.net/projects/ij-plugins/
  */
 
-package net.sf.ij_plugins.scala.console
+package net.sf.ij_plugins.scala.console.editor
 
-import org.fife.ui.rsyntaxtextarea.{SyntaxConstants, RSyntaxTextArea}
-import org.fife.ui.rtextarea.RTextScrollPane
 import java.io.{FileWriter, File}
-import javax.swing.JComponent
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
+import swing.Publisher
+import swing.event.Event
+
+
+private object EditorModel {
+
+    case class SourceFileEvent(file: Option[File]) extends Event
+
+}
 
 /**
- * Input area of the console.
+ * Model of the code editor, in the MVC sense. Publishes `SourceFileEvent` when new file is read or saved to.
+ * @author Jarek Sacha
+ * @since 2/17/12 5:57 PM
  */
-class Editor {
+private class EditorModel(private val textArea: RSyntaxTextArea) extends Publisher {
 
-    private val viewTextArea = new RSyntaxTextArea(25, 80) {
-        setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA)
-    }
-
-    private val viewScrollPane = new RTextScrollPane(viewTextArea)
-
-    private var sourceFileOption: Option[File] = None
-
-    // Initialize editor
-    reset()
-
+    private var _sourceFile: Option[File] = None
 
     /**
-     * Return a component displaying content of this editor
+     * Associated file from which the file was loaded or saved last time.
      */
-    def view: JComponent = {
-        viewScrollPane
+    def sourceFile: Option[File] = _sourceFile
+
+    private def sourceFile_=(file: Option[File]) {
+        _sourceFile = file
+        publish(EditorModel.SourceFileEvent(_sourceFile))
     }
 
 
@@ -56,11 +58,11 @@ class Editor {
      * Return a text content of this editor
      */
     def text: String = {
-        viewTextArea.getText
+        textArea.getText
     }
 
     def selection: String = {
-        viewTextArea.getSelectedText
+        textArea.getSelectedText
     }
 
 
@@ -70,16 +72,12 @@ class Editor {
     }
 
 
-    /**
-     * Associated file from which the file was loaded or saved last time.
-     */
-    def sourceFile = sourceFileOption
-
-
     def reset() {
-        viewTextArea.setText("import ij._\n" +
-                "val img = WindowManager.getCurrentImage()")
-        sourceFileOption = None
+        textArea.setText("import ij._\n" +
+                "val img = WindowManager.getCurrentImage()\n" +
+                "IJ.log(\"Hello\")\n" +
+                "println(\"I am here\")\n")
+        sourceFile = None
     }
 
     def read(file: File) {
@@ -87,19 +85,20 @@ class Editor {
         val lines = source.mkString
         source.close()
 
-        viewTextArea.setText(lines)
-        sourceFileOption = Some(file)
+        textArea.setText(lines)
+        sourceFile = Some(file)
     }
 
 
     def save(file: File) {
-        sourceFileOption = Some(file)
         val writer = new FileWriter(file)
         try {
             writer.write(text)
         } finally {
             writer.close()
         }
+        sourceFile = Some(file)
     }
+
 
 }

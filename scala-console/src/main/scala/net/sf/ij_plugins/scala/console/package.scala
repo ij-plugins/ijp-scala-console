@@ -22,17 +22,82 @@
 
 package net.sf.ij_plugins.scala
 
+import java.awt.Font
+import javax.swing.ImageIcon
+import java.net.URL
+import scala.swing._
+import java.util.logging.{Logger, Level}
 import collection.mutable.ArrayBuffer
 import ij.Menus
-import java.io._
 import tools.nsc.io.Path
 import scala.Array
-
+import java.io.{FilenameFilter, FileFilter, File}
 
 /**
+ * Helper methods used in package `net.sf.ij_plugins.scala.console`.
  * @author Jarek Sacha
+ * @since 2/17/12 
  */
-object ScalaUtils {
+package object console {
+    private lazy val logger: Logger = Logger.getLogger(this.getClass.getName)
+
+    private lazy val _defaultEditorFont: Font = {
+
+        val consolas = Font.decode("consolas-plain")
+        if (consolas != null) {
+            consolas
+        }
+
+        val lucida = Font.decode("Lucida Sans Typewriter Regular")
+        if (lucida != null) {
+            lucida
+        } else {
+            Font.getFont(Font.MONOSPACED)
+        }
+    }
+
+    def defaultEditorFont: Font = _defaultEditorFont
+
+    def loadIcon(aClass: Class[_], path: String): ImageIcon = {
+        try {
+            val url: URL = aClass.getResource(path)
+            if (url == null) {
+                logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.")
+                return null
+            }
+            new ImageIcon(url)
+        } catch {
+            case t: Throwable => {
+                logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.", t)
+            }
+            null
+        }
+    }
+
+
+    /**
+     * Load image as a resource for given class without throwing exceptions.
+     * Intended for use with [[javax.swing.JFrame# s e t I c o n I m a g e]]
+     *
+     * @param aClass Class requesting resource.
+     * @param path   Image file path.
+     * @return Image or null if loading failed.
+     */
+    def loadImage(aClass: Class[_], path: String): Image = {
+        try {
+            val url: URL = aClass.getResource(path)
+            if (url == null) {
+                logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.")
+                return null
+            }
+            new ImageIcon(url).getImage
+        } catch {
+            case t: Throwable => {
+                logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.", t)
+            }
+            null
+        }
+    }
 
     def addPluginsJarsToClassPath() {
         // TODO do not add existing entries to the classpath again
@@ -91,4 +156,5 @@ object ScalaUtils {
 
         dir.listFiles(jarFilter)
     }
+
 }

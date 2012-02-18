@@ -13,11 +13,11 @@ scalaVersion := "2.9.1"
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
 // change Compile to Test to set it for the test jar
-mainClass in (Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleFrame")
+mainClass in (Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 // set the main class for the main 'run' task
 // change Compile to Test to set it for 'test:run'
-mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleFrame")
+mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 // Extra dependent libraries, in addition to those in 'lib' subdirectory
 libraryDependencies ++= Seq(

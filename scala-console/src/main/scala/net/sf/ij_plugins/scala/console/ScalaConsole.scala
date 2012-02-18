@@ -20,9 +20,24 @@
  * Latest release available at http://sourceforge.net/projects/ij-plugins/
  */
 
-package net.sf.ij_plugins.scala.console.event
+package net.sf.ij_plugins.scala.console
 
-import net.sf.ij_plugins.scala.console.ScalaInterpreterModel
-import swing.event.Event
-
-case class Changed(source: ScalaInterpreterModel, eventName: String) extends Event
+/**
+ * Creates scala console objects and gives assess to the main view.
+ *
+ * Example of using the controller to create a stand alone application:
+ * {{{
+ * object ScalaConsoleApp extends SimpleSwingApplication {
+ *     private val view = new ScalaConsole().view
+ *     view.peer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+ *
+ *     def top = view
+ * }
+ * }}}
+ *
+ * @author Jarek Sacha
+ * @since 2/17/12
+ */
+class ScalaConsole {
+    val view = new ScalaConsoleController().view
+}
