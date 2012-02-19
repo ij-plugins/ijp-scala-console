@@ -23,8 +23,9 @@
 package net.sf.ij_plugins.scala.console.editor
 
 import net.sf.ij_plugins.scala.console._
-import javax.swing.filechooser.FileFilter
 import java.io.File
+import java.util.prefs.Preferences
+import javax.swing.filechooser.FileNameExtensionFilter
 import swing.{FileChooser, Action, Dialog, Component}
 
 /**
@@ -35,16 +36,10 @@ import swing.{FileChooser, Action, Dialog, Component}
 private class EditorController(private val parentView: Component,
                                private val model: EditorModel) {
 
-    private val defaultExtension = ".scala"
+    private val defaultExtension = "scala"
 
-    private lazy val fileChooser = new FileChooser() {
-
-        fileFilter = new FileFilter() {
-            def accept(f: File) = f != null && !f.isDirectory && f.getName.endsWith(".scala")
-
-            def getDescription = "*" + defaultExtension
-        }
-
+    private lazy val fileChooser = new FileChooser(currentDirectory) {
+        fileFilter = new FileNameExtensionFilter("*." + defaultExtension, defaultExtension)
         multiSelectionEnabled = false
     }
 
@@ -90,6 +85,7 @@ private class EditorController(private val parentView: Component,
                 return
             }
 
+            currentDirectory = file.getParentFile
             model.read(file)
         }
     }
@@ -129,16 +125,42 @@ private class EditorController(private val parentView: Component,
             return false;
         }
 
+        currentDirectory = file.getParentFile
         model.save(ensureExtension(file, defaultExtension))
 
         true
     }
 
     private def ensureExtension(file: File, extension: String): File = {
-        if (file.getName.toLowerCase.endsWith(extension))
+        if (file.getName.toLowerCase.endsWith("." + extension))
             file
         else
-            new File(file.getPath + extension)
+            new File(file.getPath + "." + extension)
     }
 
+    /**
+     * Return current directory saved in preferences, if cannot be retrieved return `null`.
+     * JFileChooser constructor is using `null` to indicate that starting directory is as user's default directory.
+     */
+    private def currentDirectory: File = {
+        try {
+            val prefNode = Preferences.userRoot.node(this.getClass.getName)
+            val currentDirectory = prefNode.get("fileChooser.currentDirectory", null)
+            if (currentDirectory == null)
+                null
+            else
+                new File(currentDirectory)
+        } catch {
+            case _ => null
+        }
+    }
+
+    private def currentDirectory_=(dir: File) {
+        try {
+            val prefNode = Preferences.userRoot.node(this.getClass.getName)
+            prefNode.put("fileChooser.currentDirectory", dir.getCanonicalPath)
+        } catch {
+            case _ => {}
+        }
+    }
 }
