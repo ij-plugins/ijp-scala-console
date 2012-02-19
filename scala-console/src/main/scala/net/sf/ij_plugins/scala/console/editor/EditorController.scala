@@ -50,20 +50,7 @@ private class EditorController(private val parentView: Component,
 
         def apply() {
 
-            if (model.needsSave) {
-                // Check if current document needs to be saved
-                val status = Dialog.showConfirmation(
-                    parentView,
-                    "Do you want to save current file?",
-                    "New",
-                    Dialog.Options.YesNo)
-                // If not cancelled, save
-                status match {
-                    case Dialog.Result.Yes => save()
-                    case Dialog.Result.No => {}
-                    case _ => return
-                }
-            }
+            askAndSave()
 
             // Reset editor
             model.reset()
@@ -161,6 +148,30 @@ private class EditorController(private val parentView: Component,
             prefNode.put("fileChooser.currentDirectory", dir.getCanonicalPath)
         } catch {
             case _ => {}
+        }
+    }
+
+    /**
+     * Perform operations needed to safely close the editor, save files, etc.
+     */
+    def prepareToClose() {
+        askAndSave()
+    }
+
+    private def askAndSave() {
+        if (model.needsSave) {
+            // Check if current document needs to be saved
+            val status = Dialog.showConfirmation(
+                parentView,
+                "Do you want to save current script?",
+                "Editor Content Modified",
+                Dialog.Options.YesNo)
+            // If not cancelled, save
+            status match {
+                case Dialog.Result.Yes => save()
+                case Dialog.Result.No => {}
+                case _ => return
+            }
         }
     }
 }

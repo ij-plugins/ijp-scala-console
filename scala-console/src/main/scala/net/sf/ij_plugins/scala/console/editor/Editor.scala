@@ -67,7 +67,6 @@ object Editor {
  */
 class Editor extends Publisher {
 
-
     private val textArea = new RSyntaxTextArea(25, 80)
 
     private lazy val _view = new EditorView(textArea)
@@ -102,4 +101,12 @@ class Editor extends Publisher {
      * Actions for file menu.
      */
     def fileActions: Seq[Action] = _controller.fileActions
+
+    /**
+     * Perform operations needed to safely close the editor, save files, etc.
+     */
+    def prepareToClose() {
+        _controller.prepareToClose()
+    }
+
 }

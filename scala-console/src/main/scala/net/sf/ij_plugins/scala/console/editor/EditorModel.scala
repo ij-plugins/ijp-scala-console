@@ -42,6 +42,7 @@ private object EditorModel {
 private class EditorModel(private val textArea: RSyntaxTextArea) extends Publisher {
 
     private var _sourceFile: Option[File] = None
+    private var lastSavedText: Option[String] = None
 
     /**
      * Associated file from which the file was loaded or saved last time.
@@ -67,8 +68,10 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
 
 
     def needsSave: Boolean = {
-        // TODO: detect changes and return 'true' only of document was modified
-        true
+        lastSavedText match {
+            case Some(lastText) => !lastText.equals(textArea.getText)
+            case None => !textArea.getText.isEmpty
+        }
     }
 
 
@@ -78,6 +81,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
                 "IJ.log(\"Hello\")\n" +
                 "println(\"I am here\")\n")
         sourceFile = None
+        lastSavedText = None
     }
 
     def read(file: File) {
@@ -85,6 +89,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
         val lines = source.mkString
         source.close()
 
+        lastSavedText = Some(lines)
         textArea.setText(lines)
         sourceFile = Some(file)
     }
@@ -94,6 +99,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
         val writer = new FileWriter(file)
         try {
             writer.write(text)
+            lastSavedText = Some(text)
         } finally {
             writer.close()
         }

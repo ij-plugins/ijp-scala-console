@@ -27,6 +27,7 @@ import editor.Editor.SourceFileEvent
 import ScalaInterpreter._
 import java.util.ArrayList
 import swing._
+import event.WindowClosing
 import swing.BorderPanel._
 import swing.Component._
 import java.awt.Cursor
@@ -56,10 +57,7 @@ private class ScalaConsoleFrame(val editor: Editor,
     })
 
 
-    val outputArea = new OutputArea()
-
-    val statusLine = new Label("Welcome to Scala Console")
-
+    // Create local actions
     private val runAction = new Action("Run") {
         icon = console.loadIcon(this.getClass, "resources/icons/script_go.png")
 
@@ -68,7 +66,7 @@ private class ScalaConsoleFrame(val editor: Editor,
         }
     }
 
-    // Menu bar
+    // Setup menu bar
     menuBar = new MenuBar {
         contents += new Menu("File") {
             contents ++= editor.fileActions.map(new MenuItem(_))
@@ -85,7 +83,7 @@ private class ScalaConsoleFrame(val editor: Editor,
 
     }
 
-    // Tool bar
+    // Setup tool bar
     val toolBar = new ToolBar
     // Add editor actions that have icons
     val fileToolActions = editor.fileActions.filter(a => a.icon != null && a.icon != Swing.EmptyIcon)
@@ -95,15 +93,23 @@ private class ScalaConsoleFrame(val editor: Editor,
     // Add script run
     toolBar += runAction
 
+
+    // Position components
+    val outputArea = new OutputArea()
+    val statusLine = new Label("Welcome to Scala Console")
     contents = new BorderPanel {
         add(toolBar, Position.North)
         add(new SplitPane(Orientation.Horizontal, editor.view, wrap(outputArea)), Position.Center)
         add(statusLine, Position.South)
     }
 
+
     private val enablable = Array(runAction)
 
+    // Listen to models
     listenTo(model, editor)
+
+    // React to models and internal changes
     reactions += {
         case StateEvent(state) => {
             val isReady = state == State.Ready
@@ -122,10 +128,13 @@ private class ScalaConsoleFrame(val editor: Editor,
                 case Results.Incomplete => outputArea.appendErrStream(result.toString)
             }
         }
+
         case SourceFileEvent(fileOption) => fileOption match {
             case Some(file) => title = defaultTitle + " - " + file.getCanonicalPath
             case None => title = defaultTitle
         }
+
+        case WindowClosing(_) => editor.prepareToClose()
     }
 
 
