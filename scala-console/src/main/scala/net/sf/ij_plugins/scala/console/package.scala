@@ -77,7 +77,7 @@ package object console {
 
     /**
      * Load image as a resource for given class without throwing exceptions.
-     * Intended for use with [[javax.swing.JFrame# s e t I c o n I m a g e]]
+     * Intended for use with `javax.swing.JFrame#setIconImage`.
      *
      * @param aClass Class requesting resource.
      * @param path   Image file path.
