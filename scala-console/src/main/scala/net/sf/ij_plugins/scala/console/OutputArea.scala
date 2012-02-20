@@ -36,6 +36,7 @@ import java.awt.{Dimension, BorderLayout, Color}
  */
 private class OutputArea extends JPanel {
 
+
     /**
      * Document style identifiers.
      */
@@ -43,6 +44,7 @@ private class OutputArea extends JPanel {
         val Regular = Value("regular")
         val Error = Value("error")
         val Log = Value("log")
+        val Code = Value("code")
     }
 
     private val outputArea = new JTextPane() {
@@ -57,6 +59,15 @@ private class OutputArea extends JPanel {
 
     def clear() {
         outputArea.setText("")
+    }
+
+    def list(code: String) {
+        code.lines.foreach {
+            line =>
+                appendText("scala> ", Style.Log)
+                appendText(line + "\n", Style.Code)
+        }
+        appendText("\n", Style.Code)
     }
 
     def appendOutStream(text: String) {
@@ -93,5 +104,8 @@ private class OutputArea extends JPanel {
 
         val log = doc.addStyle(Style.Log.toString, regular)
         StyleConstants.setForeground(log, Color.GRAY)
+
+        val code = doc.addStyle(Style.Code.toString, regular)
+        StyleConstants.setForeground(code, new Color(64, 64, 128))
     }
 }

@@ -170,7 +170,7 @@ class ScalaInterpreter() extends Publisher {
                         ScalaInterpreter.this.publish(ErrStreamEvent(interpreterOutBuffer.mkString))
                     }
                     case _ => {
-                        ScalaInterpreter.this.publish(InterpreterLogEvent(interpreterOutBuffer.mkString))
+                        ScalaInterpreter.this.publish(InterpreterLogEvent("\n" + interpreterOutBuffer.mkString))
                     }
                 }
                 ScalaInterpreter.this.state = State.Ready

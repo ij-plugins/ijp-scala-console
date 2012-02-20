@@ -47,8 +47,15 @@ private class ScalaConsoleController {
     private[console] def run() {
         _view.outputArea.clear()
         _view.statusLine.text = "Running..."
+
+        // Use selection if not empty
         val selection = editor.selection
         val code = if (selection != null && !selection.isEmpty) selection else editor.text
+
+        // Show which code will be run
+        _view.outputArea.list(code)
+
+        // Run the code
         _model.run(code)
     }
 
