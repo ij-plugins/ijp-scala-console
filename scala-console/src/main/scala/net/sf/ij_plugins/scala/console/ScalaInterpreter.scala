@@ -148,7 +148,6 @@ class ScalaInterpreter() extends Publisher {
 
         interpreterOutBuffer.clear()
         state = State.Running
-        println("Running:\n" + code)
 
         // TODO: Can scala.swing.SwingWorker be used here?
 
