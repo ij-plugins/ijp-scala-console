@@ -66,13 +66,11 @@ private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends 
      */
     private def setFont(textArea: RSyntaxTextArea, font: Font) {
         if (font != null) {
-            val ss = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]
-            for (i <- 0 until ss.styles.length) {
-                if (ss.styles(i) != null) {
-                    ss.styles(i).font = font;
-                }
-            }
-            textArea.setSyntaxScheme(ss);
+            // Set the same font for all
+            val syntaxScheme = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]
+            syntaxScheme.styles.filter(_ != null).foreach(_.font = font)
+
+            textArea.setSyntaxScheme(syntaxScheme);
             textArea.setFont(font);
         }
     }
