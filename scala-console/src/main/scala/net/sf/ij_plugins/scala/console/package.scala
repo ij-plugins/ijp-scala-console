@@ -41,20 +41,14 @@ import java.io.{FilenameFilter, FileFilter, File}
 package object console {
     private lazy val logger: Logger = Logger.getLogger(this.getClass.getName)
 
-    private lazy val _defaultEditorFont: Font = {
+    // Look for one of the preferred fonts, if cannot find use default mono-spaced font
+    private lazy val _defaultEditorFont: Font =
+        Option(Font.decode("consolas-plain")).getOrElse(
+            Option(Font.decode("Lucida Sans Typewriter Regular")).getOrElse(
+                Font.getFont(Font.MONOSPACED)
+            )
+        )
 
-        val consolas = Font.decode("consolas-plain")
-        if (consolas != null) {
-            consolas
-        }
-
-        val lucida = Font.decode("Lucida Sans Typewriter Regular")
-        if (lucida != null) {
-            lucida
-        } else {
-            Font.getFont(Font.MONOSPACED)
-        }
-    }
 
     def defaultEditorFont: Font = _defaultEditorFont
 
