@@ -67,10 +67,10 @@ object Editor {
  */
 class Editor extends Publisher {
 
-    private val textArea = new RSyntaxTextArea(25, 80)
+    private val textArea = new RSyntaxTextArea(10, 80)
 
-    private lazy val _view = new EditorView(textArea)
-    private lazy val _model = new EditorModel(textArea)
+    private lazy val _view       = new EditorView(textArea)
+    private lazy val _model      = new EditorModel(textArea)
     private lazy val _controller = new EditorController(Component.wrap(textArea), _model)
 
     listenTo(_model)
