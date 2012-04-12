@@ -42,20 +42,23 @@ private class OutputArea extends JPanel {
      */
     object Style extends Enumeration {
         val Regular = Value("regular")
-        val Error = Value("error")
-        val Log = Value("log")
-        val Code = Value("code")
+        val Error   = Value("error")
+        val Log     = Value("log")
+        val Code    = Value("code")
     }
 
     private val outputArea = new JTextPane() {
         setText("")
         setEditable(false)
         setBackground(new Color(255, 255, 218))
-        setPreferredSize(new Dimension(200, 200))
+        setPreferredSize(new Dimension(100, 100))
     }
 
+    private val scrollPane = new JScrollPane(outputArea)
+
+
     setLayout(new BorderLayout())
-    add(outputArea, BorderLayout.CENTER)
+    add(scrollPane, BorderLayout.CENTER)
 
     def clear() {
         outputArea.setText("")
