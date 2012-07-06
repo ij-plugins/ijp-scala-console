@@ -22,16 +22,17 @@
 
 package net.sf.ij_plugins.scala
 
-import java.awt.Font
-import javax.swing.ImageIcon
-import java.net.URL
-import scala.swing._
-import java.util.logging.{Logger, Level}
-import collection.mutable.ArrayBuffer
 import ij.Menus
-import tools.nsc.io.Path
-import scala.Array
+import java.awt.Font
 import java.io.{FilenameFilter, FileFilter, File}
+import java.net.URL
+import java.util.logging.{Logger, Level}
+import javax.swing.ImageIcon
+import scala.Array
+import scala.collection.mutable.ArrayBuffer
+import scala.swing._
+import scala.tools.nsc.io.Path
+
 
 /**
  * Helper methods used in package `net.sf.ij_plugins.scala.console`.
@@ -99,7 +100,7 @@ package object console {
 
         val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
         for (jar <- jars) {
-            classpath = jar.getAbsolutePath + File.pathSeparator + classpath;
+            classpath = jar.getAbsolutePath + File.pathSeparator + classpath
         }
 
         System.setProperty("java.class.path", classpath)
@@ -130,7 +131,7 @@ package object console {
         for (dir <- root.listFiles(dirFilter)) {
             r.appendAll(listDirectories(dir))
         }
-        r.toArray;
+        r.toArray
     }
 
 
@@ -139,7 +140,7 @@ package object console {
         for (dir <- dirs) {
             r.appendAll(listJarFiles(dir))
         }
-        r.toArray;
+        r.toArray
     }
 
 

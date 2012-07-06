@@ -22,18 +22,17 @@
 
 package net.sf.ij_plugins.scala.console
 
-import editor.Editor
-import editor.Editor.SourceFileEvent
-import ScalaInterpreter._
-import java.util.ArrayList
-import swing._
-import event.WindowClosing
-import swing.BorderPanel._
-import swing.Component._
 import java.awt.Cursor
-import tools.nsc.interpreter.Results
-import net.sf.ij_plugins.scala.swing.ToolBar
 import net.sf.ij_plugins.scala.console
+import net.sf.ij_plugins.scala.console.ScalaInterpreter._
+import net.sf.ij_plugins.scala.console.editor.Editor
+import net.sf.ij_plugins.scala.console.editor.Editor.SourceFileEvent
+import net.sf.ij_plugins.scala.swing.ToolBar
+import scala.swing.BorderPanel._
+import scala.swing.Component._
+import scala.swing._
+import scala.swing.event.WindowClosing
+import scala.tools.nsc.interpreter.Results
 
 
 /**
@@ -51,9 +50,9 @@ private class ScalaConsoleFrame(val editor: Editor,
     // Set frame icons, at different scales.
     peer.setIconImages({
         val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
-        val icons = new ArrayList[Image]
-        for (name <- names) icons.add(console.loadImage(this.getClass, "resources/" + name))
-        icons
+        val icons = for (name <- names) yield console.loadImage(this.getClass, "resources/" + name)
+        import scala.collection.JavaConversions._
+        icons.toList
     })
 
 
@@ -84,7 +83,7 @@ private class ScalaConsoleFrame(val editor: Editor,
     }
 
     // Setup tool bar
-    val toolBar = new ToolBar
+    val toolBar         = new ToolBar
     // Add editor actions that have icons
     val fileToolActions = editor.fileActions.filter(a => a.icon != null && a.icon != Swing.EmptyIcon)
     fileToolActions.foreach(toolBar += _)
@@ -136,6 +135,4 @@ private class ScalaConsoleFrame(val editor: Editor,
 
         case WindowClosing(_) => editor.prepareToClose()
     }
-
-
 }

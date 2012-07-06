@@ -22,11 +22,11 @@
 
 package net.sf.ij_plugins.scala.console.editor
 
-import net.sf.ij_plugins.scala.console
 import java.awt.{Font, Color}
+import net.sf.ij_plugins.scala.console
 import org.fife.ui.rsyntaxtextarea.{SyntaxScheme, Token, SyntaxConstants, RSyntaxTextArea}
 import org.fife.ui.rtextarea.RTextScrollPane
-import swing.{BorderPanel, Component}
+import scala.swing.{BorderPanel, Component}
 
 
 /**
@@ -70,8 +70,8 @@ private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends 
             val syntaxScheme = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]
             syntaxScheme.styles.filter(_ != null).foreach(_.font = font)
 
-            textArea.setSyntaxScheme(syntaxScheme);
-            textArea.setFont(font);
+            textArea.setSyntaxScheme(syntaxScheme)
+            textArea.setFont(font)
         }
     }
 }
