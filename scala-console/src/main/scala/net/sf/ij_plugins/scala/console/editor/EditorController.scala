@@ -73,7 +73,7 @@ private class EditorController(private val parentView: Component,
             }
 
             currentDirectory = file.getParentFile
-            model.read(file)
+            read(file)
         }
     }
 
@@ -90,6 +90,10 @@ private class EditorController(private val parentView: Component,
     }
 
     def fileActions = Array(fileNewAction, fileOpenAction, fileSaveAction, fileSaveAsAction)
+
+    def read(file: File) {
+        model.read(file)
+    }
 
     private def save() {
         model.sourceFile match {
@@ -109,7 +113,7 @@ private class EditorController(private val parentView: Component,
 
         val file = fileChooser.selectedFile
         if (file == null) {
-            return false;
+            return false
         }
 
         currentDirectory = file.getParentFile
@@ -138,7 +142,7 @@ private class EditorController(private val parentView: Component,
             else
                 new File(currentDirectory)
         } catch {
-            case _ => null
+            case _: Throwable => null
         }
     }
 
@@ -147,7 +151,7 @@ private class EditorController(private val parentView: Component,
             val prefNode = Preferences.userRoot.node(this.getClass.getName)
             prefNode.put("fileChooser.currentDirectory", dir.getCanonicalPath)
         } catch {
-            case _ => {}
+            case _: Throwable => {}
         }
     }
 

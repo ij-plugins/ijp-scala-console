@@ -26,17 +26,17 @@ import console.ScalaConsole
 import ij.plugin.PlugIn
 import java.lang.String
 import ij.IJ
-import scala.swing.Frame
+import java.io.File
 
 
 private object ScalaConsolePlugin {
 
-    lazy val scalaConsoleFrame: Frame = {
+    lazy val scalaConsole: ScalaConsole = {
         IJ.showStatus("Starting Scala Console...")
         console.addPluginsJarsToClassPath()
-        val frame = new ScalaConsole().view
+        val r = new ScalaConsole()
         IJ.showStatus("")
-        frame
+        r
     }
 }
 
@@ -47,7 +47,17 @@ private object ScalaConsolePlugin {
 class ScalaConsolePlugin extends PlugIn {
 
     def run(arg: String) {
-        ScalaConsolePlugin.scalaConsoleFrame.visible = true
+        val scripFile = if (arg != null && !arg.isEmpty) {
+            val file = new File(arg.trim)
+            if (file.exists) Some(file) else None
+        } else {
+            None
+        }
+
+        ScalaConsolePlugin.scalaConsole.view.visible = true
+        if (scripFile.isDefined) {
+            ScalaConsolePlugin.scalaConsole.loadScriptFile(scripFile.get)
+        }
     }
 
 }

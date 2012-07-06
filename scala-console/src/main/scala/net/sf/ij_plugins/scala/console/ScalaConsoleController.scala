@@ -24,6 +24,7 @@ package net.sf.ij_plugins.scala.console
 
 import editor.Editor
 import swing.Frame
+import java.io.File
 
 /**
  * Controller for the Scala Console.
@@ -40,6 +41,11 @@ private class ScalaConsoleController {
     private val _view = new ScalaConsoleFrame(editor, this, _model)
 
     def view: Frame = _view
+
+    def read(file:File) {
+        editor.read(file)
+
+    }
 
     /**
      * Interpret current editor selection. If selection is empty the whole editor text.
@@ -65,5 +71,6 @@ private class ScalaConsoleController {
     private[console] def exit() {
         _view.visible = false
     }
+
 
 }

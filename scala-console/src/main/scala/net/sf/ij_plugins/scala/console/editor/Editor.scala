@@ -109,4 +109,7 @@ class Editor extends Publisher {
         _controller.prepareToClose()
     }
 
+    def read(file: File) {
+        _controller.read(file)
+    }
 }

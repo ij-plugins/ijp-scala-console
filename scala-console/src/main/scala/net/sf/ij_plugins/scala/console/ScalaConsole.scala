@@ -22,6 +22,8 @@
 
 package net.sf.ij_plugins.scala.console
 
+import java.io.File
+
 /**
  * Creates scala console objects and gives assess to the main view.
  *
@@ -39,5 +41,13 @@ package net.sf.ij_plugins.scala.console
  * @since 2/17/12
  */
 class ScalaConsole {
-    val view = new ScalaConsoleController().view
+
+    private val _controller = new ScalaConsoleController()
+
+    def view = _controller.view
+
+    def loadScriptFile(file: File) {
+        _controller.read(file)
+    }
+
 }
