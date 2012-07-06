@@ -5,10 +5,10 @@ name := "scala-console"
 organization := "ij-plugins.sf.net"
 
 // Current version
-version := "1.0.0"
+version := "1.1.0"
 
 // Version of scala to use
-scalaVersion := "2.9.1"
+scalaVersion := "2.9.2"
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
@@ -21,8 +21,8 @@ mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsol
 
 // Extra dependent libraries, in addition to those in 'lib' subdirectory
 libraryDependencies ++= Seq(
-    "org.scala-lang" % "scala-compiler" % "2.9.1",
-    "org.scala-lang" % "scala-swing" % "2.9.1"
+    "org.scala-lang" % "scala-compiler" % "2.9.2",
+    "org.scala-lang" % "scala-swing" % "2.9.2"
 )
 
 // Test dependencies
@@ -35,7 +35,7 @@ resolvers += "Sonatype OSS Snapshots Repository" at "http://oss.sonatype.org/con
 
 resolvers += "NativeLibs4Java Repository" at "http://nativelibs4java.sourceforge.net/maven/"
 
-libraryDependencies += "com.nativelibs4java" % "scalacl" % "0.2"
+// libraryDependencies += "com.nativelibs4java" % "scalacl" % "0.2"
 
 autoCompilerPlugins := true
 
