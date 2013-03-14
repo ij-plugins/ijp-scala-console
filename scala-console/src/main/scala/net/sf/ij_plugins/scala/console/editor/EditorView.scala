@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2012 Jarek Sacha
+ * Copyright (C) 2002-2013 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -24,17 +24,16 @@ package net.sf.ij_plugins.scala.console.editor
 
 import java.awt.{Font, Color}
 import net.sf.ij_plugins.scala.console
-import org.fife.ui.rsyntaxtextarea.{SyntaxScheme, Token, SyntaxConstants, RSyntaxTextArea}
+import org.fife.ui.rsyntaxtextarea._
 import org.fife.ui.rtextarea.RTextScrollPane
 import scala.swing.{BorderPanel, Component}
 
 
-/**
- * The editor view, following the MVC pattern. Wrapper for `RSyntaxTextArea`.
- *
- * @author Jarek Sacha
- * @since 2/17/12 6:07 PM
- */
+/** The editor view, following the MVC pattern. Wrapper for `RSyntaxTextArea`.
+  *
+  * @author Jarek Sacha
+  * @since 2/17/12 6:07 PM
+  */
 private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends BorderPanel {
 
   // Put text area in the center of the panel.
@@ -52,10 +51,10 @@ private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends 
     textArea.setHighlightCurrentLine(false)
 
     val scheme = textArea.getSyntaxScheme
-    scheme.styles(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(0, 128, 0)
-    scheme.styles(Token.RESERVED_WORD).font = console.defaultEditorFont.deriveFont(Font.BOLD)
-    scheme.styles(Token.RESERVED_WORD).foreground = new Color(0, 0, 128)
-    scheme.styles(Token.SEPARATOR).foreground = Color.GRAY
+    scheme.getStyle(TokenTypes.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(0, 128, 0)
+    scheme.getStyle(TokenTypes.RESERVED_WORD).font = console.defaultEditorFont.deriveFont(Font.BOLD)
+    scheme.getStyle(TokenTypes.RESERVED_WORD).foreground = new Color(0, 0, 128)
+    scheme.getStyle(TokenTypes.SEPARATOR).foreground = Color.GRAY
   }
 
   /**
@@ -68,7 +67,9 @@ private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends 
     if (font != null) {
       // Set the same font for all
       val syntaxScheme = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]
-      syntaxScheme.styles.filter(_ != null).foreach(_.font = font)
+      for (i <- 0 until syntaxScheme.getStyleCount) {
+        Option(syntaxScheme.getStyle(i)).foreach(_.font = font)
+      }
 
       textArea.setSyntaxScheme(syntaxScheme)
       textArea.setFont(font)
