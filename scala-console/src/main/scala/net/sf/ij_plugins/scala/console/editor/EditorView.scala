@@ -37,41 +37,41 @@ import scala.swing.{BorderPanel, Component}
  */
 private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends BorderPanel {
 
-    // Put text area in the center of the panel.
-    layout(Component.wrap(new RTextScrollPane(textArea))) = BorderPanel.Position.Center
+  // Put text area in the center of the panel.
+  layout(Component.wrap(new RTextScrollPane(textArea))) = BorderPanel.Position.Center
 
-    init()
+  init()
 
 
-    private def init() {
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA)
+  private def init() {
+    textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA)
 
-        setFont(textArea, console.defaultEditorFont)
-        textArea.setAntiAliasingEnabled(true)
-        textArea.setFractionalFontMetricsEnabled(true)
-        textArea.setHighlightCurrentLine(false)
+    setFont(textArea, console.defaultEditorFont)
+    textArea.setAntiAliasingEnabled(true)
+    textArea.setFractionalFontMetricsEnabled(true)
+    textArea.setHighlightCurrentLine(false)
 
-        val scheme = textArea.getSyntaxScheme
-        scheme.styles(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(0, 128, 0)
-        scheme.styles(Token.RESERVED_WORD).font = console.defaultEditorFont.deriveFont(Font.BOLD)
-        scheme.styles(Token.RESERVED_WORD).foreground = new Color(0, 0, 128)
-        scheme.styles(Token.SEPARATOR).foreground = Color.GRAY
+    val scheme = textArea.getSyntaxScheme
+    scheme.styles(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(0, 128, 0)
+    scheme.styles(Token.RESERVED_WORD).font = console.defaultEditorFont.deriveFont(Font.BOLD)
+    scheme.styles(Token.RESERVED_WORD).foreground = new Color(0, 0, 128)
+    scheme.styles(Token.SEPARATOR).foreground = Color.GRAY
+  }
+
+  /**
+   * Set the font for all token types.
+   *
+   * @param textArea The text area to modify.
+   * @param font The font to use.
+   */
+  private def setFont(textArea: RSyntaxTextArea, font: Font) {
+    if (font != null) {
+      // Set the same font for all
+      val syntaxScheme = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]
+      syntaxScheme.styles.filter(_ != null).foreach(_.font = font)
+
+      textArea.setSyntaxScheme(syntaxScheme)
+      textArea.setFont(font)
     }
-
-    /**
-     * Set the font for all token types.
-     *
-     * @param textArea The text area to modify.
-     * @param font The font to use.
-     */
-    private def setFont(textArea: RSyntaxTextArea, font: Font) {
-        if (font != null) {
-            // Set the same font for all
-            val syntaxScheme = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]
-            syntaxScheme.styles.filter(_ != null).foreach(_.font = font)
-
-            textArea.setSyntaxScheme(syntaxScheme)
-            textArea.setFont(font)
-        }
-    }
+  }
 }

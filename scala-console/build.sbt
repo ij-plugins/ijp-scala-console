@@ -8,7 +8,7 @@ organization := "ij-plugins.sf.net"
 version := "1.1.0"
 
 // Version of scala to use
-scalaVersion := "2.9.2"
+scalaVersion := "2.9.3"
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
@@ -21,8 +21,8 @@ mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsol
 
 // Extra dependent libraries, in addition to those in 'lib' subdirectory
 libraryDependencies ++= Seq(
-    "org.scala-lang" % "scala-compiler" % "2.9.2",
-    "org.scala-lang" % "scala-swing" % "2.9.2"
+    "org.scala-lang" % "scala-compiler" % "2.9.3",
+    "org.scala-lang" % "scala-swing" % "2.9.3"
 )
 
 // Test dependencies
