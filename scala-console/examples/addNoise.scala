@@ -27,9 +27,12 @@ if (imp == null) {
   // add random noise to its pixels
   val width = ip.getWidth
   val height = ip.getHeight
-  for (x <- 0 until width; showProgress(x, width); y <- 0 until height) {
-    val noise = round(random * 255 - 128).toInt
-    ip.putPixel(x, y, ip.getPixel(x, y) + noise)
+  for (x <- 0 until width) {
+    showProgress(x, width)
+    for (y <- 0 until height) {
+      val noise = round(random * 255 - 128).toInt
+      ip.putPixel(x, y, ip.getPixel(x, y) + noise)
+    }
   }
   showProgress(width, width)
 
