@@ -2,7 +2,7 @@
 
 <!--
   ~ Image/J Plugins
-  ~ Copyright (C) 2002-2012 Jarek Sacha
+  ~ Copyright (C) 2002-2013 Jarek Sacha
   ~ Author's email: jsacha at users dot sourceforge dot net
   ~
   ~ This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
     <property environment="env"/>
     <property name="sandbox.dir" location="${basedir}/sandbox"/>
     <property name="plugins.dir" location="${sandbox.dir}/plugins"/>
-    <property name="sbt-launch.jar" location="${env.SBT_HOME}/sbt-launch.jar"/>
+    <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>
 
 
     <target name="prepare-run"
