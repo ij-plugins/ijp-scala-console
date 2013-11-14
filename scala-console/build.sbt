@@ -1,14 +1,19 @@
+// sbt-imagej configuration keys
+import ImageJKeys._
+
 // Project name
 name := "scala-console"
 
 // Publishing organization
-organization := "ij-plugins.sf.net"
+organization := "net.sf.ij-plugins"
 
 // Current version
-version := "1.1.0"
+version := "1.1.1"
 
 // Version of scala to use
-scalaVersion := "2.9.3"
+crossScalaVersions := Seq("2.9.3", "2.10.3")
+
+scalaVersion <<= crossScalaVersions {versions => versions.head}
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
@@ -20,13 +25,12 @@ mainClass in (Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scal
 mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 // Extra dependent libraries, in addition to those in 'lib' subdirectory
-libraryDependencies ++= Seq(
-    "org.scala-lang" % "scala-compiler" % "2.9.3",
-    "org.scala-lang" % "scala-swing" % "2.9.3"
-)
+libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-compiler" % _ }
+
+libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-swing" % _ }
 
 // Test dependencies
-libraryDependencies += "junit" % "junit" % "4.+" % "test"
+libraryDependencies += "junit" % "junit" % "4.11" % "test"
 
 //
 // Use ScalaCL compiler plugin
@@ -46,3 +50,15 @@ fork := true
 
 // add a JVM option to use when forking a JVM for 'run'
 javaOptions += "-Xmx2G"
+
+// Set the prompt (for this build) to include the project id.
+shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
+
+// sbt-imagej plugin
+imageJSettings
+
+imageJRuntimeDir := "sandbox"
+
+imageJPluginsSubDir := "ij-plugins"
+
+imageJExclusions += """nativelibs4java\S*"""

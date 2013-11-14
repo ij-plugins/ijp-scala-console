@@ -22,45 +22,25 @@
   ~ Latest release available at http://sourceforge.net/projects/ij-plugins/
   -->
 
-<project name="scala-console" default="run-ImageJ" basedir=".">
+<project name="scala-console" basedir=".">
 
-    <!-- This project is using SBT (https://github.com/harrah/xsbt) as a build system                                 -->
-    <!-- This Ant scripts is primarily used to simplify integration of SBT into IDEs that do not directly support it. -->
-    <!-- You need to define system variable SBT_HOME that points to directory containing 'sbt-launch.jar'.            -->
+    <!-- This project is using SBT (https://github.com/harrah/xsbt) as a build system                               -->
+    <!-- This Ant scripts is only used to simplify integration of SBT into IDEs that do not yetproperly support it. -->
+    <!-- You need to define system variable SBT_HOME that points to directory containing 'sbt-launch.jar            -->
 
-    <property environment="env"/>
-    <property name="sandbox.dir" location="${basedir}/sandbox"/>
-    <property name="plugins.dir" location="${sandbox.dir}/plugins"/>
-    <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>
-
-
-    <target name="prepare-run"
-            description="Run SBT task 'prepareRun'">
+    <!-- Use SBT to build plugin JAR archives and pepare ImageJ plugin directories  -->
+    <target name="sbt-imagej-prepare-run"
+            description="Run SBT task 'prepareRun' that prepares ImageJ plugins directory">
+        <property environment="env"/>
         <fail unless="env.SBT_HOME"
               message="SBT_HOME system variable must be defined and point to directory containing 'sbt-launch.jar'"/>
+        <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>
         <java dir="${basedir}"
               jar="${sbt-launch.jar}"
-              fork="true">
-            <jvmarg line="-Dfile.encoding=UTF8 -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m -Djava.net.useSystemProxies=true"/>
-            <arg line="prepareRun"/>
-        </java>
-    </target>
-
-
-    <target name="setup-plugins"
-            depends="prepare-run"
-            description="Prepare ImageJ-PG plugins for testing with ImageJ">
-    </target>
-
-
-    <target name="run-ImageJ"
-            depends="setup-plugins"
-            description="Run ImageJ with projects plugins.">
-        <java dir="${sandbox.dir}"
-              classname="ij.ImageJ"
-              classpath="lib/ij.jar"
-              fork="true">
-            <jvmarg line="-Xmx512m"/>
+              fork="true"
+              failonerror="true">
+            <jvmarg line="-Dfile.encoding=UTF8 -Xmx1G -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m -Djava.net.useSystemProxies=true"/>
+            <arg line="ijp-color/imagejPrepareRun"/>
         </java>
     </target>
 
