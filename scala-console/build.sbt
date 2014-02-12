@@ -8,10 +8,10 @@ name := "scala-console"
 organization := "net.sf.ij-plugins"
 
 // Current version
-version := "1.1.1"
+version := "1.1.2"
 
 // Version of scala to use
-crossScalaVersions := Seq("2.9.3", "2.10.3")
+crossScalaVersions := Seq("2.10.3", "2.9.3")
 
 scalaVersion <<= crossScalaVersions {versions => versions.head}
 
@@ -30,20 +30,27 @@ libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-compiler" % _ }
 libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-swing" % _ }
 
 // Test dependencies
-libraryDependencies += "junit" % "junit" % "4.11" % "test"
+libraryDependencies ++= Seq(
+  "net.imagej" % "ij" % "1.47v",
+  "com.fifesoft" % "rsyntaxtextarea" % "2.0.6",
+  "junit" % "junit" % "4.11" % "test"
+)
 
 //
 // Use ScalaCL compiler plugin
 //
-resolvers += "Sonatype OSS Snapshots Repository" at "http://oss.sonatype.org/content/groups/public/"
+resolvers ++= Seq(
+  "Sonatype OSS Snapshots Repository" at "http://oss.sonatype.org/content/groups/public/",
+  "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
+)
 
-resolvers += "NativeLibs4Java Repository" at "http://nativelibs4java.sourceforge.net/maven/"
+//resolvers += "NativeLibs4Java Repository" at "http://nativelibs4java.sourceforge.net/maven/"
 
 // libraryDependencies += "com.nativelibs4java" % "scalacl" % "0.2"
 
-autoCompilerPlugins := true
+//autoCompilerPlugins := true
 
-addCompilerPlugin("com.nativelibs4java" % "scalacl-compiler-plugin" % "0.2")
+//addCompilerPlugin("com.nativelibs4java" % "scalacl-compiler-plugin" % "0.2")
 
 // fork a new JVM for 'run' and 'test:run'
 fork := true
@@ -55,10 +62,12 @@ javaOptions += "-Xmx2G"
 shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
 
 // sbt-imagej plugin
-imageJSettings
+ijSettings
 
-imageJRuntimeDir := "sandbox"
+ijRuntimeSubDir := "sandbox"
 
-imageJPluginsSubDir := "ij-plugins"
+ijPluginsSubDir := "ij-plugins"
 
-imageJExclusions += """nativelibs4java\S*"""
+ijExclusions += """nativelibs4java\S*"""
+
+cleanFiles += ijPluginsDir.value

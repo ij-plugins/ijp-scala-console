@@ -6,4 +6,4 @@ addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.2")
 
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.4.0")
 
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "0.1.0-SNAPSHOT")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.1.0")
