@@ -29,7 +29,8 @@ libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-swing" % scalaVersion.value,
   "net.imagej" % "ij" % "1.47v",
   "com.fifesoft" % "rsyntaxtextarea" % "2.0.6",
-  "junit" % "junit" % "4.11" % "test"
+  "junit" % "junit" % "4.11" % "test",
+  "com.novocode" % "junit-interface" % "0.10" % "test"
 )
 
 resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
