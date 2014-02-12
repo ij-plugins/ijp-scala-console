@@ -24,33 +24,15 @@ mainClass in (Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scal
 // change Compile to Test to set it for 'test:run'
 mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
-// Extra dependent libraries, in addition to those in 'lib' subdirectory
-libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-compiler" % _ }
-
-libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-swing" % _ }
-
-// Test dependencies
 libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+  "org.scala-lang" % "scala-swing" % scalaVersion.value,
   "net.imagej" % "ij" % "1.47v",
   "com.fifesoft" % "rsyntaxtextarea" % "2.0.6",
   "junit" % "junit" % "4.11" % "test"
 )
 
-//
-// Use ScalaCL compiler plugin
-//
-resolvers ++= Seq(
-  "Sonatype OSS Snapshots Repository" at "http://oss.sonatype.org/content/groups/public/",
-  "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
-)
-
-//resolvers += "NativeLibs4Java Repository" at "http://nativelibs4java.sourceforge.net/maven/"
-
-// libraryDependencies += "com.nativelibs4java" % "scalacl" % "0.2"
-
-//autoCompilerPlugins := true
-
-//addCompilerPlugin("com.nativelibs4java" % "scalacl-compiler-plugin" % "0.2")
+resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
 
 // fork a new JVM for 'run' and 'test:run'
 fork := true
