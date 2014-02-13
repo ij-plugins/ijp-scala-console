@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2012 Jarek Sacha
+ * Copyright (C) 2002-2014 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -51,8 +51,8 @@ private class ScalaConsoleFrame(val editor: Editor,
     peer.setIconImages({
         val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
         val icons = for (name <- names) yield console.loadImage(this.getClass, "resources/" + name)
-        import scala.collection.JavaConversions._
-        icons.toList
+      import scala.collection.JavaConversions._
+      icons.toList
     })
 
 
@@ -110,26 +110,24 @@ private class ScalaConsoleFrame(val editor: Editor,
 
     // React to models and internal changes
     reactions += {
-        case StateEvent(state) => {
-            val isReady = state == State.Ready
-            enablable.foreach(_.enabled = isReady)
-            cursor = if (isReady) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
-            statusLine.text = state.toString
-        }
+      case StateEvent(state) =>
+        val isReady = state == State.Ready
+        enablable.foreach(_.enabled = isReady)
+        cursor = if (isReady) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
+        statusLine.text = state.toString
 
-        case ErrStreamEvent(data) => outputArea.appendErrStream(data)
-        case OutStreamEvent(data) => outputArea.appendOutStream(data)
+      case ErrStreamEvent(data) => outputArea.appendErrStream(data)
+      case OutStreamEvent(data) => outputArea.appendOutStream(data)
         case InterpreterLogEvent(data) => outputArea.appendInterpreterOut(data)
-        case ResultEvent(result) => {
-            result match {
-                case Results.Error => outputArea.appendErrStream(result.toString)
-                case Results.Success => outputArea.appendOutStream(result.toString)
-                case Results.Incomplete => outputArea.appendErrStream(result.toString)
-            }
+      case ResultEvent(result) =>
+        result match {
+          case Results.Error => outputArea.appendErrStream(result.toString)
+          case Results.Success => outputArea.appendOutStream(result.toString)
+          case Results.Incomplete => outputArea.appendErrStream(result.toString)
         }
 
-        case SourceFileEvent(fileOption) => fileOption match {
-            case Some(file) => title = defaultTitle + " - " + file.getCanonicalPath
+      case SourceFileEvent(fileOption) => fileOption match {
+        case Some(file) => title = defaultTitle + " - " + file.getCanonicalPath
             case None => title = defaultTitle
         }
 

@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2012 Jarek Sacha
+ * Copyright (C) 2002-2014 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,9 +22,8 @@
 
 package net.sf.ij_plugins.scala.swing
 
-import swing._
-import java.awt.Insets
 import javax.swing.JToolBar
+import swing._
 
 /**
  * A tool bar, wrapper for [[javax.swing.JToolBar]]
