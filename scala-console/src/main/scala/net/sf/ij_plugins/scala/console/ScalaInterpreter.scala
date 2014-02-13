@@ -1,6 +1,6 @@
 /*
  * Image/J Plugins
- * Copyright (C) 2002-2012 Jarek Sacha
+ * Copyright (C) 2002-2014 Jarek Sacha
  * Author's email: jsacha at users dot sourceforge dot net
  *
  * This library is free software; you can redistribute it and/or
@@ -23,49 +23,49 @@
 package net.sf.ij_plugins.scala.console
 
 
-import java.io.{PrintStream, OutputStream, Writer}
+import java.io.{PrintStream, Writer}
 import scala.Enumeration
+import scala.collection.mutable.ArrayBuffer
 import scala.swing.Publisher
 import scala.swing.event.Event
 import scala.tools.nsc.interpreter.Results.Result
 import scala.tools.nsc.interpreter._
 import scala.tools.nsc.{NewLinePrintWriter, Settings}
-import scala.collection.mutable.ArrayBuffer
 
 object ScalaInterpreter {
 
-    /**
-     * Interpreter execution state.
-     */
-    object State extends Enumeration {
-        val Running = Value("Running...")
-        val Ready = Value("Ready")
-    }
+  /**
+   * Interpreter execution state.
+   */
+  object State extends Enumeration {
+    val Running = Value("Running...")
+    val Ready   = Value("Ready")
+  }
 
-    /**
-     * Interpreter state changed.
-     */
-    case class StateEvent(state: State.Value) extends Event
+  /**
+   * Interpreter state changed.
+   */
+  case class StateEvent(state: State.Value) extends Event
 
-    /**
-     * Posted after interpreter finished with results returned by the interpreter
-     */
-    case class ResultEvent(result: Result) extends Event
+  /**
+   * Posted after interpreter finished with results returned by the interpreter
+   */
+  case class ResultEvent(result: Result) extends Event
 
-    /**
-     * New value `data` in the standard out stream.
-     */
-    case class OutStreamEvent(data: String) extends Event
+  /**
+   * New value `data` in the standard out stream.
+   */
+  case class OutStreamEvent(data: String) extends Event
 
-    /**
-     * New value `data` in the standard err stream.
-     */
-    case class ErrStreamEvent(data: String) extends Event
+  /**
+   * New value `data` in the standard err stream.
+   */
+  case class ErrStreamEvent(data: String) extends Event
 
-    /**
-     * New value `data` in the interpreter log.
-     */
-    case class InterpreterLogEvent(data: String) extends Event
+  /**
+   * New value `data` in the interpreter log.
+   */
+  case class InterpreterLogEvent(data: String) extends Event
 
 }
 
@@ -83,100 +83,98 @@ object ScalaInterpreter {
  */
 class ScalaInterpreter() extends Publisher {
 
-    import ScalaInterpreter._
+  import ScalaInterpreter._
 
-    val interpreterOutBuffer = new ArrayBuffer[String]
+  val interpreterOutBuffer = new ArrayBuffer[String]
 
-    private class LogOutputStream extends OutputStream {
-        def write(b: Int) {
-            write(Array(b.toByte), 0, 1)
+  private class LogOutputStream extends OutputStream {
+    def write(b: Int) {
+      write(Array(b.toByte), 0, 1)
+    }
+  }
+
+  private object outStream extends LogOutputStream {
+    override def write(b: Array[Byte], off: Int, len: Int) {
+      publish(OutStreamEvent(new String(b, off, len)))
+    }
+  }
+
+  private object errStream extends LogOutputStream {
+    override def write(b: Array[Byte], off: Int, len: Int) {
+      publish(ErrStreamEvent(new String(b, off, len)))
+    }
+  }
+
+
+  private object interpreterOut extends Writer {
+    def close() {}
+
+    def flush() {}
+
+    def write(buf: Array[Char], off: Int, len: Int) {
+      val s = new String(buf, off, len)
+      interpreterOutBuffer.append(s)
+    }
+  }
+
+
+  val interpreterSettings = new Settings() {
+    usejavacp.value = true
+    //        classpath.value +=
+  }
+
+  // Create interpreter
+  val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(interpreterOut, true))
+
+  private var _state = State.Ready
+
+  /**
+   * Current state.
+   */
+  def state: State.Value = _state
+
+
+  private def state_=(newState: State.Value) {
+    _state = newState
+    publish(StateEvent(_state))
+  }
+
+
+  /**
+   * Interpret `code`
+   * @param code actual text of the code to be interpreted.
+   */
+  def run(code: String) {
+
+    interpreterOutBuffer.clear()
+    state = State.Running
+
+    // TODO: Can scala.swing.SwingWorker be used here?
+
+    // Setup
+    val worker = new javax.swing.SwingWorker[Result, Result] {
+      override def doInBackground(): Result = {
+        Console.setOut(outStream)
+        java.lang.System.setOut(new PrintStream(outStream))
+        Console.setErr(errStream)
+        java.lang.System.setErr(new PrintStream(outStream))
+
+        interpreter.interpret(code)
+      }
+
+
+      override def done() {
+        get match {
+          case Results.Error =>
+            ScalaInterpreter.this.publish(ErrStreamEvent(interpreterOutBuffer.mkString))
+          case _ =>
+            ScalaInterpreter.this.publish(InterpreterLogEvent("\n" + interpreterOutBuffer.mkString))
         }
+        ScalaInterpreter.this.state = State.Ready
+      }
     }
 
-    private object outStream extends LogOutputStream {
-        override def write(b: Array[Byte], off: Int, len: Int) {
-            publish(OutStreamEvent(new String(b, off, len)))
-        }
-    }
-
-    private object errStream extends LogOutputStream {
-        override def write(b: Array[Byte], off: Int, len: Int) {
-            publish(ErrStreamEvent(new String(b, off, len)))
-        }
-    }
-
-
-    private object interpreterOut extends Writer {
-        def close() {}
-
-        def flush() {}
-
-        def write(buf: Array[Char], off: Int, len: Int) {
-            val s = new String(buf, off, len)
-            interpreterOutBuffer.append(s)
-        }
-    }
-
-
-    val interpreterSettings = new Settings() {
-        usejavacp.value = true
-        // classpath.value +=
-    }
-
-    // Create interpreter
-    val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(interpreterOut, true))
-
-    private var _state = State.Ready
-
-    /**
-     * Current state.
-     */
-    def state: State.Value = _state
-
-
-    private def state_=(newState: State.Value) {
-        _state = newState
-        publish(StateEvent(_state))
-    }
-
-
-    /**
-     * Interpret `code`
-     * @param code actual text of the code to be interpreted.
-     */
-    def run(code: String) {
-
-        interpreterOutBuffer.clear()
-        state = State.Running
-
-        // TODO: Can scala.swing.SwingWorker be used here?
-
-        // Setup
-        val worker = new javax.swing.SwingWorker[Result, Result] {
-            override def doInBackground(): Result = {
-                Console.setOut(outStream)
-                java.lang.System.setOut(new PrintStream(outStream))
-                Console.setErr(errStream)
-                java.lang.System.setErr(new PrintStream(outStream))
-
-                interpreter.interpret(code)
-            }
-
-
-            override def done() {
-                get match {
-                    case Results.Error => {
-                        ScalaInterpreter.this.publish(ErrStreamEvent(interpreterOutBuffer.mkString))
-                    }
-                    case _ => {
-                        ScalaInterpreter.this.publish(InterpreterLogEvent("\n" + interpreterOutBuffer.mkString))
-                    }
-                }
-                ScalaInterpreter.this.state = State.Ready
-            }
-        }
-
-        // Execute
-        worker.execute()
-    }
+    // Execute
+    worker.execute()
+  }
 }
