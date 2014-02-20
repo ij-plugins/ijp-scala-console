@@ -33,14 +33,14 @@ object MyBuild extends Build {
 
     /**
      * Copy dependencies to "./"sandbox/plugin/ij-plugins".
-     * Excludes ij-1.45s.jar and nativelibs4java jars.
+     * Excludes ij-1.47v.jar and nativelibs4java jars.
      */
     def prepareRunFiles(jar: java.io.File, dependencies: Seq[Attributed[File]]): Seq[java.io.File] = {
         println("Preparing ImageJ plugin directories")
         val files = jar +: (for (f <- dependencies) yield f.data)
         val pluginsDir = file(".") / "sandbox" / "plugins" / "ij-plugins"
         pluginsDir.mkdirs()
-        for (f <- files; if (!f.isDirectory); if(!f.getPath.contains("nativelibs4java")); if(!f.getPath.contains("ij-1.45s.jar"))) {
+        for (f <- files; if (!f.isDirectory); if(!f.getPath.contains("nativelibs4java")); if(!f.getPath.contains("ij-1.47v.jar"))) {
             println("Copying: " + f)
             IO.copyFile(f, pluginsDir / f.getName)
         }
