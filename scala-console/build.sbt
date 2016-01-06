@@ -1,6 +1,3 @@
-// sbt-imagej configuration keys
-import ImageJKeys._
-
 // Project name
 name := "scala-console"
 
@@ -8,10 +5,10 @@ name := "scala-console"
 organization := "net.sf.ij-plugins"
 
 // Current version
-version := "1.1.2"
+version := "1.1.3"
 
 // Version of scala to use
-crossScalaVersions := Seq("2.10.3", "2.9.3")
+crossScalaVersions := Seq("2.11.7", "2.10.6", "2.9.3")
 
 scalaVersion <<= crossScalaVersions {versions => versions.head}
 
@@ -25,13 +22,17 @@ mainClass in (Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scal
 mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-  "org.scala-lang" % "scala-swing" % scalaVersion.value,
-  "net.imagej" % "ij" % "1.47v",
-  "com.fifesoft" % "rsyntaxtextarea" % "2.0.6",
-  "junit" % "junit" % "4.11" % "test",
-  "com.novocode" % "junit-interface" % "0.10" % "test"
+  "org.scala-lang" % "scala-compiler"  % scalaVersion.value,
+  "net.imagej"     % "ij"              % "1.49v",
+  "com.fifesoft"   % "rsyntaxtextarea" % "2.0.7",
+  "junit"          % "junit"           % "4.12"  % "test",
+  "com.novocode"   % "junit-interface" % "0.11" % "test"
 )
+
+libraryDependencies ++= (if (scalaVersion.value.startsWith("2.11."))
+        Seq("org.scala-lang.modules" %% "scala-swing" % "1.0.2")
+      else
+        Seq("org.scala-lang" % "scala-swing" % scalaVersion.value))
 
 resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
 
@@ -44,8 +45,7 @@ javaOptions += "-Xmx2G"
 // Set the prompt (for this build) to include the project id.
 shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
 
-// sbt-imagej plugin
-ijSettings
+enablePlugins(SbtImageJ)
 
 ijRuntimeSubDir := "sandbox"
 
