@@ -8,7 +8,7 @@ organization := "net.sf.ij-plugins"
 version := "1.1.3"
 
 // Version of scala to use
-crossScalaVersions := Seq("2.11.7", "2.10.6", "2.9.3")
+crossScalaVersions := Seq("2.11.7", "2.10.6")
 
 scalaVersion <<= crossScalaVersions {versions => versions.head}
 
@@ -54,3 +54,25 @@ ijPluginsSubDir := "ij-plugins"
 ijExclusions += """nativelibs4java\S*"""
 
 cleanFiles += ijPluginsDir.value
+
+// Info needed sync with Maven central.
+pomExtra in Global := {
+  <url>(your project URL)</url>
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn://svn.code.sf.net/p/ij-plugins/code/trunk</connection>
+    <developerConnection>scm:svn://svn.code.sf.net/p/ij-plugins/code/trunk</developerConnection>
+    <url>http://sourceforge.net/projects/ij-plugins/</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>jsacha</id>
+      <name>Jarek Sacha</name>
+    </developer>
+  </developers>
+}
