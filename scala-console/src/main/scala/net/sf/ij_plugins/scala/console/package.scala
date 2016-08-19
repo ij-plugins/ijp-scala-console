@@ -96,7 +96,7 @@ package object console {
     }
   }
 
-  def addPluginsJarsToClassPath() {
+  def addPluginsJarsToClassPath(): Unit = {
     // TODO do not add existing entries to the classpath again
     var classpath = System.getProperty("java.class.path")
 
@@ -116,7 +116,7 @@ package object console {
   }
 
 
-  def listPluginDirectories() {
+  def listPluginDirectories(): Unit = {
     val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
     for (jar <- jars) {
       println("jar: " + jar.getAbsolutePath)

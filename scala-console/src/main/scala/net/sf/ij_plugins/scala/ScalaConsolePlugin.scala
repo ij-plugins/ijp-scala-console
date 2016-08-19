@@ -46,7 +46,7 @@ private object ScalaConsolePlugin {
  */
 class ScalaConsolePlugin extends PlugIn {
 
-    def run(arg: String) {
+    def run(arg: String): Unit = {
         val scripFile = if (arg != null && !arg.isEmpty) {
             val file = new File(arg.trim)
             if (file.exists) Some(file) else None

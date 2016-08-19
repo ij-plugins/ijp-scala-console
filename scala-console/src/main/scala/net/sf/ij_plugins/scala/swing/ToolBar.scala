@@ -51,7 +51,7 @@ class ToolBar(removeActionText: Boolean = true,
 
     def +=(b: Button) = contents += b
 
-    def addSeparator() {
+    def addSeparator(): Unit = {
         peer.addSeparator()
     }
 }

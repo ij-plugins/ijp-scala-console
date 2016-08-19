@@ -85,11 +85,11 @@ class Editor extends Publisher {
     /**
      * Perform operations needed to safely close the editor, save files, etc.
      */
-    def prepareToClose() {
+    def prepareToClose(): Unit = {
         _controller.prepareToClose()
     }
 
-    def read(file: File) {
+  def read(file: File): Unit = {
         _controller.read(file)
     }
 }

@@ -43,27 +43,27 @@ class InterpreterTest {
     }
 
     private object bufferWriter extends Writer with Buffer {
-        def close() {}
+      def close(): Unit = {}
 
-        def flush() {}
+      def flush(): Unit = {}
 
-        def write(buf: Array[Char], off: Int, len: Int) {
+      def write(buf: Array[Char], off: Int, len: Int): Unit = {
             _buffer.append(new String(buf, off, len))
         }
     }
 
     private class BufferOutputStream extends OutputStream with Buffer {
-        override def write(b: Array[Byte], off: Int, len: Int) {
+      override def write(b: Array[Byte], off: Int, len: Int): Unit = {
             _buffer.append(new String(b, off, len))
         }
 
-        def write(b: Int) {
+      def write(b: Int): Unit = {
             write(Array(b.toByte), 0, 1)
         }
     }
 
     @Test
-    def printHelloTest() {
+    def printHelloTest(): Unit = {
 
         val interpreterSettings = new Settings() {
             usejavacp.value = true

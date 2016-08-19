@@ -44,7 +44,7 @@ private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends 
   init()
 
 
-  private def init() {
+  private def init(): Unit = {
     textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA)
 
     setFont(textArea, console.defaultEditorFont)
@@ -65,7 +65,7 @@ private[editor] class EditorView(private val textArea: RSyntaxTextArea) extends 
    * @param textArea The text area to modify.
    * @param font The font to use.
    */
-  private def setFont(textArea: RSyntaxTextArea, font: Font) {
+  private def setFont(textArea: RSyntaxTextArea, font: Font): Unit = {
     if (font != null) {
       // Set the same font for all
       val syntaxScheme = textArea.getSyntaxScheme.clone().asInstanceOf[SyntaxScheme]

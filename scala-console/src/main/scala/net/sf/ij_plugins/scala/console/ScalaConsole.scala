@@ -46,7 +46,7 @@ class ScalaConsole {
 
     def view = _controller.view
 
-    def loadScriptFile(file: File) {
+    def loadScriptFile(file: File): Unit = {
         _controller.read(file)
     }
 

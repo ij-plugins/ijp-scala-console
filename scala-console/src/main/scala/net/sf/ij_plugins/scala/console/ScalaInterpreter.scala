@@ -88,30 +88,30 @@ class ScalaInterpreter() extends Publisher {
   val interpreterOutBuffer = new ArrayBuffer[String]
 
   private class LogOutputStream extends OutputStream {
-    def write(b: Int) {
+    def write(b: Int): Unit = {
       write(Array(b.toByte), 0, 1)
     }
   }
 
   private object outStream extends LogOutputStream {
-    override def write(b: Array[Byte], off: Int, len: Int) {
+    override def write(b: Array[Byte], off: Int, len: Int): Unit = {
       publish(OutStreamEvent(new String(b, off, len)))
     }
   }
 
   private object errStream extends LogOutputStream {
-    override def write(b: Array[Byte], off: Int, len: Int) {
+    override def write(b: Array[Byte], off: Int, len: Int): Unit = {
       publish(ErrStreamEvent(new String(b, off, len)))
     }
   }
 
 
   private object interpreterOut extends Writer {
-    def close() {}
+    def close(): Unit = {}
 
-    def flush() {}
+    def flush(): Unit = {}
 
-    def write(buf: Array[Char], off: Int, len: Int) {
+    def write(buf: Array[Char], off: Int, len: Int): Unit = {
       val s = new String(buf, off, len)
       interpreterOutBuffer.append(s)
     }
@@ -134,7 +134,7 @@ class ScalaInterpreter() extends Publisher {
   def state: State.Value = _state
 
 
-  private def state_=(newState: State.Value) {
+  private def state_=(newState: State.Value): Unit = {
     _state = newState
     publish(StateEvent(_state))
   }
@@ -145,7 +145,7 @@ class ScalaInterpreter() extends Publisher {
     *
     * @param code actual text of the code to be interpreted.
    */
-  def run(code: String) {
+  def run(code: String): Unit = {
 
     interpreterOutBuffer.clear()
     state = State.Running
@@ -164,7 +164,7 @@ class ScalaInterpreter() extends Publisher {
       }
 
 
-      override def done() {
+      override def done(): Unit = {
         get match {
           case Results.Error =>
             ScalaInterpreter.this.publish(ErrStreamEvent(interpreterOutBuffer.mkString))

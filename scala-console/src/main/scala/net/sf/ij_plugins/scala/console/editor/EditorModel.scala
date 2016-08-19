@@ -52,7 +52,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
      */
     def sourceFile: Option[File] = _sourceFile
 
-    private def sourceFile_=(file: Option[File]) {
+    private def sourceFile_=(file: Option[File]): Unit = {
         _sourceFile = file
         publish(EditorModel.SourceFileEvent(_sourceFile))
     }
@@ -78,7 +78,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
     }
 
 
-    def reset() {
+    def reset(): Unit = {
         textArea.setText("import ij._\n" +
                 "val img = WindowManager.getCurrentImage()\n" +
                 "IJ.log(\"Hello\")\n" +
@@ -87,7 +87,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
         lastSavedText = None
     }
 
-    def read(file: File) {
+    def read(file: File): Unit = {
         val source = scala.io.Source.fromFile(file)
         val lines = source.mkString
         source.close()
@@ -98,7 +98,7 @@ private class EditorModel(private val textArea: RSyntaxTextArea) extends Publish
     }
 
 
-    def save(file: File) {
+    def save(file: File): Unit = {
         val writer = new FileWriter(file)
         try {
             writer.write(text)

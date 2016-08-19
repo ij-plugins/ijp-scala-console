@@ -44,7 +44,7 @@ private class ScalaConsoleController {
 
     def view: Frame = _view
 
-    def read(file:File) {
+    def read(file: File): Unit = {
         editor.read(file)
 
     }
@@ -52,7 +52,7 @@ private class ScalaConsoleController {
     /**
      * Interpret current editor selection. If selection is empty the whole editor text.
      */
-    private[console] def run() {
+    private[console] def run(): Unit = {
         _view.outputArea.clear()
         _view.statusLine.text = "Running..."
 
@@ -70,7 +70,7 @@ private class ScalaConsoleController {
     /**
      * Hide console frame, and possibly exit application.
      */
-    private[console] def exit() {
+    private[console] def exit(): Unit = {
         _view.visible = false
     }
 

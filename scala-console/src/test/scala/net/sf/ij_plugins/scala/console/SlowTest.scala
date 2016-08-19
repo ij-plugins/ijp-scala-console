@@ -30,9 +30,9 @@ import org.junit._
 class SlowTest {
 
     @Test
-    def printNumbers() {
+    def printNumbers(): Unit = {
         for (i <- 1 to 10) {
-            var t = Thread.currentThread()
+            val t = Thread.currentThread()
             println("" + i + "... [" + t + "]")
             Thread.sleep(1000)
         }

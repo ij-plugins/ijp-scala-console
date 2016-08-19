@@ -63,7 +63,7 @@ private class ScalaConsoleFrame(val editor: Editor,
   private val runAction = new Action("Run") {
     icon = console.loadIcon(this.getClass, "resources/icons/script_go.png")
 
-    def apply() {
+    def apply(): Unit = {
       controller.run()
     }
   }

@@ -51,7 +51,7 @@ private class EditorController(private val parentView: Component,
 
     icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/page.png")
 
-    def apply() {
+    def apply(): Unit = {
 
       askAndSave()
 
@@ -63,7 +63,7 @@ private class EditorController(private val parentView: Component,
   private val fileOpenAction = new Action("Open...") {
     icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/folder_page.png")
 
-    def apply() {
+    def apply(): Unit = {
 
       val status = fileChooser.showOpenDialog(parentView)
       if (status != FileChooser.Result.Approve) {
@@ -83,7 +83,7 @@ private class EditorController(private val parentView: Component,
   private val fileSaveAction = new Action("Save") {
     icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/disk.png")
 
-    def apply() {
+    def apply(): Unit = {
       save()
     }
   }
@@ -94,11 +94,11 @@ private class EditorController(private val parentView: Component,
 
   def fileActions = Array(fileNewAction, fileOpenAction, fileSaveAction, fileSaveAsAction)
 
-  def read(file: File) {
+  def read(file: File): Unit = {
     model.read(file)
   }
 
-  private def save() {
+  private def save(): Unit = {
     model.sourceFile match {
       case Some(file) => model.save(file)
       case None => saveAs()
@@ -147,7 +147,7 @@ private class EditorController(private val parentView: Component,
     }
   }
 
-  private def currentDirectory_=(dir: File) {
+  private def currentDirectory_=(dir: File): Unit = {
     try {
       val prefNode = Preferences.userRoot.node(this.getClass.getName)
       prefNode.put("fileChooser.currentDirectory", dir.getCanonicalPath)
@@ -159,11 +159,11 @@ private class EditorController(private val parentView: Component,
   /**
    * Perform operations needed to safely close the editor, save files, etc.
    */
-  def prepareToClose() {
+  def prepareToClose(): Unit = {
     askAndSave()
   }
 
-  private def askAndSave() {
+  private def askAndSave(): Unit = {
     if (model.needsSave) {
       // Check if current document needs to be saved
       val status = Dialog.showConfirmation(

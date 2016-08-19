@@ -61,11 +61,11 @@ private class OutputArea extends JPanel {
     setLayout(new BorderLayout())
     add(scrollPane, BorderLayout.CENTER)
 
-    def clear() {
+    def clear(): Unit = {
         outputArea.setText("")
     }
 
-    def list(code: String) {
+    def list(code: String): Unit = {
         code.lines.foreach {
             line =>
                 appendText("scala> ", Style.Log)
@@ -74,19 +74,19 @@ private class OutputArea extends JPanel {
         appendText("\n", Style.Code)
     }
 
-    def appendOutStream(text: String) {
+    def appendOutStream(text: String): Unit = {
         appendText(text, Style.Regular)
     }
 
-    def appendErrStream(text: String) {
+    def appendErrStream(text: String): Unit = {
         appendText(text, Style.Error)
     }
 
-    def appendInterpreterOut(text: String) {
+    def appendInterpreterOut(text: String): Unit = {
         appendText(text, Style.Log)
     }
 
-    private def appendText(text: String, style: Style.Value) {
+    private def appendText(text: String, style: Style.Value): Unit = {
         Swing.onEDT({
             val doc = outputArea.getStyledDocument
             addStylesToDocument(doc)
@@ -97,7 +97,7 @@ private class OutputArea extends JPanel {
     /**
      * Initialize document styles.
      */
-    private def addStylesToDocument(doc: StyledDocument) {
+    private def addStylesToDocument(doc: StyledDocument): Unit = {
         val default = StyleContext.getDefaultStyleContext.getStyle(StyleContext.DEFAULT_STYLE)
 
         val regular = doc.addStyle(Style.Regular.toString, default)
