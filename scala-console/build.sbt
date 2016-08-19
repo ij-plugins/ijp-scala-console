@@ -4,7 +4,7 @@ name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
 version      := "1.4.0-SNAPSHOT"
 
-crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0-M4")
+crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0-M4", "2.12.0-M5")
 scalaVersion <<= crossScalaVersions { versions => versions.head }
 
 // set the main class for packaging the main jar
@@ -36,8 +36,8 @@ scalacOptions ++= Seq(
       "–optimise",
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
-        "-Ywarn-numeric-widen",
-        "-Ywarn-value-discard"
+      "-Ywarn-numeric-widen"
+//      "-Ywarn-value-discard",
 //      "-Ywarn-unused",
 //      "-Ywarn-unused-import"
     )
