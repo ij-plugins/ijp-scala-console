@@ -1,23 +1,23 @@
 /*
- * Image/J Plugins
- * Copyright (C) 2002-2014 Jarek Sacha
- * Author's email: jsacha at users dot sourceforge dot net
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at http://sourceforge.net/projects/ij-plugins/
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console.editor
@@ -25,12 +25,15 @@ package net.sf.ij_plugins.scala.console.editor
 import java.io.File
 import java.util.prefs.Preferences
 import javax.swing.filechooser.FileNameExtensionFilter
+
 import net.sf.ij_plugins.scala.console._
-import swing.{FileChooser, Action, Dialog, Component}
+
+import scala.swing.{Action, Component, Dialog, FileChooser}
 
 /**
  * Translate user actions into commands for the editor model. Controller in the MVC pattern.
- * @author Jarek Sacha
+  *
+  * @author Jarek Sacha
  * @since 2/17/12
  */
 private class EditorController(private val parentView: Component,
@@ -48,7 +51,7 @@ private class EditorController(private val parentView: Component,
 
     icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/page.png")
 
-    def apply() {
+    def apply(): Unit = {
 
       askAndSave()
 
@@ -60,7 +63,7 @@ private class EditorController(private val parentView: Component,
   private val fileOpenAction = new Action("Open...") {
     icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/folder_page.png")
 
-    def apply() {
+    def apply(): Unit = {
 
       val status = fileChooser.showOpenDialog(parentView)
       if (status != FileChooser.Result.Approve) {
@@ -80,7 +83,7 @@ private class EditorController(private val parentView: Component,
   private val fileSaveAction = new Action("Save") {
     icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/disk.png")
 
-    def apply() {
+    def apply(): Unit = {
       save()
     }
   }
@@ -91,11 +94,11 @@ private class EditorController(private val parentView: Component,
 
   def fileActions = Array(fileNewAction, fileOpenAction, fileSaveAction, fileSaveAsAction)
 
-  def read(file: File) {
+  def read(file: File): Unit = {
     model.read(file)
   }
 
-  private def save() {
+  private def save(): Unit = {
     model.sourceFile match {
       case Some(file) => model.save(file)
       case None => saveAs()
@@ -144,7 +147,7 @@ private class EditorController(private val parentView: Component,
     }
   }
 
-  private def currentDirectory_=(dir: File) {
+  private def currentDirectory_=(dir: File): Unit = {
     try {
       val prefNode = Preferences.userRoot.node(this.getClass.getName)
       prefNode.put("fileChooser.currentDirectory", dir.getCanonicalPath)
@@ -156,11 +159,11 @@ private class EditorController(private val parentView: Component,
   /**
    * Perform operations needed to safely close the editor, save files, etc.
    */
-  def prepareToClose() {
+  def prepareToClose(): Unit = {
     askAndSave()
   }
 
-  private def askAndSave() {
+  private def askAndSave(): Unit = {
     if (model.needsSave) {
       // Check if current document needs to be saved
       val status = Dialog.showConfirmation(

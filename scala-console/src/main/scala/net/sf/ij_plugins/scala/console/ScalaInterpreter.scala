@@ -1,30 +1,30 @@
 /*
- * Image/J Plugins
- * Copyright (C) 2002-2014 Jarek Sacha
- * Author's email: jsacha at users dot sourceforge dot net
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at http://sourceforge.net/projects/ij-plugins/
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console
 
 
 import java.io.{PrintStream, Writer}
-import scala.Enumeration
+
 import scala.collection.mutable.ArrayBuffer
 import scala.swing.Publisher
 import scala.swing.event.Event
@@ -88,30 +88,30 @@ class ScalaInterpreter() extends Publisher {
   val interpreterOutBuffer = new ArrayBuffer[String]
 
   private class LogOutputStream extends OutputStream {
-    def write(b: Int) {
+    def write(b: Int): Unit = {
       write(Array(b.toByte), 0, 1)
     }
   }
 
   private object outStream extends LogOutputStream {
-    override def write(b: Array[Byte], off: Int, len: Int) {
+    override def write(b: Array[Byte], off: Int, len: Int): Unit = {
       publish(OutStreamEvent(new String(b, off, len)))
     }
   }
 
   private object errStream extends LogOutputStream {
-    override def write(b: Array[Byte], off: Int, len: Int) {
+    override def write(b: Array[Byte], off: Int, len: Int): Unit = {
       publish(ErrStreamEvent(new String(b, off, len)))
     }
   }
 
 
   private object interpreterOut extends Writer {
-    def close() {}
+    def close(): Unit = {}
 
-    def flush() {}
+    def flush(): Unit = {}
 
-    def write(buf: Array[Char], off: Int, len: Int) {
+    def write(buf: Array[Char], off: Int, len: Int): Unit = {
       val s = new String(buf, off, len)
       interpreterOutBuffer.append(s)
     }
@@ -134,7 +134,7 @@ class ScalaInterpreter() extends Publisher {
   def state: State.Value = _state
 
 
-  private def state_=(newState: State.Value) {
+  private def state_=(newState: State.Value): Unit = {
     _state = newState
     publish(StateEvent(_state))
   }
@@ -142,9 +142,10 @@ class ScalaInterpreter() extends Publisher {
 
   /**
    * Interpret `code`
-   * @param code actual text of the code to be interpreted.
+    *
+    * @param code actual text of the code to be interpreted.
    */
-  def run(code: String) {
+  def run(code: String): Unit = {
 
     interpreterOutBuffer.clear()
     state = State.Running
@@ -163,7 +164,7 @@ class ScalaInterpreter() extends Publisher {
       }
 
 
-      override def done() {
+      override def done(): Unit = {
         get match {
           case Results.Error =>
             ScalaInterpreter.this.publish(ErrStreamEvent(interpreterOutBuffer.mkString))

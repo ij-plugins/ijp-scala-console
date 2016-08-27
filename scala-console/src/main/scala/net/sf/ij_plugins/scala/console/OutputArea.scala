@@ -1,31 +1,32 @@
 /*
- * Image/J Plugins
- * Copyright (C) 2002-2014 Jarek Sacha
- * Author's email: jsacha at users dot sourceforge dot net
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at http://sourceforge.net/projects/ij-plugins/
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console
 
-import java.awt.{Dimension, BorderLayout, Color}
+import java.awt.{BorderLayout, Color, Dimension}
 import javax.swing._
-import swing.Swing
-import text.{StyleConstants, StyleContext, StyledDocument}
+import javax.swing.text.{StyleConstants, StyleContext, StyledDocument}
+
+import scala.swing.Swing
 
 
 /**
@@ -60,11 +61,11 @@ private class OutputArea extends JPanel {
     setLayout(new BorderLayout())
     add(scrollPane, BorderLayout.CENTER)
 
-    def clear() {
+    def clear(): Unit = {
         outputArea.setText("")
     }
 
-    def list(code: String) {
+    def list(code: String): Unit = {
         code.lines.foreach {
             line =>
                 appendText("scala> ", Style.Log)
@@ -73,19 +74,19 @@ private class OutputArea extends JPanel {
         appendText("\n", Style.Code)
     }
 
-    def appendOutStream(text: String) {
+    def appendOutStream(text: String): Unit = {
         appendText(text, Style.Regular)
     }
 
-    def appendErrStream(text: String) {
+    def appendErrStream(text: String): Unit = {
         appendText(text, Style.Error)
     }
 
-    def appendInterpreterOut(text: String) {
+    def appendInterpreterOut(text: String): Unit = {
         appendText(text, Style.Log)
     }
 
-    private def appendText(text: String, style: Style.Value) {
+    private def appendText(text: String, style: Style.Value): Unit = {
         Swing.onEDT({
             val doc = outputArea.getStyledDocument
             addStylesToDocument(doc)
@@ -96,7 +97,7 @@ private class OutputArea extends JPanel {
     /**
      * Initialize document styles.
      */
-    private def addStylesToDocument(doc: StyledDocument) {
+    private def addStylesToDocument(doc: StyledDocument): Unit = {
         val default = StyleContext.getDefaultStyleContext.getStyle(StyleContext.DEFAULT_STYLE)
 
         val regular = doc.addStyle(Style.Regular.toString, default)

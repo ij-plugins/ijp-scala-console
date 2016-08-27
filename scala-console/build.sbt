@@ -1,38 +1,46 @@
-// Project name
-name := "scala-console"
+// @formatter:off
 
-// Publishing organization
+name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
+version      := "1.4.0"
 
-// Current version
-version := "1.1.3"
-
-// Version of scala to use
-crossScalaVersions := Seq("2.11.7", "2.10.6")
-
-scalaVersion <<= crossScalaVersions {versions => versions.head}
+crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0-M4", "2.12.0-M5")
+scalaVersion <<= crossScalaVersions { versions => versions.head }
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
 // change Compile to Test to set it for the test jar
-mainClass in (Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
+mainClass in(Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 // set the main class for the main 'run' task
 // change Compile to Test to set it for 'test:run'
-mainClass in (Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
+mainClass in(Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-compiler"  % scalaVersion.value,
-  "net.imagej"     % "ij"              % "1.49v",
-  "com.fifesoft"   % "rsyntaxtextarea" % "2.0.7",
-  "junit"          % "junit"           % "4.12"  % "test",
-  "com.novocode"   % "junit-interface" % "0.11" % "test"
+  "org.scala-lang"          % "scala-compiler"  % scalaVersion.value,
+  "org.scala-lang.modules" %% "scala-swing"     % "2.0.0-M2",
+  "net.imagej"              % "ij"              % "1.51f",
+  "com.fifesoft"            % "rsyntaxtextarea" % "2.5.8",
+  "junit"                   % "junit"           % "4.12" % "test",
+  "com.novocode"            % "junit-interface" % "0.11" % "test"
 )
 
-libraryDependencies ++= (if (scalaVersion.value.startsWith("2.11."))
-        Seq("org.scala-lang.modules" %% "scala-swing" % "1.0.2")
-      else
-        Seq("org.scala-lang" % "scala-swing" % scalaVersion.value))
+scalacOptions in(Compile, compile) ++= Seq(
+//      "-target:jvm-1.8",
+      "-encoding", "UTF-8",
+      "-unchecked",
+      "-deprecation",
+      "-Xlint",
+      "-feature",
+      "-Xfuture",
+      "–optimise",
+      "-Yno-adapted-args",
+      "-Ywarn-dead-code",
+      "-Ywarn-numeric-widen"
+//      "-Ywarn-value-discard",
+//      "-Ywarn-unused",
+//      "-Ywarn-unused-import"
+    )
 
 resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
 
@@ -43,17 +51,13 @@ fork := true
 javaOptions += "-Xmx2G"
 
 // Set the prompt (for this build) to include the project id.
-shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
+shellPrompt in ThisBuild := { state => "sbt:" + Project.extract(state).currentRef.project + "> " }
 
 enablePlugins(SbtImageJ)
 
 ijRuntimeSubDir := "sandbox"
-
 ijPluginsSubDir := "ij-plugins"
-
-ijExclusions += """nativelibs4java\S*"""
-
-cleanFiles += ijPluginsDir.value
+cleanFiles      += ijPluginsDir.value
 
 // Info needed sync with Maven central.
 pomExtra in Global := {

@@ -1,30 +1,32 @@
 /*
- * Image/J Plugins
- * Copyright (C) 2002-2014 Jarek Sacha
- * Author's email: jsacha at users dot sourceforge dot net
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at http://sourceforge.net/projects/ij-plugins/
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console
 
-import editor.Editor
 import java.io.File
-import swing.Frame
+
+import net.sf.ij_plugins.scala.console.editor.Editor
+
+import scala.swing.Frame
 
 /**
  * Controller for the Scala Console.
@@ -42,7 +44,7 @@ private class ScalaConsoleController {
 
     def view: Frame = _view
 
-    def read(file:File) {
+    def read(file: File): Unit = {
         editor.read(file)
 
     }
@@ -50,7 +52,7 @@ private class ScalaConsoleController {
     /**
      * Interpret current editor selection. If selection is empty the whole editor text.
      */
-    private[console] def run() {
+    private[console] def run(): Unit = {
         _view.outputArea.clear()
         _view.statusLine.text = "Running..."
 
@@ -68,7 +70,7 @@ private class ScalaConsoleController {
     /**
      * Hide console frame, and possibly exit application.
      */
-    private[console] def exit() {
+    private[console] def exit(): Unit = {
         _view.visible = false
     }
 
