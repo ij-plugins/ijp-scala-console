@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 )
 
-scalacOptions ++= Seq(
+scalacOptions in(Compile, compile) ++= Seq(
 //      "-target:jvm-1.8",
       "-encoding", "UTF-8",
       "-unchecked",
