@@ -72,7 +72,7 @@ package object console {
 
   def listDirectories(root: File): Array[File] = {
     val dirFilter = new FileFilter() {
-      override def accept(file: File) = file.isDirectory
+      override def accept(file: File): Boolean = file.isDirectory
     }
 
     val r = ArrayBuffer(root)
@@ -94,7 +94,7 @@ package object console {
 
   def listJarFiles(dir: File): Array[File] = {
     val jarFilter = new FilenameFilter() {
-      override def accept(dir: File, name: String) = name.toLowerCase.endsWith(".jar")
+      override def accept(dir: File, name: String): Boolean = name.toLowerCase.endsWith(".jar")
     }
 
     dir.listFiles(jarFilter)

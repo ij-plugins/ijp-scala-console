@@ -1,32 +1,36 @@
 /*
- *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
- *  Author's email: jpsacha at gmail dot com
+ * ImageJ Plugins
+ * Copyright (C) 2002-2016 Jarek Sacha
+ * Author's email: jpsacha at gmail dot com
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *   Latest release available at https://github.com/ij-plugins
+ * Latest release available at https://github.com/ij-plugins
+ *
  */
 
 package net.sf.ij_plugins.scala.console.editor
 
 import java.io.{File, FileWriter}
 
-import net.sf.ij_plugins.scala.console.editor.Editor.{EditorEvent, SourceFileEvent}
+import net.sf.ij_plugins.scala.console.editor.Editor.EditorEvent
 
 import scala.collection.mutable
+import scalafx.beans.binding.{Bindings, BooleanBinding}
+import scalafx.beans.property.{ObjectProperty, ReadOnlyObjectProperty, ReadOnlyObjectWrapper}
+import scalafx.beans.value.ObservableValue
 
 
 /**
@@ -37,59 +41,38 @@ import scala.collection.mutable
   */
 private class EditorModel(private val textArea: EditorCodeArea) extends mutable.Publisher[EditorEvent] {
 
-  private var _sourceFile: Option[File] = None
-  private var lastSavedText: Option[String] = None
+  private val _sourceFile = ReadOnlyObjectWrapper[Option[File]](None)
+  /**
+    * Source file from editor content was saved to read from.
+    */
+  val sourceFile: ReadOnlyObjectProperty[Option[File]] = _sourceFile.readOnlyProperty
+
+  private val lastSavedText = ObjectProperty[Option[String]](None)
 
   /**
-    * Associated file from which the file was loaded or saved last time.
+    * Text content of this editor
     */
-  def sourceFile: Option[File] = _sourceFile
-
-  private def sourceFile_=(file: Option[File]): Unit = {
-    _sourceFile = file
-    publish(SourceFileEvent(_sourceFile))
-  }
-
-
-  /**
-    * Return a text content of this editor
-    */
-  def text: String = {
-    textArea.text
-  }
+  val text: ObservableValue[String, String] = textArea.text
 
   def selection: String = {
     textArea.selectedText
   }
 
-
-  def needsSave: Boolean = {
-    lastSavedText match {
-      case Some(lastText) => !lastText.equals(textArea.text)
-      case None => !textArea.text.isEmpty
-    }
-  }
+  val needsSaving: BooleanBinding = Bindings.createBooleanBinding(
+    () => {
+      lastSavedText.value match {
+        case Some(lastText) => !lastText.equals(textArea.text.value)
+        case None => !textArea.text.value.isEmpty
+      }
+    },
+    lastSavedText,
+    textArea.text
+  )
 
   def reset(): Unit = {
-    textArea.text = Seq(
-      "import scala.math._",
-      "",
-      "/*",
-      "* Print a wave to the standard output",
-      "*/",
-      "val scale = 2",
-      "for (x <- Range.Double(-Pi / 2, 3.5 * Pi, Pi / 5)) {",
-      "  // Prepare empty line",
-      "  val line = Array.fill(scale * 2 + 1) {\" \"}",
-      "  // Create marker at location `y`",
-      "  val y = round((sin(x) + 1) * scale).toInt",
-      "  line(y) = \"*\"",
-      "  // Print line as string",
-      "  println(line.mkString(\" \"))",
-      "}"
-    ).mkString("\n")
-    sourceFile = None
-    lastSavedText = None
+    textArea.replaceText("")
+    _sourceFile.value = None
+    lastSavedText.value = Some(textArea.text.value)
   }
 
   def read(file: File): Unit = {
@@ -97,21 +80,22 @@ private class EditorModel(private val textArea: EditorCodeArea) extends mutable.
     val lines = source.mkString
     source.close()
 
-    lastSavedText = Some(lines)
-    textArea.text = lines
-    sourceFile = Some(file)
+    lastSavedText.value = Some(lines)
+    textArea.replaceText(lines)
+    _sourceFile.value = Some(file)
   }
 
 
   def save(file: File): Unit = {
     val writer = new FileWriter(file)
     try {
-      writer.write(text)
-      lastSavedText = Some(text)
+      val t = text.value
+      writer.write(t)
+      lastSavedText.value = Some(t)
     } finally {
       writer.close()
     }
-    sourceFile = Some(file)
+    _sourceFile.value = Some(file)
   }
 
 

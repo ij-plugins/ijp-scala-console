@@ -81,7 +81,7 @@ class ScalaConsolePaneView(private val fileMenu: Menu,
   }
 
   // Create editor menu items
-  val fileMenuItems = model.editor.fileActions.
+  private val fileMenuItems = model.editor.fileActions.
     map { a =>
       new MenuItem {
         text = a.name

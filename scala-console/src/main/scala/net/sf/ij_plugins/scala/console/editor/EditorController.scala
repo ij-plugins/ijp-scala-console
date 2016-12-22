@@ -1,23 +1,24 @@
 /*
- *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
- *  Author's email: jpsacha at gmail dot com
+ * ImageJ Plugins
+ * Copyright (C) 2002-2016 Jarek Sacha
+ * Author's email: jpsacha at gmail dot com
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *   Latest release available at https://github.com/ij-plugins
+ * Latest release available at https://github.com/ij-plugins
+ *
  */
 
 package net.sf.ij_plugins.scala.console.editor
@@ -56,11 +57,8 @@ private class EditorController(private val ownerWindow: Window,
     name = "New...",
     icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/page.png"),
     eventHandler = () => {
-      askAndSave() match {
-        case true =>
-          // Reset editor
-          model.reset()
-        case false =>
+      if (ifModifiedAskAndSave()) {
+        model.reset()
       }
     }
   )
@@ -69,10 +67,12 @@ private class EditorController(private val ownerWindow: Window,
     name = "Open...",
     icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/folder_page.png"),
     eventHandler = () => {
-      val file = fileChooser.showOpenDialog(ownerWindow)
-      if (file != null) {
-        currentDirectory = file.getParentFile
-        read(file)
+      if (ifModifiedAskAndSave()) {
+        val file = fileChooser.showOpenDialog(ownerWindow)
+        if (file != null) {
+          currentDirectory = file.getParentFile
+          read(file)
+        }
       }
     }
   )
@@ -96,7 +96,7 @@ private class EditorController(private val ownerWindow: Window,
   }
 
   private def save(): Unit = {
-    model.sourceFile match {
+    model.sourceFile.value match {
       case Some(file) => model.save(file)
       case None => saveAs()
     }
@@ -149,11 +149,20 @@ private class EditorController(private val ownerWindow: Window,
 
   /**
     * Perform operations needed to safely close the editor, save files, etc.
+    *
+    * Return 'true' if can be closed.
     */
-  def prepareToClose(): Boolean = askAndSave()
+  def prepareToClose(): Boolean = ifModifiedAskAndSave()
 
-  private def askAndSave(): Boolean = {
-    if (model.needsSave) {
+  /**
+    * If editor text was modified, ask user to save current editor content.
+    * Return `false` if user cancelled the operation.
+    *
+    * @return 'true' if content is saved or used did not want to save content.
+    *         `false` if user canceled the dialog.
+    */
+  private def ifModifiedAskAndSave(): Boolean = {
+    if (model.needsSaving.value) {
       val alert = YesNoAlert(
         parent = null,
         title = "New...",

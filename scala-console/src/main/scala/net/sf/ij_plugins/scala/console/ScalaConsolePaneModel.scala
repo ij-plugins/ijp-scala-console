@@ -32,7 +32,7 @@ import org.scalafx.extras.onFX
 import scala.collection.mutable
 import scala.tools.nsc.interpreter.Results
 import scalafx.application.Platform
-import scalafx.beans.property.{ReadOnlyBooleanWrapper, StringProperty}
+import scalafx.beans.property.{ReadOnlyBooleanProperty, ReadOnlyBooleanWrapper, StringProperty}
 
 /**
   * UI model for the Scala Console main pane.
@@ -44,7 +44,7 @@ class ScalaConsolePaneModel extends Model {
   val outputArea = new OutputArea()
 
   private val _isReady = new ReadOnlyBooleanWrapper(this, "isReady", true)
-  val isReady = _isReady.readOnlyProperty
+  val isReady: ReadOnlyBooleanProperty = _isReady.readOnlyProperty
 
   private val scalaInterpreter = new ScalaInterpreter()
 
@@ -96,9 +96,21 @@ class ScalaConsolePaneModel extends Model {
     scalaInterpreter.run(code)
   }
 
-  def onExit(): Unit = {
-    // TODO: Check if content needs to be saved
-    Platform.exit()
+  /**
+    * Exit application if no saving is needed or saving is done.
+    * Do not exit if user cancelled saving request.
+    *
+    * @return `true` when exited (application may terminate before returning).
+    *         `false` if exit was canceled.
+    */
+  def onExit(): Boolean = {
+    // Check if content needs to be saved
+    if (editor.prepareToClose()) {
+      Platform.exit()
+      true
+    } else {
+      false
+    }
   }
 
 }

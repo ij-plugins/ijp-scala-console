@@ -28,8 +28,10 @@ import org.scalafx.extras._
 import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
+import scalafx.beans.binding.Bindings
 import scalafx.scene.image.Image
 import scalafx.scene.{Node, Scene}
+import scalafx.stage.WindowEvent
 
 /**
   * Stand-alone Scala Console application.
@@ -44,14 +46,39 @@ object ScalaConsoleApp extends JFXApp {
     names.map { n => new Image(s"$path$n").delegate }
   }
 
+  val scalaConsolePane = new ScalaConsolePane()
+
   stage = new PrimaryStage {
     scene = new Scene(640, 480) {
-      title = "Scala Console"
-      root = new ScalaConsolePane().view
+      root = scalaConsolePane.view
     }
     icons ++= iconImages
-  }
 
+    // Intercept window close request
+    onCloseRequest = (event: WindowEvent) => {
+      if (scalaConsolePane.model.onExit()) {
+        // Exiting, allow default FX close handler
+      } else {
+        // Do not exit, mark close request event as done
+        event.consume()
+      }
+    }
+
+    // Display open file name in the title
+    title <== Bindings.createStringBinding(
+      () => {
+        val t = scalaConsolePane.model.editor.sourceFile.value match {
+          case Some(f) => "Scala Console: " + f.getName
+          case None => "Scala Console"
+        }
+
+        // Add `*` when content is modified
+        t + (if (scalaConsolePane.model.editor.needsSaving.value) "*" else "")
+      },
+      scalaConsolePane.model.editor.sourceFile,
+      scalaConsolePane.model.editor.needsSaving
+    )
+  }
 
   def setupUncaughtExceptionHandling(title: String): Unit = {
     Thread.setDefaultUncaughtExceptionHandler(
