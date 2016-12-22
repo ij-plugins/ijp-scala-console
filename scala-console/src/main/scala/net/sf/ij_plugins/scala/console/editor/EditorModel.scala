@@ -24,90 +24,95 @@ package net.sf.ij_plugins.scala.console.editor
 
 import java.io.{File, FileWriter}
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
+import net.sf.ij_plugins.scala.console.editor.Editor.{EditorEvent, SourceFileEvent}
 
-import scala.swing.Publisher
-import scala.swing.event.Event
+import scala.collection.mutable
 
-
-private object EditorModel {
-
-    case class SourceFileEvent(file: Option[File]) extends Event
-
-}
 
 /**
- * Model of the code editor, in the MVC sense. Publishes `SourceFileEvent` when new file is read or saved to.
+  * Model of the code editor, in the MVC sense. Publishes `SourceFileEvent` when new file is read or saved to.
   *
   * @author Jarek Sacha
- * @since 2/17/12 5:57 PM
- */
-private class EditorModel(private val textArea: RSyntaxTextArea) extends Publisher {
+  * @since 2/17/12 5:57 PM
+  */
+private class EditorModel(private val textArea: EditorCodeArea) extends mutable.Publisher[EditorEvent] {
 
-    private var _sourceFile: Option[File] = None
-    private var lastSavedText: Option[String] = None
+  private var _sourceFile: Option[File] = None
+  private var lastSavedText: Option[String] = None
 
-    /**
-     * Associated file from which the file was loaded or saved last time.
-     */
-    def sourceFile: Option[File] = _sourceFile
+  /**
+    * Associated file from which the file was loaded or saved last time.
+    */
+  def sourceFile: Option[File] = _sourceFile
 
-    private def sourceFile_=(file: Option[File]): Unit = {
-        _sourceFile = file
-        publish(EditorModel.SourceFileEvent(_sourceFile))
+  private def sourceFile_=(file: Option[File]): Unit = {
+    _sourceFile = file
+    publish(SourceFileEvent(_sourceFile))
+  }
+
+
+  /**
+    * Return a text content of this editor
+    */
+  def text: String = {
+    textArea.text
+  }
+
+  def selection: String = {
+    textArea.selectedText
+  }
+
+
+  def needsSave: Boolean = {
+    lastSavedText match {
+      case Some(lastText) => !lastText.equals(textArea.text)
+      case None => !textArea.text.isEmpty
     }
+  }
+
+  def reset(): Unit = {
+    textArea.text = Seq(
+      "import scala.math._",
+      "",
+      "/*",
+      "* Print a wave to the standard output",
+      "*/",
+      "val scale = 2",
+      "for (x <- Range.Double(-Pi / 2, 3.5 * Pi, Pi / 5)) {",
+      "  // Prepare empty line",
+      "  val line = Array.fill(scale * 2 + 1) {\" \"}",
+      "  // Create marker at location `y`",
+      "  val y = round((sin(x) + 1) * scale).toInt",
+      "  line(y) = \"*\"",
+      "  // Print line as string",
+      "  println(line.mkString(\" \"))",
+      "}"
+    ).mkString("\n")
+    sourceFile = None
+    lastSavedText = None
+  }
+
+  def read(file: File): Unit = {
+    val source = scala.io.Source.fromFile(file)
+    val lines = source.mkString
+    source.close()
+
+    lastSavedText = Some(lines)
+    textArea.text = lines
+    sourceFile = Some(file)
+  }
 
 
-    /**
-     * Return a text content of this editor
-     */
-    def text: String = {
-        textArea.getText
+  def save(file: File): Unit = {
+    val writer = new FileWriter(file)
+    try {
+      writer.write(text)
+      lastSavedText = Some(text)
+    } finally {
+      writer.close()
     }
-
-    def selection: String = {
-        textArea.getSelectedText
-    }
-
-
-    def needsSave: Boolean = {
-        lastSavedText match {
-            case Some(lastText) => !lastText.equals(textArea.getText)
-            case None => !textArea.getText.isEmpty
-        }
-    }
-
-
-    def reset(): Unit = {
-        textArea.setText("import ij._\n" +
-                "val img = WindowManager.getCurrentImage()\n" +
-                "IJ.log(\"Hello\")\n" +
-                "println(\"I am here\")\n")
-        sourceFile = None
-        lastSavedText = None
-    }
-
-    def read(file: File): Unit = {
-        val source = scala.io.Source.fromFile(file)
-        val lines = source.mkString
-        source.close()
-
-        lastSavedText = Some(lines)
-        textArea.setText(lines)
-        sourceFile = Some(file)
-    }
-
-
-    def save(file: File): Unit = {
-        val writer = new FileWriter(file)
-        try {
-            writer.write(text)
-            lastSavedText = Some(text)
-        } finally {
-            writer.close()
-        }
-        sourceFile = Some(file)
-    }
+    sourceFile = Some(file)
+  }
 
 
 }

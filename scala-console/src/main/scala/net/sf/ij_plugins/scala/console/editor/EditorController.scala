@@ -24,73 +24,70 @@ package net.sf.ij_plugins.scala.console.editor
 
 import java.io.File
 import java.util.prefs.Preferences
-import javax.swing.filechooser.FileNameExtensionFilter
 
-import net.sf.ij_plugins.scala.console._
+import net.sf.ij_plugins.scala.console.YesNoAlert
 
-import scala.swing.{Action, Component, Dialog, FileChooser}
+import scalafx.Includes._
+import scalafx.scene.image.Image
+import scalafx.stage.FileChooser.ExtensionFilter
+import scalafx.stage.{FileChooser, Window}
 
 /**
- * Translate user actions into commands for the editor model. Controller in the MVC pattern.
+  * Translate user actions into commands for the editor model. Controller in the MVC pattern.
   *
   * @author Jarek Sacha
- * @since 2/17/12
- */
-private class EditorController(private val parentView: Component,
+  * @since 2/17/12
+  */
+private class EditorController(private val ownerWindow: Window,
                                private val model: EditorModel) {
 
   private val defaultExtension = "scala"
 
-  private lazy val fileChooser = new FileChooser(currentDirectory) {
-    fileFilter = new FileNameExtensionFilter("*." + defaultExtension, defaultExtension)
-    multiSelectionEnabled = false
+  private lazy val fileChooser = new FileChooser {
+    initialDirectory = currentDirectory
+    extensionFilters += new ExtensionFilter("*." + defaultExtension, "*." + defaultExtension)
   }
 
-
-  private val fileNewAction = new Action("New...") {
-
-    icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/page.png")
-
-    def apply(): Unit = {
-
-      askAndSave()
-
-      // Reset editor
-      model.reset()
-    }
+  private def loadIcon(url: String): Image = {
+    new Image(url)
   }
 
-  private val fileOpenAction = new Action("Open...") {
-    icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/folder_page.png")
-
-    def apply(): Unit = {
-
-      val status = fileChooser.showOpenDialog(parentView)
-      if (status != FileChooser.Result.Approve) {
-        return
+  private val fileNewAction = Action(
+    name = "New...",
+    icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/page.png"),
+    eventHandler = () => {
+      askAndSave() match {
+        case true =>
+          // Reset editor
+          model.reset()
+        case false =>
       }
+    }
+  )
 
-      val file = fileChooser.selectedFile
-      if (file == null) {
-        return
+  private val fileOpenAction = Action(
+    name = "Open...",
+    icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/folder_page.png"),
+    eventHandler = () => {
+      val file = fileChooser.showOpenDialog(ownerWindow)
+      if (file != null) {
+        currentDirectory = file.getParentFile
+        read(file)
       }
-
-      currentDirectory = file.getParentFile
-      read(file)
     }
-  }
+  )
 
-  private val fileSaveAction = new Action("Save") {
-    icon = loadIcon(this.getClass, "/net/sf/ij_plugins/scala/console/resources/icons/disk.png")
+  private val fileSaveAction = Action(
+    name = "Save",
+    icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/disk.png"),
+    eventHandler = () => save()
+  )
 
-    def apply(): Unit = {
-      save()
-    }
-  }
-
-  private val fileSaveAsAction = Action("Save As...") {
-    saveAs()
-  }
+  private val fileSaveAsAction = Action(
+    name = "Save As...",
+    icon = null,
+    eventHandler = () => saveAs()
+  )
 
   def fileActions = Array(fileNewAction, fileOpenAction, fileSaveAction, fileSaveAsAction)
 
@@ -103,16 +100,10 @@ private class EditorController(private val parentView: Component,
       case Some(file) => model.save(file)
       case None => saveAs()
     }
-
   }
 
   private def saveAs(): Boolean = {
-    val status = fileChooser.showSaveDialog(parentView)
-    if (status != FileChooser.Result.Approve) {
-      return false
-    }
-
-    val file = fileChooser.selectedFile
+    val file = fileChooser.showSaveDialog(ownerWindow)
     if (file == null) {
       return false
     }
@@ -131,9 +122,9 @@ private class EditorController(private val parentView: Component,
   }
 
   /**
-   * Return current directory saved in preferences, if cannot be retrieved return `null`.
-   * JFileChooser constructor is using `null` to indicate that starting directory is as user's default directory.
-   */
+    * Return current directory saved in preferences, if cannot be retrieved return `null`.
+    * FileChooser constructor is using `null` to indicate that starting directory is as user's default directory.
+    */
   private def currentDirectory: File = {
     try {
       val prefNode = Preferences.userRoot.node(this.getClass.getName)
@@ -157,26 +148,33 @@ private class EditorController(private val parentView: Component,
   }
 
   /**
-   * Perform operations needed to safely close the editor, save files, etc.
-   */
-  def prepareToClose(): Unit = {
-    askAndSave()
-  }
+    * Perform operations needed to safely close the editor, save files, etc.
+    */
+  def prepareToClose(): Boolean = askAndSave()
 
-  private def askAndSave(): Unit = {
+  private def askAndSave(): Boolean = {
     if (model.needsSave) {
-      // Check if current document needs to be saved
-      val status = Dialog.showConfirmation(
-        parentView,
-        "Do you want to save current script?",
-        "Editor Content Modified",
-        Dialog.Options.YesNo)
-      // If not cancelled, save
-      status match {
-        case Dialog.Result.Yes => save()
-        case Dialog.Result.No =>
-        case _ => return
+      val alert = YesNoAlert(
+        parent = null,
+        title = "New...",
+        header = "Editor Content Modified.",
+        content = "Do you want to save current script?"
+      )
+
+      val result = alert.showAndWait()
+
+      result match {
+        case Some(YesNoAlert.ButtonTypeYes) =>
+          save()
+          true
+        case Some(YesNoAlert.ButtonTypeNo) =>
+          true
+        case _ =>
+          // user chose CANCEL or closed the dialog
+          false
       }
+    } else {
+      true
     }
   }
 }
