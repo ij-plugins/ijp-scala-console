@@ -2,7 +2,7 @@
 
 name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
-version      := "1.4.1-SNAPSHOT"
+version      := "1.5.0"
 
 crossScalaVersions := Seq("2.11.8", "2.12.1")
 scalaVersion <<= crossScalaVersions { versions => versions.head }
@@ -17,13 +17,13 @@ mainClass in(Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scala
 mainClass in(Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
-  "com.beachape"           %% "enumeratum"          % "1.5.3",
-  "org.fxmisc.richtext"     % "richtextfx"          % "0.7-M2",
+  "com.beachape"           %% "enumeratum"          % "1.5.4",
+  "org.fxmisc.richtext"     % "richtextfx"          % "0.7-M3",
   "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
   "org.scala-lang.modules" %% "scala-java8-compat"  % "0.8.0",
   "org.scalafx"            %% "scalafx"             % "8.0.102-R11",
   "org.scalafx"            %% "scalafxml-core-sfx8" % "0.3",
-  "org.scalafx"            %% "scalafx-extras"      % "0.1.0-SNAPSHOT",
+  "org.scalafx"            %% "scalafx-extras"      % "0.1.0",
   "net.imagej"              % "ij"                  % "1.51f",
   "junit"                   % "junit"               % "4.12" % "test",
   "com.novocode"            % "junit-interface"     % "0.11" % "test"
