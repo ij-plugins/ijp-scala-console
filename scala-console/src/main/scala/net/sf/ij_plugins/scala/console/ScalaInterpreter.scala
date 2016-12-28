@@ -1,87 +1,103 @@
 /*
- *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
- *  Author's email: jpsacha at gmail dot com
+ * ImageJ Plugins
+ * Copyright (C) 2002-2016 Jarek Sacha
+ * Author's email: jpsacha at gmail dot com
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *   Latest release available at https://github.com/ij-plugins
+ * Latest release available at https://github.com/ij-plugins
+ *
  */
 
 package net.sf.ij_plugins.scala.console
 
-
 import java.io.{PrintStream, Writer}
 
+import enumeratum.{EnumEntry, _}
+import net.sf.ij_plugins.scala.console
+import net.sf.ij_plugins.scala.console.ScalaInterpreter.InterpreterEvent
+
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.swing.Publisher
-import scala.swing.event.Event
 import scala.tools.nsc.interpreter.Results.Result
 import scala.tools.nsc.interpreter._
 import scala.tools.nsc.{NewLinePrintWriter, Settings}
 
+
 object ScalaInterpreter {
 
   /**
-   * Interpreter execution state.
-   */
-  object State extends Enumeration {
-    val Running = Value("Running...")
-    val Ready   = Value("Ready")
+    * Event marker trait.
+    */
+  trait InterpreterEvent
+
+  /**
+    * Interpreter execution state.
+    */
+  sealed abstract class State(override val entryName: String) extends EnumEntry
+
+  object State extends Enum[State] {
+
+    val values = findValues
+
+    case object Running extends State("Running...")
+
+    case object Ready extends State("Ready")
+
   }
 
   /**
-   * Interpreter state changed.
-   */
-  case class StateEvent(state: State.Value) extends Event
+    * Interpreter state changed.
+    */
+  case class StateEvent(state: State) extends InterpreterEvent
 
   /**
-   * Posted after interpreter finished with results returned by the interpreter
-   */
-  case class ResultEvent(result: Result) extends Event
+    * Posted after interpreter finished with results returned by the interpreter
+    */
+  case class ResultEvent(result: Result) extends InterpreterEvent
 
   /**
-   * New value `data` in the standard out stream.
-   */
-  case class OutStreamEvent(data: String) extends Event
+    * New value `data` in the standard out stream.
+    */
+  case class OutStreamEvent(data: String) extends InterpreterEvent
 
   /**
-   * New value `data` in the standard err stream.
-   */
-  case class ErrStreamEvent(data: String) extends Event
+    * New value `data` in the standard err stream.
+    */
+  case class ErrStreamEvent(data: String) extends InterpreterEvent
 
   /**
-   * New value `data` in the interpreter log.
-   */
-  case class InterpreterLogEvent(data: String) extends Event
+    * New value `data` in the interpreter log.
+    */
+  case class InterpreterLogEvent(data: String) extends InterpreterEvent
 
 }
 
 
 /**
- * Wrapper for scala interpreter. Publishes events when output is printed to standard output, standard error,
- * and to interpreter log.
- *
- * Publishes events:
- * [[net.sf.ij_plugins.scala.console.ScalaInterpreter.StateEvent]]
- * [[net.sf.ij_plugins.scala.console.ScalaInterpreter.OutStreamEvent]]
- * [[net.sf.ij_plugins.scala.console.ScalaInterpreter.ErrStreamEvent]]
- * [[net.sf.ij_plugins.scala.console.ScalaInterpreter.InterpreterLogEvent]]
- * [[net.sf.ij_plugins.scala.console.ScalaInterpreter.ResultEvent]]
- */
-class ScalaInterpreter() extends Publisher {
+  * Wrapper for scala interpreter. Publishes events when output is printed to standard output, standard error,
+  * and to interpreter log.
+  *
+  * Publishes events:
+  * [[console.ScalaInterpreter.StateEvent StateEvent]],
+  * [[console.ScalaInterpreter.OutStreamEvent OutStreamEvent]],
+  * [[console.ScalaInterpreter.ErrStreamEvent ErrStreamEvent]],
+  * [[console.ScalaInterpreter.InterpreterLogEvent InterpreterLogEvent]],
+  * [[console.ScalaInterpreter.ResultEvent ResultEvent]].
+  */
+class ScalaInterpreter() extends mutable.Publisher[InterpreterEvent] {
 
   import ScalaInterpreter._
 
@@ -126,56 +142,43 @@ class ScalaInterpreter() extends Publisher {
   // Create interpreter
   val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(interpreterOut, true))
 
-  private var _state = State.Ready
+  private var _state: State = State.Ready
 
   /**
-   * Current state.
-   */
-  def state: State.Value = _state
+    * Current state.
+    */
+  def state: State = _state
 
 
-  private def state_=(newState: State.Value): Unit = {
+  private def state_=(newState: State): Unit = {
     _state = newState
     publish(StateEvent(_state))
   }
 
 
   /**
-   * Interpret `code`
+    * Interpret `code`
     *
     * @param code actual text of the code to be interpreted.
-   */
+    */
   def run(code: String): Unit = {
 
     interpreterOutBuffer.clear()
     state = State.Running
 
-    // TODO: Can scala.swing.SwingWorker be used here?
+    Console.setOut(outStream)
+    java.lang.System.setOut(new PrintStream(outStream))
+    Console.setErr(errStream)
+    java.lang.System.setErr(new PrintStream(outStream))
 
-    // Setup
-    val worker = new javax.swing.SwingWorker[Result, Result] {
-      override def doInBackground(): Result = {
-        Console.setOut(outStream)
-        java.lang.System.setOut(new PrintStream(outStream))
-        Console.setErr(errStream)
-        java.lang.System.setErr(new PrintStream(outStream))
+    val r = interpreter.interpret(code)
 
-        interpreter.interpret(code)
-      }
-
-
-      override def done(): Unit = {
-        get match {
-          case Results.Error =>
-            ScalaInterpreter.this.publish(ErrStreamEvent(interpreterOutBuffer.mkString))
-          case _ =>
-            ScalaInterpreter.this.publish(InterpreterLogEvent("\n" + interpreterOutBuffer.mkString))
-        }
-        ScalaInterpreter.this.state = State.Ready
-      }
+    r match {
+      case Results.Error =>
+        publish(ErrStreamEvent(interpreterOutBuffer.mkString))
+      case _ =>
+        publish(InterpreterLogEvent("\n" + interpreterOutBuffer.mkString))
     }
-
-    // Execute
-    worker.execute()
+    state = State.Ready
   }
 }

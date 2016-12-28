@@ -22,16 +22,11 @@
 
 package net.sf.ij_plugins.scala
 
-import java.awt.Font
 import java.io.{File, FileFilter, FilenameFilter}
-import java.net.URL
-import java.util.logging.{Level, Logger}
-import javax.swing.ImageIcon
 
 import ij.Menus
 
 import scala.collection.mutable.ArrayBuffer
-import scala.swing._
 import scala.tools.nsc.io.Path
 
 
@@ -42,59 +37,6 @@ import scala.tools.nsc.io.Path
   * @since 2/17/12
   */
 package object console {
-  private lazy val logger: Logger = Logger.getLogger(this.getClass.getName)
-
-  // Look for one of the preferred fonts, if cannot find use default mono-spaced font
-  private lazy val _defaultEditorFont: Font =
-    Option(Font.decode("consolas-plain")).getOrElse(
-      Option(Font.decode("Lucida Sans Typewriter Regular")).getOrElse(
-        Font.getFont(Font.MONOSPACED)
-      )
-    )
-
-
-  def defaultEditorFont: Font = _defaultEditorFont
-
-  def loadIcon(aClass: Class[_], path: String): ImageIcon = {
-    try {
-      val url: URL = aClass.getResource(path)
-      if (url == null) {
-        logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.")
-        return null
-      }
-      new ImageIcon(url)
-    } catch {
-      case t: Throwable => {
-        logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.", t)
-      }
-        null
-    }
-  }
-
-
-  /**
-    * Load image as a resource for given class without throwing exceptions.
-    * Intended for use with `javax.swing.JFrame#setIconImage`.
-    *
-    * @param aClass Class requesting resource.
-    * @param path   Image file path.
-    * @return Image or null if loading failed.
-    */
-  def loadImage(aClass: Class[_], path: String): Image = {
-    try {
-      val url: URL = aClass.getResource(path)
-      if (url == null) {
-        logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.")
-        return null
-      }
-      new ImageIcon(url).getImage
-    } catch {
-      case t: Throwable => {
-        logger.log(Level.WARNING, "Unable to find resource '" + path + "' for class '" + aClass.getName + "'.", t)
-      }
-        null
-    }
-  }
 
   def addPluginsJarsToClassPath(): Unit = {
     // TODO do not add existing entries to the classpath again
@@ -130,7 +72,7 @@ package object console {
 
   def listDirectories(root: File): Array[File] = {
     val dirFilter = new FileFilter() {
-      override def accept(file: File) = file.isDirectory
+      override def accept(file: File): Boolean = file.isDirectory
     }
 
     val r = ArrayBuffer(root)
@@ -152,7 +94,7 @@ package object console {
 
   def listJarFiles(dir: File): Array[File] = {
     val jarFilter = new FilenameFilter() {
-      override def accept(dir: File, name: String) = name.toLowerCase.endsWith(".jar")
+      override def accept(dir: File, name: String): Boolean = name.toLowerCase.endsWith(".jar")
     }
 
     dir.listFiles(jarFilter)

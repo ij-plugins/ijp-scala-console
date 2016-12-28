@@ -3,9 +3,9 @@ ijp-scala-console
 
 Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application.
 
-Currently, it is primarily developed to be run as an [ImageJ](http://rsb.info.nih.gov/ij/) plugin.
+Currently, it is primarily developed to be run as an [ImageJ](http://rsb.info.nih.gov/ij/) plugin. It can also run as a stand-alone application, see [ScalaConsoleApp](scala-console/src/main/scala/net/sf/ij_plugins/scala/console/ScalaConsoleApp.scala)
 
-![Screenshot](http://ij-plugins.sourceforge.net/plugins/scala/Screenshot-ScalaConsole.png)
+![Screenshot](docs/images/Scala-Console-2_screenshot.png)
 
 Binaries can be downloaded from the [releases] page. Some additional info is at the old [IJ Plugins](http://ij-plugins.sourceforge.net/plugins/scala/index.html) project site.
 
