@@ -29,7 +29,7 @@ import java.util.function.Consumer
 import java.util.regex.Pattern
 
 import org.fxmisc.flowless.VirtualizedScrollPane
-import org.fxmisc.richtext.model.{RichTextChange, StyleSpans, StyleSpansBuilder}
+import org.fxmisc.richtext.model.{RichTextChange, StyleSpans, StyleSpansBuilder, StyledText}
 import org.fxmisc.richtext.{CodeArea, LineNumberFactory}
 
 import scala.compat.java8.FunctionConverters._
@@ -87,12 +87,12 @@ class EditorCodeArea {
   codeArea.stylesheets += this.getClass.getResource("scala-keywords.css").toExternalForm
 
   private val filterOp:
-  RichTextChange[util.Collection[String], util.Collection[String]] => Boolean =
+    RichTextChange[util.Collection[String], StyledText[util.Collection[String]], util.Collection[String]] => Boolean =
     ch => !ch.getInserted.equals(ch.getRemoved)
 
   codeArea.richChanges.filter(asJavaPredicate(filterOp)).subscribe(
-    new Consumer[RichTextChange[util.Collection[String], util.Collection[String]]] {
-      override def accept(t: RichTextChange[util.Collection[String], util.Collection[String]]): Unit = {
+    new Consumer[RichTextChange[util.Collection[String], StyledText[util.Collection[String]], util.Collection[String]]] {
+      override def accept(t: RichTextChange[util.Collection[String], StyledText[util.Collection[String]], util.Collection[String]]): Unit = {
         codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()))
       }
     })
