@@ -4,8 +4,8 @@ name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
 version      := "1.5.1-SNAPSHOT"
 
-crossScalaVersions := Seq("2.11.8", "2.12.1")
-scalaVersion <<= crossScalaVersions { versions => versions.head }
+crossScalaVersions := Seq("2.11.12", "2.12.4")
+scalaVersion := crossScalaVersions.value.head
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
@@ -17,16 +17,15 @@ mainClass in(Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scala
 mainClass in(Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
-  "com.beachape"           %% "enumeratum"          % "1.5.4",
-  "org.fxmisc.richtext"     % "richtextfx"          % "0.7-M3",
+  "com.beachape"           %% "enumeratum"          % "1.5.12",
+  "org.fxmisc.richtext"     % "richtextfx"          % "0.8.2",
   "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
   "org.scala-lang.modules" %% "scala-java8-compat"  % "0.8.0",
-  "org.scalafx"            %% "scalafx"             % "8.0.102-R11",
-  "org.scalafx"            %% "scalafxml-core-sfx8" % "0.3",
+  "org.scalafx"            %% "scalafx"             % "8.0.144-R12",
+  "org.scalafx"            %% "scalafxml-core-sfx8" % "0.4",
   "org.scalafx"            %% "scalafx-extras"      % "0.1.0",
   "net.imagej"              % "ij"                  % "1.51f",
-  "junit"                   % "junit"               % "4.12" % "test",
-  "com.novocode"            % "junit-interface"     % "0.11" % "test"
+  "org.scalatest"          %% "scalatest"           % "3.0.5" % "test"
 )
 
 scalacOptions in(Compile, compile) ++= Seq(
@@ -57,7 +56,7 @@ javaOptions += "-Xmx2G"
 
 // Needed by ScalaFXML
 autoCompilerPlugins := true
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
 
 // Set the prompt (for this build) to include the project id.
 shellPrompt in ThisBuild := { state => "sbt:" + Project.extract(state).currentRef.project + "> " }
