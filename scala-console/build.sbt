@@ -2,7 +2,13 @@
 
 name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
-version      := "1.5.1-SNAPSHOT"
+version      := "1.5.1"
+
+homepage     := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
+startYear    := Some(2013)
+licenses     := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.1")))
+description  :=
+  "Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application."
 
 crossScalaVersions := Seq("2.11.12", "2.12.5")
 scalaVersion := crossScalaVersions.value.head
@@ -53,7 +59,6 @@ fork := true
 // add a JVM option to use when forking a JVM for 'run'
 javaOptions += "-Xmx2G"
 
-
 // Needed by ScalaFXML
 autoCompilerPlugins := true
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
@@ -62,29 +67,29 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.fu
 shellPrompt in ThisBuild := { state => "sbt:" + Project.extract(state).currentRef.project + "> " }
 
 enablePlugins(SbtImageJ)
-
 ijRuntimeSubDir := "sandbox"
 ijPluginsSubDir := "ij-plugins"
 cleanFiles      += ijPluginsDir.value
 
+publishTo := {
+  val sonatype = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at sonatype + "content/repositories/snapshots")
+  else
+    Some("releases"  at sonatype + "service/local/staging/deploy/maven2")
+}
+
 // Info needed sync with Maven central.
 pomExtra in Global := {
-  <url>(your project URL)</url>
-  <licenses>
-    <license>
-      <name>GNU Lesser General Public License</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
   <scm>
-    <connection>scm:svn://svn.code.sf.net/p/ij-plugins/code/trunk</connection>
-    <developerConnection>scm:svn://svn.code.sf.net/p/ij-plugins/code/trunk</developerConnection>
-    <url>http://sourceforge.net/projects/ij-plugins/</url>
+    <url>https://github.com/ij-plugins/ijp-scala-console</url>
+    <connection>scm:https://github.com/ij-plugins/ijp-scala-console.git</connection>
   </scm>
   <developers>
     <developer>
-      <id>jsacha</id>
+      <id>jpsacha</id>
       <name>Jarek Sacha</name>
+      <url>https://github.com/jpsacha</url>
     </developer>
   </developers>
 }
