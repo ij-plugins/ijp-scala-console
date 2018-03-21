@@ -4,7 +4,7 @@ name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
 version      := "1.5.1-SNAPSHOT"
 
-crossScalaVersions := Seq("2.11.12", "2.12.4")
+crossScalaVersions := Seq("2.11.12", "2.12.5")
 scalaVersion := crossScalaVersions.value.head
 
 // set the main class for packaging the main jar
@@ -17,7 +17,7 @@ mainClass in(Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scala
 mainClass in(Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
-  "com.beachape"           %% "enumeratum"          % "1.5.12",
+  "com.beachape"           %% "enumeratum"          % "1.5.13",
   "org.fxmisc.richtext"     % "richtextfx"          % "0.8.2",
   "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
   "org.scala-lang.modules" %% "scala-java8-compat"  % "0.8.0",
