@@ -2,7 +2,7 @@
 
 name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
-version      := "1.5.1-SNAPSHOT"
+version      := "1.5.1"
 
 crossScalaVersions := Seq("2.11.12", "2.12.5")
 scalaVersion := crossScalaVersions.value.head
