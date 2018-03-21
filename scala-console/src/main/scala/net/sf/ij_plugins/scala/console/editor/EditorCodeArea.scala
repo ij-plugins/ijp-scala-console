@@ -1,24 +1,23 @@
 /*
- * ImageJ Plugins
- * Copyright (C) 2002-2016 Jarek Sacha
- * Author's email: jpsacha at gmail dot com
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2018 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at https://github.com/ij-plugins
- *
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console.editor
@@ -29,14 +28,14 @@ import java.util.function.Consumer
 import java.util.regex.Pattern
 
 import org.fxmisc.flowless.VirtualizedScrollPane
-import org.fxmisc.richtext.model.{RichTextChange, StyleSpans, StyleSpansBuilder, StyledText}
+import org.fxmisc.richtext.model.{RichTextChange, StyleSpans, StyleSpansBuilder}
 import org.fxmisc.richtext.{CodeArea, LineNumberFactory}
-
-import scala.compat.java8.FunctionConverters._
 import scalafx.Includes._
 import scalafx.beans.value.ObservableValue
 import scalafx.scene.Parent
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
+
+import scala.compat.java8.FunctionConverters._
 
 /**
   * Text area that provides Scala syntax highlighting.
@@ -87,12 +86,12 @@ class EditorCodeArea {
   codeArea.stylesheets += this.getClass.getResource("scala-keywords.css").toExternalForm
 
   private val filterOp:
-    RichTextChange[util.Collection[String], StyledText[util.Collection[String]], util.Collection[String]] => Boolean =
+    RichTextChange[util.Collection[String], String, util.Collection[String]] => Boolean =
     ch => !ch.getInserted.equals(ch.getRemoved)
 
   codeArea.richChanges.filter(asJavaPredicate(filterOp)).subscribe(
-    new Consumer[RichTextChange[util.Collection[String], StyledText[util.Collection[String]], util.Collection[String]]] {
-      override def accept(t: RichTextChange[util.Collection[String], StyledText[util.Collection[String]], util.Collection[String]]): Unit = {
+    new Consumer[RichTextChange[util.Collection[String], String, util.Collection[String]]] {
+      override def accept(t: RichTextChange[util.Collection[String], String, util.Collection[String]]): Unit = {
         codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()))
       }
     })
