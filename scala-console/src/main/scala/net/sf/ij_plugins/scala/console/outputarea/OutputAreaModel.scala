@@ -1,6 +1,6 @@
 /*
  *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Copyright (C) 2002-2018 Jarek Sacha
  *  Author's email: jpsacha at gmail dot com
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,10 +22,12 @@
 
 package net.sf.ij_plugins.scala.console.outputarea
 
-import enumeratum._
+import enumeratum.{Enum, EnumEntry}
 import org.fxmisc.richtext.InlineCssTextArea
-import org.scalafx.extras._
 import org.scalafx.extras.modelview.Model
+import org.scalafx.extras.{onFX, onFXAndWait}
+
+import scala.collection.immutable
 
 object OutputAreaModel {
   sealed abstract class Style(override val entryName: String) extends EnumEntry
@@ -35,7 +37,7 @@ object OutputAreaModel {
     */
   object Style extends Enum[Style] {
 
-    val values = findValues
+    val values: immutable.IndexedSeq[Style] = findValues
 
     case object Regular extends Style("regular")
     case object Error extends Style("error")
