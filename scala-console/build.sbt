@@ -2,7 +2,7 @@
 
 name         := "ijp-scala-console"
 organization := "net.sf.ij-plugins"
-version      := "1.5.1"
+version      := "1.5.2-SNAPSHOT"
 
 homepage     := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
 startYear    := Some(2013)
