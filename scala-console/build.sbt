@@ -16,25 +16,25 @@ scalaVersion := crossScalaVersions.value.head
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
 // change Compile to Test to set it for the test jar
-mainClass in(Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
+Compile/packageBin/mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 // set the main class for the main 'run' task
 // change Compile to Test to set it for 'test:run'
-mainClass in(Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
+Compile/ run /mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
   "com.beachape"           %% "enumeratum"          % "1.7.2",
-  "org.fxmisc.richtext"     % "richtextfx"          % "0.8.2",
+  "org.fxmisc.richtext"     % "richtextfx"          % "0.11.0",
   "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
   "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
   "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
   "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
   "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
   "net.imagej"              % "ij"                  % "1.53v",
-  "org.scalatest"          %% "scalatest"           % "3.0.9" % "test"
+  "org.scalatest"          %% "scalatest"           % "3.2.14" % "test"
 )
 
-scalacOptions in(Compile, compile) ++= Seq(
+Compile/ compile /scalacOptions ++= Seq(
       "-target:jvm-1.8",
       "-encoding", "UTF-8",
       "-unchecked",
@@ -62,9 +62,6 @@ javaOptions += "-Xmx2G"
 // Needed by ScalaFXML
 autoCompilerPlugins := true
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
-
-// Set the prompt (for this build) to include the project id.
-shellPrompt in ThisBuild := { state => "sbt:" + Project.extract(state).currentRef.project + "> " }
 
 enablePlugins(SbtImageJ)
 ijRuntimeSubDir := "sandbox"
