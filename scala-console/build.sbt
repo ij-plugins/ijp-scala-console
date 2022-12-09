@@ -10,7 +10,7 @@ licenses     := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.
 description  :=
   "Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application."
 
-crossScalaVersions := Seq("2.11.12", "2.12.5")
+crossScalaVersions := Seq("2.12.17")
 scalaVersion := crossScalaVersions.value.head
 
 // set the main class for packaging the main jar
@@ -23,15 +23,15 @@ mainClass in(Compile, packageBin) := Some("net.sf.ij_plugins.scala.console.Scala
 mainClass in(Compile, run) := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
-  "com.beachape"           %% "enumeratum"          % "1.5.13",
+  "com.beachape"           %% "enumeratum"          % "1.7.2",
   "org.fxmisc.richtext"     % "richtextfx"          % "0.8.2",
   "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
-  "org.scala-lang.modules" %% "scala-java8-compat"  % "0.8.0",
-  "org.scalafx"            %% "scalafx"             % "8.0.144-R12",
-  "org.scalafx"            %% "scalafxml-core-sfx8" % "0.4",
-  "org.scalafx"            %% "scalafx-extras"      % "0.1.0",
-  "net.imagej"              % "ij"                  % "1.51f",
-  "org.scalatest"          %% "scalatest"           % "3.0.5" % "test"
+  "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
+  "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
+  "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
+  "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
+  "net.imagej"              % "ij"                  % "1.53v",
+  "org.scalatest"          %% "scalatest"           % "3.0.9" % "test"
 )
 
 scalacOptions in(Compile, compile) ++= Seq(
@@ -51,7 +51,7 @@ scalacOptions in(Compile, compile) ++= Seq(
 //      "-Ywarn-unused-import"
     )
 
-resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
+//resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
 
 // fork a new JVM for 'run' and 'test:run'
 fork := true

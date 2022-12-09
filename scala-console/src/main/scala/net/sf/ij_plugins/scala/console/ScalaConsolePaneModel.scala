@@ -1,6 +1,6 @@
 /*
  * ImageJ Plugins
- * Copyright (C) 2002-2016 Jarek Sacha
+ * Copyright (C) 2002-2022 Jarek Sacha
  * Author's email: jpsacha at gmail dot com
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ package net.sf.ij_plugins.scala.console
 import net.sf.ij_plugins.scala.console.ScalaInterpreter._
 import net.sf.ij_plugins.scala.console.editor.Editor
 import net.sf.ij_plugins.scala.console.outputarea.OutputArea
-import org.scalafx.extras.modelview.Model
+import org.scalafx.extras.mvcfx.ModelFX
 import org.scalafx.extras.onFX
 
 import scala.collection.mutable
@@ -37,7 +37,7 @@ import scalafx.beans.property.{ReadOnlyBooleanProperty, ReadOnlyBooleanWrapper, 
 /**
   * UI model for the Scala Console main pane.
   */
-class ScalaConsolePaneModel extends Model {
+class ScalaConsolePaneModel extends ModelFX {
 
   val statusText = new StringProperty("Welcome to Scala Console")
   val editor = new Editor()

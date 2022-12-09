@@ -1,6 +1,6 @@
 /*
  * ImageJ Plugins
- * Copyright (C) 2002-2016 Jarek Sacha
+ * Copyright (C) 2002-2022 Jarek Sacha
  * Author's email: jpsacha at gmail dot com
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +25,6 @@ package net.sf.ij_plugins.scala.console
 
 import net.sf.ij_plugins.scala.console.editor.Action
 import org.scalafx.extras._
-import org.scalafx.extras.modelview.View
 
 import scalafx.Includes._
 import scalafx.application.Platform
@@ -35,6 +34,7 @@ import scalafx.scene.image.Image
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.{Cursor, Parent}
 import scalafxml.core.macros.sfxml
+import org.scalafx.extras.mvcfx.ControllerFX
 
 /**
   * View for the Scala Console main pane.
@@ -46,7 +46,7 @@ class ScalaConsolePaneView(private val fileMenu: Menu,
                            private val editorPane: BorderPane,
                            private val outputPane: BorderPane,
                            private val statusLabel: Label,
-                           private val model: ScalaConsolePaneModel) extends View {
+                           private val model: ScalaConsolePaneModel) extends ControllerFX {
 
   val runAction = Action(
     name = "Run",
