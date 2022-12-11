@@ -1,6 +1,6 @@
 /*
  * ImageJ Plugins
- * Copyright (C) 2002-2016 Jarek Sacha
+ * Copyright (C) 2002-2022 Jarek Sacha
  * Author's email: jpsacha at gmail dot com
  *
  * This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ package net.sf.ij_plugins.scala.console
 import org.scalafx.extras._
 
 import scalafx.Includes._
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
+import scalafx.application.JFXApp3
+import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.beans.binding.Bindings
 import scalafx.scene.image.Image
 import scalafx.scene.{Node, Scene}
@@ -36,68 +36,67 @@ import scalafx.stage.WindowEvent
 /**
   * Stand-alone Scala Console application.
   */
-object ScalaConsoleApp extends JFXApp {
+object ScalaConsoleApp extends JFXApp3 {
 
   val title = "Scala Console"
 
-  val iconImages = {
-    val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
-    val path = "/net/sf/ij_plugins/scala/console/resources/"
-    names.map { n => new Image(s"$path$n").delegate }
-  }
+  override def start(): Unit = {
 
-  val scalaConsolePane = new ScalaConsolePane()
-
-  stage = new PrimaryStage {
-    scene = new Scene(640, 480) {
-      root = scalaConsolePane.view
+    val iconImages = {
+      val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
+      val path = "/net/sf/ij_plugins/scala/console/resources/"
+      names.map { n => new Image(s"$path$n").delegate }
     }
-    icons ++= iconImages
 
-    // Intercept window close request
-    onCloseRequest = (event: WindowEvent) => {
-      if (scalaConsolePane.model.onExit()) {
-        // Exiting, allow default FX close handler
-      } else {
-        // Do not exit, mark close request event as done
-        event.consume()
+    val scalaConsolePane = new ScalaConsolePane()
+
+    stage = new PrimaryStage {
+      scene = new Scene(640, 480) {
+        root = scalaConsolePane.view
       }
-    }
+      icons ++= iconImages
 
-    // Display open file name in the title
-    title <== Bindings.createStringBinding(
-      () => {
-        val t = scalaConsolePane.model.editor.sourceFile.value match {
-          case Some(f) => "Scala Console: " + f.getName
-          case None => "Scala Console"
+      // Intercept window close request
+      onCloseRequest = (event: WindowEvent) => {
+        if (scalaConsolePane.model.onExit()) {
+          // Exiting, allow default FX close handler
+        } else {
+          // Do not exit, mark close request event as done
+          event.consume()
         }
+      }
 
-        // Add `*` when content is modified
-        t + (if (scalaConsolePane.model.editor.needsSaving.value) "*" else "")
-      },
-      scalaConsolePane.model.editor.sourceFile,
-      scalaConsolePane.model.editor.needsSaving
-    )
+      // Display open file name in the title
+      title <== Bindings.createStringBinding(
+        () => {
+          val t = scalaConsolePane.model.editor.sourceFile.value match {
+            case Some(f) => "Scala Console: " + f.getName
+            case None => "Scala Console"
+          }
+
+          // Add `*` when content is modified
+          t + (if (scalaConsolePane.model.editor.needsSaving.value) "*" else "")
+        },
+        scalaConsolePane.model.editor.sourceFile,
+        scalaConsolePane.model.editor.needsSaving
+      )
+    }
   }
 
   def setupUncaughtExceptionHandling(title: String): Unit = {
     Thread.setDefaultUncaughtExceptionHandler(
-      new Thread.UncaughtExceptionHandler {
-        override def uncaughtException(t: Thread, e: Throwable): Unit = {
-          e.printStackTrace()
-          showException("Unhandled exception.", e)
-        }
+      (t: Thread, e: Throwable) => {
+        e.printStackTrace()
+        showException("Unhandled exception.", e)
       }
     )
 
     onFXAndWait {
       Thread.currentThread().setUncaughtExceptionHandler(
-        new Thread.UncaughtExceptionHandler {
-          override def uncaughtException(t: Thread, e: Throwable): Unit = {
-            e.printStackTrace()
-            showException("Unhandled exception.", e)
+        (t: Thread, e: Throwable) => {
+          e.printStackTrace()
+          showException("Unhandled exception.", e)
 
-          }
         }
       )
     }
@@ -109,5 +108,4 @@ object ScalaConsoleApp extends JFXApp {
 
     ShowMessage.exception(title, header, t, null.asInstanceOf[Node])
   }
-
 }
