@@ -36,7 +36,7 @@ import scalafx.scene.image.Image
 import scalafx.stage.Stage
 
 
-private object ScalaConsolePlugin {˚
+private object ScalaConsolePlugin {
   console.addPluginsJarsToClassPath()
 }
 

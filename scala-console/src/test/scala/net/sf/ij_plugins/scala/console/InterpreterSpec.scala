@@ -27,13 +27,12 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.io.{OutputStream, Writer}
-
 import scala.tools.nsc.interpreter.{IMain, Results}
 import scala.tools.nsc.{NewLinePrintWriter, Settings}
 
 /**
-  * @author Jarek Sacha 
-  */
+ * @author Jarek Sacha
+ */
 class InterpreterSpec extends AnyFlatSpec with Matchers {
 
   private trait Buffer {
@@ -70,24 +69,24 @@ class InterpreterSpec extends AnyFlatSpec with Matchers {
     }
 
     // Capture output streams
-    val defaultOut = Console.out
     val outStream = new BufferOutputStream
-    Console.setOut(outStream)
-    val defaultErr = Console.err
     val errStream = new BufferOutputStream
-    Console.setErr(errStream)
 
-    // Create interpreter
-    val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(bufferWriter, true))
-
-    // Interpret simple code
     val outString = "Hello"
-    val code = "print(\"" + outString + "\")"
-    val result = interpreter.interpret(code)
 
-    // Restore default streams
-    Console.setOut(defaultOut)
-    Console.setErr(defaultErr)
+    val result =
+      Console.withOut(outStream) {
+        Console.withErr(errStream) {
+
+          // Create interpreter
+          val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(bufferWriter, true))
+
+          // Interpret simple code
+
+          val code = "print(\"" + outString + "\")"
+          interpreter.interpret(code)
+        }
+      }
 
     // Verify
     result should equal(Results.Success)
@@ -96,5 +95,4 @@ class InterpreterSpec extends AnyFlatSpec with Matchers {
     errStream.buffer.isEmpty should equal(true)
     bufferWriter.buffer.isEmpty should equal(true)
   }
-
 }

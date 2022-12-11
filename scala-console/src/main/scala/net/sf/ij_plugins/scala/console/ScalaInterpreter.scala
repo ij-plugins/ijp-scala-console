@@ -1,6 +1,6 @@
 /*
  * ImageJ Plugins
- * Copyright (C) 2002-2016 Jarek Sacha
+ * Copyright (C) 2002-2022 Jarek Sacha
  * Author's email: jpsacha at gmail dot com
  *
  * This library is free software; you can redistribute it and/or
@@ -159,12 +159,16 @@ class ScalaInterpreter() extends Publisher[InterpreterEvent] {
     interpreterOutBuffer.clear()
     state = State.Running
 
-    Console.setOut(outStream)
+    // Console.setOut(outStream)
+    // Console.setErr(errStream)
     java.lang.System.setOut(new PrintStream(outStream))
-    Console.setErr(errStream)
     java.lang.System.setErr(new PrintStream(outStream))
-
-    val r = interpreter.interpret(code)
+    val r =
+      Console.withOut(outStream) {
+        Console.withErr(errStream) {
+          interpreter.interpret(code)
+        }
+      }
 
     r match {
       case Results.Error =>
