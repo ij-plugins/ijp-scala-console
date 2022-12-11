@@ -23,14 +23,13 @@
 
 package net.sf.ij_plugins.scala.console.editor
 
-import java.io.{File, FileWriter}
-
 import net.sf.ij_plugins.scala.console.editor.Editor.EditorEvent
-
-import scala.collection.mutable
+import net.sf.ij_plugins.scala.console.editor.extra.Publisher
 import scalafx.beans.binding.{Bindings, BooleanBinding}
 import scalafx.beans.property.{ObjectProperty, ReadOnlyObjectProperty, ReadOnlyObjectWrapper}
 import scalafx.beans.value.ObservableValue
+
+import java.io.{File, FileWriter}
 
 
 /**
@@ -39,7 +38,7 @@ import scalafx.beans.value.ObservableValue
   * @author Jarek Sacha
   * @since 2/17/12 5:57 PM
   */
-private class EditorModel(private val textArea: EditorCodeArea) extends mutable.Publisher[EditorEvent] {
+private class EditorModel(private val textArea: EditorCodeArea) extends Publisher[EditorEvent] {
 
   private val _sourceFile = ReadOnlyObjectWrapper[Option[File]](None)
   /**

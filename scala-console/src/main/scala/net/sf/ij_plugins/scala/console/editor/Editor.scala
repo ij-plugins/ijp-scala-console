@@ -23,89 +23,83 @@
 
 package net.sf.ij_plugins.scala.console.editor
 
-import java.io.File
-
 import net.sf.ij_plugins.scala.console.editor.Editor.EditorEvent
-
-import scala.collection.mutable
+import net.sf.ij_plugins.scala.console.editor.extra.Publisher
 import scalafx.beans.binding.BooleanBinding
 import scalafx.beans.property.ReadOnlyObjectProperty
 import scalafx.scene.Node
 
+import java.io.File
+
 object Editor {
 
   /**
-    * Event marker trait.
-    */
+   * Event marker trait.
+   */
   trait EditorEvent
 
   /**
-    * Notifies that file name associated with the editor changed.
-    * Informs what file was saved or opened in the editor.
-    */
+   * Notifies that file name associated with the editor changed.
+   * Informs what file was saved or opened in the editor.
+   */
   case class SourceFileEvent(file: Option[File]) extends EditorEvent
 
 }
 
 /**
-  * Code input area of the console.  Creates MVC components and gives access to the view, and externally relevant
-  * parts of the model (selection and text) and controller (actions).
-  *
-  * Publishes event [[net.sf.ij_plugins.scala.console.editor.Editor.SourceFileEvent]]
-  */
-class Editor extends mutable.Publisher[EditorEvent] {
+ * Code input area of the console.  Creates MVC components and gives access to the view, and externally relevant
+ * parts of the model (selection and text) and controller (actions).
+ *
+ * Publishes event [[net.sf.ij_plugins.scala.console.editor.Editor.SourceFileEvent]]
+ */
+class Editor extends Publisher[EditorEvent] {
 
   private val editorCodeArea = new EditorCodeArea()
 
-  private lazy val _view = editorCodeArea.view
-  private lazy val _model = new EditorModel(editorCodeArea)
+  private lazy val _view       = editorCodeArea.view
+  private lazy val _model      = new EditorModel(editorCodeArea)
   private lazy val _controller = new EditorController(null, _model)
 
-  _model.subscribe(
-    new mutable.Subscriber[EditorEvent, mutable.Publisher[EditorEvent]] {
-      override def notify(pub: mutable.Publisher[EditorEvent], event: EditorEvent): Unit = {
-        // Just forward event from the model
-        publish(event)
-      }
-    }
-  )
+  _model.subscribe((_: Publisher[EditorEvent], event: EditorEvent) => {
+    // Just forward event from the model
+    publish(event)
+  })
 
   // Initialize editor
   _model.reset()
 
-
   /**
-    * Component displaying content of this editor
-    */
+   * Component displaying content of this editor
+   */
   def view: Node = _view
 
   /**
-    * Currently selected text in the editor. May be an empty string.
-    */
+   * Currently selected text in the editor. May be an empty string.
+   */
   def selection: String = _model.selection
 
   /**
-    * Full editor content.
-    */
+   * Full editor content.
+   */
   def text: String = _model.text.value
 
   /**
-    * Source file from editor content was saved to read from.
-    */
+   * Source file from editor content was saved to read from.
+   */
   val sourceFile: ReadOnlyObjectProperty[Option[File]] = _model.sourceFile
 
   val needsSaving: BooleanBinding = _model.needsSaving
 
   /**
-    * Actions for file menu.
-    */
+   * Actions for file menu.
+   */
   def fileActions: Seq[Action] = _controller.fileActions
 
   /**
-    * Perform operations needed to safely close the editor, save files, etc.
-    *
-    * Return 'true' if can be closed.
-    */
+   * Perform operations needed to safely close the editor, save files, etc.
+   *
+   * Return 'true' if can be closed.
+   */
   def prepareToClose(): Boolean = {
     _controller.prepareToClose()
   }
@@ -113,6 +107,5 @@ class Editor extends mutable.Publisher[EditorEvent] {
   def read(file: File): Unit = {
     _controller.read(file)
   }
-
 
 }

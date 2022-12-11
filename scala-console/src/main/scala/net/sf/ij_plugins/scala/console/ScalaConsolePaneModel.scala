@@ -25,47 +25,47 @@ package net.sf.ij_plugins.scala.console
 
 import net.sf.ij_plugins.scala.console.ScalaInterpreter._
 import net.sf.ij_plugins.scala.console.editor.Editor
+import net.sf.ij_plugins.scala.console.editor.extra.{Publisher, Subscriber}
 import net.sf.ij_plugins.scala.console.outputarea.OutputArea
 import org.scalafx.extras.mvcfx.ModelFX
 import org.scalafx.extras.onFX
-
-import scala.collection.mutable
-import scala.tools.nsc.interpreter.Results
 import scalafx.application.Platform
 import scalafx.beans.property.{ReadOnlyBooleanProperty, ReadOnlyBooleanWrapper, StringProperty}
 
+import scala.tools.nsc.interpreter.Results
+
 /**
-  * UI model for the Scala Console main pane.
-  */
+ * UI model for the Scala Console main pane.
+ */
 class ScalaConsolePaneModel extends ModelFX {
 
   val statusText = new StringProperty("Welcome to Scala Console")
-  val editor = new Editor()
+  val editor     = new Editor()
   val outputArea = new OutputArea()
 
-  private val _isReady = new ReadOnlyBooleanWrapper(this, "isReady", true)
+  private val _isReady                 = new ReadOnlyBooleanWrapper(this, "isReady", true)
   val isReady: ReadOnlyBooleanProperty = _isReady.readOnlyProperty
 
   private val scalaInterpreter = new ScalaInterpreter()
 
-  val interpreterReactions =
-    new mutable.Subscriber[InterpreterEvent, mutable.Publisher[InterpreterEvent]] {
-      override def notify(pub: mutable.Publisher[InterpreterEvent], event: InterpreterEvent): Unit = {
+  private val interpreterReactions =
+    new Subscriber[InterpreterEvent, Publisher[InterpreterEvent]] {
+      override def notify(pub: Publisher[InterpreterEvent], event: InterpreterEvent): Unit = {
         event match {
           case StateEvent(s) => onFX {
-            _isReady.value = s == State.Ready
-            statusText.value = s.entryName
-          }
+              _isReady.value = s == State.Ready
+              statusText.value = s.entryName
+            }
           //          enablable.foreach(_.enabled = isReady)
           //          cursor = if (isReady) Cursor.getDefaultCursor else Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
 
-          case ErrStreamEvent(data) => outputArea.model.appendErrStream(data)
-          case OutStreamEvent(data) => outputArea.model.appendOutStream(data)
+          case ErrStreamEvent(data)      => outputArea.model.appendErrStream(data)
+          case OutStreamEvent(data)      => outputArea.model.appendOutStream(data)
           case InterpreterLogEvent(data) => outputArea.model.appendInterpreterOut(data)
           case ResultEvent(result) =>
             result match {
-              case Results.Error => outputArea.model.appendErrStream(result.toString)
-              case Results.Success => outputArea.model.appendOutStream(result.toString)
+              case Results.Error      => outputArea.model.appendErrStream(result.toString)
+              case Results.Success    => outputArea.model.appendOutStream(result.toString)
               case Results.Incomplete => outputArea.model.appendErrStream(result.toString)
             }
 
@@ -87,7 +87,7 @@ class ScalaConsolePaneModel extends ModelFX {
 
     // Use selection if not empty
     val selection = editor.selection
-    val code = if (selection != null && !selection.isEmpty) selection else editor.text
+    val code      = if (selection != null && selection.nonEmpty) selection else editor.text
 
     // Show which code will be run
     outputArea.model.list(code)
@@ -97,12 +97,12 @@ class ScalaConsolePaneModel extends ModelFX {
   }
 
   /**
-    * Exit application if no saving is needed or saving is done.
-    * Do not exit if user cancelled saving request.
-    *
-    * @return `true` when exited (application may terminate before returning).
-    *         `false` if exit was canceled.
-    */
+   * Exit application if no saving is needed or saving is done.
+   * Do not exit if user cancelled saving request.
+   *
+   * @return `true` when exited (application may terminate before returning).
+   *         `false` if exit was canceled.
+   */
   def onExit(): Boolean = {
     // Check if content needs to be saved
     if (editor.prepareToClose()) {

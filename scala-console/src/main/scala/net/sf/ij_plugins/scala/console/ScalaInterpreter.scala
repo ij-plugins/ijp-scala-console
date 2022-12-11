@@ -23,34 +23,32 @@
 
 package net.sf.ij_plugins.scala.console
 
-import java.io.{PrintStream, Writer}
-
 import enumeratum.{EnumEntry, _}
-import net.sf.ij_plugins.scala.console
 import net.sf.ij_plugins.scala.console.ScalaInterpreter.InterpreterEvent
+import net.sf.ij_plugins.scala.console.editor.extra.Publisher
 
-import scala.collection.mutable
+import java.io.{OutputStream, PrintStream, Writer}
+import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
 import scala.tools.nsc.interpreter.Results.Result
-import scala.tools.nsc.interpreter._
+import scala.tools.nsc.interpreter.{IMain, Results}
 import scala.tools.nsc.{NewLinePrintWriter, Settings}
-
 
 object ScalaInterpreter {
 
   /**
-    * Event marker trait.
-    */
+   * Event marker trait.
+   */
   trait InterpreterEvent
 
   /**
-    * Interpreter execution state.
-    */
+   * Interpreter execution state.
+   */
   sealed abstract class State(override val entryName: String) extends EnumEntry
 
   object State extends Enum[State] {
 
-    val values = findValues
+    val values: immutable.IndexedSeq[State] = findValues
 
     case object Running extends State("Running...")
 
@@ -59,45 +57,44 @@ object ScalaInterpreter {
   }
 
   /**
-    * Interpreter state changed.
-    */
+   * Interpreter state changed.
+   */
   case class StateEvent(state: State) extends InterpreterEvent
 
   /**
-    * Posted after interpreter finished with results returned by the interpreter
-    */
+   * Posted after interpreter finished with results returned by the interpreter
+   */
   case class ResultEvent(result: Result) extends InterpreterEvent
 
   /**
-    * New value `data` in the standard out stream.
-    */
+   * New value `data` in the standard out stream.
+   */
   case class OutStreamEvent(data: String) extends InterpreterEvent
 
   /**
-    * New value `data` in the standard err stream.
-    */
+   * New value `data` in the standard err stream.
+   */
   case class ErrStreamEvent(data: String) extends InterpreterEvent
 
   /**
-    * New value `data` in the interpreter log.
-    */
+   * New value `data` in the interpreter log.
+   */
   case class InterpreterLogEvent(data: String) extends InterpreterEvent
 
 }
 
-
 /**
-  * Wrapper for scala interpreter. Publishes events when output is printed to standard output, standard error,
-  * and to interpreter log.
-  *
-  * Publishes events:
-  * [[console.ScalaInterpreter.StateEvent StateEvent]],
-  * [[console.ScalaInterpreter.OutStreamEvent OutStreamEvent]],
-  * [[console.ScalaInterpreter.ErrStreamEvent ErrStreamEvent]],
-  * [[console.ScalaInterpreter.InterpreterLogEvent InterpreterLogEvent]],
-  * [[console.ScalaInterpreter.ResultEvent ResultEvent]].
-  */
-class ScalaInterpreter() extends mutable.Publisher[InterpreterEvent] {
+ * Wrapper for scala interpreter. Publishes events when output is printed to standard output, standard error,
+ * and to interpreter log.
+ *
+ * Publishes events:
+ * [[console.ScalaInterpreter.StateEvent StateEvent]],
+ * [[console.ScalaInterpreter.OutStreamEvent OutStreamEvent]],
+ * [[console.ScalaInterpreter.ErrStreamEvent ErrStreamEvent]],
+ * [[console.ScalaInterpreter.InterpreterLogEvent InterpreterLogEvent]],
+ * [[console.ScalaInterpreter.ResultEvent ResultEvent]].
+ */
+class ScalaInterpreter() extends Publisher[InterpreterEvent] {
 
   import ScalaInterpreter._
 
@@ -121,7 +118,6 @@ class ScalaInterpreter() extends mutable.Publisher[InterpreterEvent] {
     }
   }
 
-
   private object interpreterOut extends Writer {
     def close(): Unit = {}
 
@@ -133,8 +129,7 @@ class ScalaInterpreter() extends mutable.Publisher[InterpreterEvent] {
     }
   }
 
-
-  val interpreterSettings = new Settings() {
+  val interpreterSettings: Settings = new Settings() {
     usejavacp.value = true
     //        classpath.value +=
   }
@@ -145,22 +140,20 @@ class ScalaInterpreter() extends mutable.Publisher[InterpreterEvent] {
   private var _state: State = State.Ready
 
   /**
-    * Current state.
-    */
+   * Current state.
+   */
   def state: State = _state
-
 
   private def state_=(newState: State): Unit = {
     _state = newState
     publish(StateEvent(_state))
   }
 
-
   /**
-    * Interpret `code`
-    *
-    * @param code actual text of the code to be interpreted.
-    */
+   * Interpret `code`
+   *
+   * @param code actual text of the code to be interpreted.
+   */
   def run(code: String): Unit = {
 
     interpreterOutBuffer.clear()
