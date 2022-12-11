@@ -107,7 +107,7 @@ object ScalaConsoleApp extends JFXApp {
     // Make sure that FX is initialized
     initFX()
 
-    org.scalafx.extras.showException(title, header, t, null.asInstanceOf[Node])
+    ShowMessage.exception(title, header, t, null.asInstanceOf[Node])
   }
 
 }

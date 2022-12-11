@@ -28,41 +28,41 @@ import org.fxmisc.richtext.InlineCssTextArea
 import org.scalafx.extras.mvcfx.ModelFX
 import org.scalafx.extras.{onFX, onFXAndWait}
 
-import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.convert.ImplicitConversions._
 import scala.collection.immutable
 
 object OutputAreaModel {
   sealed abstract class Style(override val entryName: String) extends EnumEntry
 
   /**
-    * Document style identifiers.
-    */
+   * Document style identifiers.
+   */
   object Style extends Enum[Style] {
 
     val values: immutable.IndexedSeq[Style] = findValues
 
     case object Regular extends Style("regular")
-    case object Error extends Style("error")
-    case object Log extends Style("log")
-    case object Code extends Style("code")
+    case object Error   extends Style("error")
+    case object Log     extends Style("log")
+    case object Code    extends Style("code")
   }
 }
 
 /**
-  */
+ */
 class OutputAreaModel extends ModelFX {
 
   import OutputAreaModel._
 
-  val CodeColor = "#404080"
-  val LogColor = "grey"
+  val CodeColor  = "#404080"
+  val LogColor   = "grey"
   val ErrorColor = "red"
 
   //  val outputText = new StringProperty()
   val codeArea = new InlineCssTextArea()
   codeArea.setStyle("-fx-font-family: monospace; -fx-background-color: #FFFFDA")
 
-  def clear(): Unit = onFXAndWait {codeArea.replaceText(0, codeArea.getLength, "")}
+  def clear(): Unit = onFXAndWait { codeArea.replaceText(0, codeArea.getLength, "") }
 
   def list(code: String): Unit = {
     code.lines.toList.foreach {
@@ -89,10 +89,10 @@ class OutputAreaModel extends ModelFX {
     val cssStyle: String = "-fx-font-family: monospace;" + {
       style match {
         case Style.Regular => ""
-        case Style.Error => s"-fx-fill: $ErrorColor;"
-        case Style.Log => s"-fx-fill: $LogColor;"
-        case Style.Code => s"-fx-fill: $CodeColor;"
-        case _ => ""
+        case Style.Error   => s"-fx-fill: $ErrorColor;"
+        case Style.Log     => s"-fx-fill: $LogColor;"
+        case Style.Code    => s"-fx-fill: $CodeColor;"
+        case _             => ""
       }
     }
 

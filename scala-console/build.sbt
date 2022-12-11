@@ -43,7 +43,7 @@ Compile/ compile /scalacOptions ++= Seq(
       "-feature",
       "-Xfuture",
       "–optimise",
-      "-Yno-adapted-args",
+//      "-Yno-adapted-args",
       "-Ywarn-dead-code",
       "-Ywarn-numeric-widen"
 //      "-Ywarn-value-discard",
