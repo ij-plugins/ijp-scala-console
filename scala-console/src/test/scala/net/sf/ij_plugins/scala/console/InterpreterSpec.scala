@@ -27,8 +27,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.io.{OutputStream, Writer}
-import scala.tools.nsc.interpreter.{IMain, Results}
-import scala.tools.nsc.{NewLinePrintWriter, Settings}
+import scala.tools.nsc.interpreter.Results
 
 /**
  * @author Jarek Sacha
@@ -63,11 +62,6 @@ class InterpreterSpec extends AnyFlatSpec with Matchers {
 
   "Interpreter" should "capture output streams" in {
 
-    val interpreterSettings = new Settings() {
-      usejavacp.value = true
-      // classpath.value +=
-    }
-
     // Capture output streams
     val outStream = new BufferOutputStream
     val errStream = new BufferOutputStream
@@ -79,7 +73,7 @@ class InterpreterSpec extends AnyFlatSpec with Matchers {
         Console.withErr(errStream) {
 
           // Create interpreter
-          val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(bufferWriter, true))
+          val interpreter = IMainFactory.create(bufferWriter)
 
           // Interpret simple code
 

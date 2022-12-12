@@ -32,7 +32,6 @@ import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
 import scala.tools.nsc.interpreter.Results.Result
 import scala.tools.nsc.interpreter.{IMain, Results}
-import scala.tools.nsc.{NewLinePrintWriter, Settings}
 
 object ScalaInterpreter {
 
@@ -129,13 +128,8 @@ class ScalaInterpreter() extends Publisher[InterpreterEvent] {
     }
   }
 
-  val interpreterSettings: Settings = new Settings() {
-    usejavacp.value = true
-    //        classpath.value +=
-  }
-
   // Create interpreter
-  val interpreter = new IMain(interpreterSettings, new NewLinePrintWriter(interpreterOut, true))
+  val interpreter: IMain = IMainFactory.create(interpreterOut)
 
   private var _state: State = State.Ready
 

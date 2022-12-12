@@ -63,7 +63,7 @@ class OutputAreaModel extends ModelFX {
   def clear(): Unit = onFXAndWait { codeArea.replaceText(0, codeArea.getLength, "") }
 
   def list(code: String): Unit = {
-    code.lines.toArray.foreach {
+    code.linesIterator.foreach {
       line =>
         appendText("scala> ", Style.Log)
         appendText(line + "\n", Style.Code)

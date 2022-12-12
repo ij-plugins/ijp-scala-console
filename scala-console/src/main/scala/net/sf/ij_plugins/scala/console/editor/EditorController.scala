@@ -89,7 +89,7 @@ private class EditorController(private val ownerWindow: Window,
     eventHandler = () => saveAs()
   )
 
-  def fileActions = Array(fileNewAction, fileOpenAction, fileSaveAction, fileSaveAsAction)
+  def fileActions = Seq(fileNewAction, fileOpenAction, fileSaveAction, fileSaveAsAction)
 
   def read(file: File): Unit = {
     model.read(file)

@@ -10,17 +10,28 @@ licenses     := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.
 description  :=
   "Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application."
 
-crossScalaVersions := Seq("2.12.17")
+crossScalaVersions := Seq("2.13.10", "2.12.17")
 scalaVersion := crossScalaVersions.value.head
+
+def isScala2_12(scalaVersion: String): Boolean =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, 12)) => true
+    case _             => false
+  }
+def isScala2_13(scalaVersion: String): Boolean =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, 13)) => true
+    case _             => false
+  }
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
 // change Compile to Test to set it for the test jar
-Compile/packageBin/mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
+Compile / packageBin / mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 // set the main class for the main 'run' task
 // change Compile to Test to set it for 'test:run'
-Compile/ run /mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
+Compile / run / mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp")
 
 libraryDependencies ++= Seq(
   "com.beachape"           %% "enumeratum"          % "1.7.2",
@@ -34,22 +45,34 @@ libraryDependencies ++= Seq(
   "org.scalatest"          %% "scalatest"           % "3.2.14" % "test"
 )
 
-Compile/ compile /scalacOptions ++= Seq(
+libraryDependencies ++= (
+  if (isScala2_12(scalaVersion.value))
+    Seq(compilerPlugin(
+      "org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full
+    ))
+  else
+    Seq.empty[sbt.ModuleID]
+  )
+
+scalacOptions ++= Seq(
       "-release", "8",
       "-encoding", "UTF-8",
+      "-explaintypes",
       "-unchecked",
       "-deprecation",
       "-Xlint",
+      "-Xcheckinit",
       "-feature",
-      "-Xfuture",
       "–optimise",
-//      "-Yno-adapted-args",
       "-Ywarn-dead-code",
-      "-Ywarn-numeric-widen"
-//      "-Ywarn-value-discard",
-//      "-Ywarn-unused",
-//      "-Ywarn-unused-import"
+      "-Ywarn-numeric-widen",
+      "-Xlint:missing-interpolator",
+      "-Ywarn-dead-code",
+      "-Ywarn-unused:-patvars,_",
     )
+
+// If using Scala 2.13 or better, enable macro processing through compiler option
+scalacOptions += (if (isScala2_13(scalaVersion.value)) "-Ymacro-annotations" else "")
 
 //resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
 
@@ -58,10 +81,6 @@ fork := true
 
 // add a JVM option to use when forking a JVM for 'run'
 javaOptions += "-Xmx2G"
-
-// Needed by ScalaFXML
-autoCompilerPlugins := true
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
 
 enablePlugins(SbtImageJ)
 ijRuntimeSubDir := "sandbox"
