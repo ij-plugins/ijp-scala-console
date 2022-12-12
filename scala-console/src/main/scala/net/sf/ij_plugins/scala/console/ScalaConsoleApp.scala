@@ -1,30 +1,28 @@
 /*
- * ImageJ Plugins
- * Copyright (C) 2002-2022 Jarek Sacha
- * Author's email: jpsacha at gmail dot com
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2022 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at https://github.com/ij-plugins
- *
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console
 
 import org.scalafx.extras._
-
 import scalafx.Includes._
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
@@ -34,17 +32,19 @@ import scalafx.scene.{Node, Scene}
 import scalafx.stage.WindowEvent
 
 /**
-  * Stand-alone Scala Console application.
-  */
+ * Stand-alone Scala Console application.
+ */
 object ScalaConsoleApp extends JFXApp3 {
 
   val title = "Scala Console"
 
   override def start(): Unit = {
 
+    setupUncaughtExceptionHandling(title)
+
     val iconImages = {
       val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
-      val path = "/net/sf/ij_plugins/scala/console/resources/"
+      val path  = "/net/sf/ij_plugins/scala/console/resources/"
       names.map { n => new Image(s"$path$n").delegate }
     }
 
@@ -71,7 +71,7 @@ object ScalaConsoleApp extends JFXApp3 {
         () => {
           val t = scalaConsolePane.model.editor.sourceFile.value match {
             case Some(f) => "Scala Console: " + f.getName
-            case None => "Scala Console"
+            case None    => "Scala Console"
           }
 
           // Add `*` when content is modified
@@ -83,22 +83,17 @@ object ScalaConsoleApp extends JFXApp3 {
     }
   }
 
-  def setupUncaughtExceptionHandling(title: String): Unit = {
-    Thread.setDefaultUncaughtExceptionHandler(
-      (t: Thread, e: Throwable) => {
-        e.printStackTrace()
-        showException("Unhandled exception.", e)
-      }
-    )
+  private def setupUncaughtExceptionHandling(title: String): Unit = {
+    Thread.setDefaultUncaughtExceptionHandler((t: Thread, e: Throwable) => {
+      e.printStackTrace()
+      showException(s"$title: Unhandled exception, thread: ${t.getName}.", e)
+    })
 
     onFXAndWait {
-      Thread.currentThread().setUncaughtExceptionHandler(
-        (t: Thread, e: Throwable) => {
-          e.printStackTrace()
-          showException("Unhandled exception.", e)
-
-        }
-      )
+      Thread.currentThread().setUncaughtExceptionHandler((t: Thread, e: Throwable) => {
+        e.printStackTrace()
+        showException(s"$title: Unhandled FX exception, thread: ${t.getName}.", e)
+      })
     }
   }
 
