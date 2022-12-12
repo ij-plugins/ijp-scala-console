@@ -35,7 +35,7 @@ libraryDependencies ++= Seq(
 )
 
 Compile/ compile /scalacOptions ++= Seq(
-      "-target:jvm-1.8",
+      "-release", "8",
       "-encoding", "UTF-8",
       "-unchecked",
       "-deprecation",

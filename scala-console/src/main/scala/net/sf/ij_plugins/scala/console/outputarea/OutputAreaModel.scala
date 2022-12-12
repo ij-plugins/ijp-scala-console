@@ -1,24 +1,23 @@
 /*
- * ImageJ Plugins
- * Copyright (C) 2002-2022 Jarek Sacha
- * Author's email: jpsacha at gmail dot com
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2022 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at https://github.com/ij-plugins
- *
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console.outputarea
@@ -28,7 +27,6 @@ import org.fxmisc.richtext.InlineCssTextArea
 import org.scalafx.extras.mvcfx.ModelFX
 import org.scalafx.extras.{onFX, onFXAndWait}
 
-import scala.collection.convert.ImplicitConversions._
 import scala.collection.immutable
 
 object OutputAreaModel {
@@ -54,9 +52,9 @@ class OutputAreaModel extends ModelFX {
 
   import OutputAreaModel._
 
-  val CodeColor  = "#404080"
-  val LogColor   = "grey"
-  val ErrorColor = "red"
+  private val CodeColor  = "#404080"
+  private val LogColor   = "grey"
+  private val ErrorColor = "red"
 
   //  val outputText = new StringProperty()
   val codeArea = new InlineCssTextArea()
@@ -65,7 +63,7 @@ class OutputAreaModel extends ModelFX {
   def clear(): Unit = onFXAndWait { codeArea.replaceText(0, codeArea.getLength, "") }
 
   def list(code: String): Unit = {
-    code.lines.toList.foreach {
+    code.lines.toArray.foreach {
       line =>
         appendText("scala> ", Style.Log)
         appendText(line + "\n", Style.Code)
