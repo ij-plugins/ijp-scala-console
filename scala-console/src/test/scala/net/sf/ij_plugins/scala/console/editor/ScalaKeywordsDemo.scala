@@ -25,10 +25,9 @@ package net.sf.ij_plugins.scala.console.editor
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 
-
 /**
-  * Simple demo of using EditorCodeArea.
-  */
+ * Simple demo of using EditorCodeArea.
+ */
 object ScalaKeywordsDemo extends JFXApp3 {
 
   override def start(): Unit = {

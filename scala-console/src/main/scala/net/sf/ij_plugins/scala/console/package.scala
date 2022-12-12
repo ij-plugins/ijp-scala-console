@@ -1,6 +1,6 @@
 /*
  *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Copyright (C) 2002-2022 Jarek Sacha
  *  Author's email: jpsacha at gmail dot com
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,20 +22,18 @@
 
 package net.sf.ij_plugins.scala
 
-import java.io.{File, FileFilter, FilenameFilter}
-
 import ij.Menus
 
+import java.io.{File, FileFilter, FilenameFilter}
 import scala.collection.mutable.ArrayBuffer
 import scala.tools.nsc.io.Path
 
-
 /**
-  * Helper methods used in package `net.sf.ij_plugins.scala.console`.
-  *
-  * @author Jarek Sacha
-  * @since 2/17/12
-  */
+ * Helper methods used in package `net.sf.ij_plugins.scala.console`.
+ *
+ * @author Jarek Sacha
+ * @since 2/17/12
+ */
 package object console {
 
   def addPluginsJarsToClassPath(): Unit = {
@@ -50,13 +48,11 @@ package object console {
     System.setProperty("java.class.path", classpath)
   }
 
-
   def listAllJarFiles(root: File): Array[File] = {
     val r = new ArrayBuffer[File]()
     Path(root).walk.filter(e => e.toString().contains(".jar")).foreach(p => r.append(p.jfile))
     r.toArray
   }
-
 
   def listPluginDirectories(): Unit = {
     val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))
@@ -82,7 +78,6 @@ package object console {
     r.toArray
   }
 
-
   def listJarFiles(dirs: Array[File]): Array[File] = {
     val r = ArrayBuffer[File]()
     for (dir <- dirs) {
@@ -90,7 +85,6 @@ package object console {
     }
     r.toArray
   }
-
 
   def listJarFiles(dir: File): Array[File] = {
     val jarFilter = new FilenameFilter() {

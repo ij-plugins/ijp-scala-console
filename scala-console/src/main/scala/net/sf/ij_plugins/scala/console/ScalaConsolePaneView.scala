@@ -1,31 +1,30 @@
 /*
- * ImageJ Plugins
- * Copyright (C) 2002-2022 Jarek Sacha
- * Author's email: jpsacha at gmail dot com
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2022 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at https://github.com/ij-plugins
- *
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console
 
 import net.sf.ij_plugins.scala.console.editor.Action
 import org.scalafx.extras._
-
+import org.scalafx.extras.mvcfx.ControllerFX
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.event.ActionEvent
@@ -34,19 +33,20 @@ import scalafx.scene.image.Image
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.{Cursor, Parent}
 import scalafxml.core.macros.sfxml
-import org.scalafx.extras.mvcfx.ControllerFX
 
 /**
-  * View for the Scala Console main pane.
-  */
+ * View for the Scala Console main pane.
+ */
 @sfxml
-class ScalaConsolePaneView(private val fileMenu: Menu,
-                           private val toolBar: ToolBar,
-                           private val runMenuItem: MenuItem,
-                           private val editorPane: BorderPane,
-                           private val outputPane: BorderPane,
-                           private val statusLabel: Label,
-                           private val model: ScalaConsolePaneModel) extends ControllerFX {
+class ScalaConsolePaneView(
+  private val fileMenu: Menu,
+  private val toolBar: ToolBar,
+  private val runMenuItem: MenuItem,
+  private val editorPane: BorderPane,
+  private val outputPane: BorderPane,
+  private val statusLabel: Label,
+  private val model: ScalaConsolePaneModel
+) extends ControllerFX {
 
   val runAction = Action(
     name = "Run",
@@ -81,14 +81,13 @@ class ScalaConsolePaneView(private val fileMenu: Menu,
   }
 
   // Create editor menu items
-  private val fileMenuItems = model.editor.fileActions.
-    map { a =>
-      new MenuItem {
-        text = a.name
-        graphic = a.icon
-        onAction = a.eventHandler
-      }.delegate
-    }
+  private val fileMenuItems = model.editor.fileActions.map { a =>
+    new MenuItem {
+      text = a.name
+      graphic = a.icon
+      onAction = a.eventHandler
+    }.delegate
+  }
 
   fileMenu.items ++= fileMenuItems
   fileMenu.items += new SeparatorMenuItem()
@@ -111,7 +110,6 @@ class ScalaConsolePaneView(private val fileMenu: Menu,
 
   editorPane.center = model.editor.view
   outputPane.center = model.outputArea.view
-
 
   private def actDisabled[R](op: () => R): Unit = {
     onFX {
@@ -146,6 +144,5 @@ class ScalaConsolePaneView(private val fileMenu: Menu,
   private def parent: Parent = {
     runButton.parent().scene().root()
   }
-
 
 }

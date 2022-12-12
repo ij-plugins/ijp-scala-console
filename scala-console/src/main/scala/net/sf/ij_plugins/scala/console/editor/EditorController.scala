@@ -1,46 +1,43 @@
 /*
- * ImageJ Plugins
- * Copyright (C) 2002-2016 Jarek Sacha
- * Author's email: jpsacha at gmail dot com
+ *  ImageJ Plugins
+ *  Copyright (C) 2002-2022 Jarek Sacha
+ *  Author's email: jpsacha at gmail dot com
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Latest release available at https://github.com/ij-plugins
- *
+ *   Latest release available at https://github.com/ij-plugins
  */
 
 package net.sf.ij_plugins.scala.console.editor
 
-import java.io.File
-import java.util.prefs.Preferences
-
 import net.sf.ij_plugins.scala.console.YesNoAlert
-
 import scalafx.Includes._
 import scalafx.scene.image.Image
 import scalafx.stage.FileChooser.ExtensionFilter
 import scalafx.stage.{FileChooser, Window}
 
+import java.io.File
+import java.util.prefs.Preferences
+
 /**
-  * Translate user actions into commands for the editor model. Controller in the MVC pattern.
-  *
-  * @author Jarek Sacha
-  * @since 2/17/12
-  */
-private class EditorController(private val ownerWindow: Window,
-                               private val model: EditorModel) {
+ * Translate user actions into commands for the editor model. Controller in the MVC pattern.
+ *
+ * @author Jarek Sacha
+ * @since 2/17/12
+ */
+private class EditorController(private val ownerWindow: Window, private val model: EditorModel) {
 
   private val defaultExtension = "scala"
 
@@ -98,7 +95,7 @@ private class EditorController(private val ownerWindow: Window,
   private def save(): Unit = {
     model.sourceFile.value match {
       case Some(file) => model.save(file)
-      case None => saveAs()
+      case None       => saveAs()
     }
   }
 
@@ -122,12 +119,12 @@ private class EditorController(private val ownerWindow: Window,
   }
 
   /**
-    * Return current directory saved in preferences, if cannot be retrieved return `null`.
-    * FileChooser constructor is using `null` to indicate that starting directory is as user's default directory.
-    */
+   * Return current directory saved in preferences, if cannot be retrieved return `null`.
+   * FileChooser constructor is using `null` to indicate that starting directory is as user's default directory.
+   */
   private def currentDirectory: File = {
     try {
-      val prefNode = Preferences.userRoot.node(this.getClass.getName)
+      val prefNode         = Preferences.userRoot.node(this.getClass.getName)
       val currentDirectory = prefNode.get("fileChooser.currentDirectory", null)
       if (currentDirectory == null)
         null
@@ -148,19 +145,19 @@ private class EditorController(private val ownerWindow: Window,
   }
 
   /**
-    * Perform operations needed to safely close the editor, save files, etc.
-    *
-    * Return 'true' if can be closed.
-    */
+   * Perform operations needed to safely close the editor, save files, etc.
+   *
+   * Return 'true' if can be closed.
+   */
   def prepareToClose(): Boolean = ifModifiedAskAndSave()
 
   /**
-    * If editor text was modified, ask user to save current editor content.
-    * Return `false` if user cancelled the operation.
-    *
-    * @return 'true' if content is saved or used did not want to save content.
-    *         `false` if user canceled the dialog.
-    */
+   * If editor text was modified, ask user to save current editor content.
+   * Return `false` if user cancelled the operation.
+   *
+   * @return 'true' if content is saved or used did not want to save content.
+   *         `false` if user canceled the dialog.
+   */
   private def ifModifiedAskAndSave(): Boolean = {
     if (model.needsSaving.value) {
       val alert = YesNoAlert(

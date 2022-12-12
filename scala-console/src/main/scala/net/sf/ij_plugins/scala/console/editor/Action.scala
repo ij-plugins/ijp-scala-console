@@ -1,6 +1,6 @@
 /*
  *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Copyright (C) 2002-2022 Jarek Sacha
  *  Author's email: jpsacha at gmail dot com
  *
  *  This library is free software; you can redistribute it and/or
@@ -23,7 +23,6 @@
 package net.sf.ij_plugins.scala.console.editor
 
 import javafx.event.{ActionEvent, EventHandler}
-
 import scalafx.scene.Node
 import scalafx.scene.image.{Image, ImageView}
 
@@ -31,7 +30,7 @@ object Action {
 
   def apply(name: String, icon: Image, eventHandler: EventHandler[ActionEvent]): Action = {
 
-    val _icon = icon
+    val _icon         = icon
     val _eventHandler = eventHandler
 
     new Action(name) {
@@ -44,13 +43,12 @@ object Action {
 }
 
 /**
-  * Simple UI action.
-  */
+ * Simple UI action.
+ */
 abstract class Action(val name: String) {
 
   def icon: Node
 
   def eventHandler: EventHandler[ActionEvent]
-
 
 }

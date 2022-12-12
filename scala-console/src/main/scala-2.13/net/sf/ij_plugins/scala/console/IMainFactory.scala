@@ -24,8 +24,8 @@ package net.sf.ij_plugins.scala.console
 
 import java.io.{PrintWriter, Writer}
 import scala.tools.nsc.Settings
-import scala.tools.nsc.interpreter.shell.{ReplReporterImpl, ShellConfig}
 import scala.tools.nsc.interpreter.IMain
+import scala.tools.nsc.interpreter.shell.{ReplReporterImpl, ShellConfig}
 
 object IMainFactory {
 

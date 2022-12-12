@@ -1,6 +1,6 @@
 /*
  *  ImageJ Plugins
- *  Copyright (C) 2002-2018 Jarek Sacha
+ *  Copyright (C) 2002-2022 Jarek Sacha
  *  Author's email: jpsacha at gmail dot com
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,11 +22,6 @@
 
 package net.sf.ij_plugins.scala.console.editor
 
-import java.util
-import java.util.Collections
-import java.util.function.Consumer
-import java.util.regex.Pattern
-
 import org.fxmisc.flowless.VirtualizedScrollPane
 import org.fxmisc.richtext.model.{RichTextChange, StyleSpans, StyleSpansBuilder}
 import org.fxmisc.richtext.{CodeArea, LineNumberFactory}
@@ -35,58 +30,99 @@ import scalafx.beans.value.ObservableValue
 import scalafx.scene.Parent
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
 
+import java.util
+import java.util.Collections
+import java.util.function.Consumer
+import java.util.regex.Pattern
 import scala.compat.java8.FunctionConverters._
 
 /**
-  * Text area that provides Scala syntax highlighting.
-  *
-  * Example use:
-  * {{{
-  *   object ScalaKeywordsDemo extends JFXApp {
-  *     val editorCodeArea = new EditorCodeArea()
-  *     editorCodeArea.text = ...
-  *     stage = new JFXApp.PrimaryStage {
-  *       title = "Scala Keywords Demo"
-  *       scene = new Scene(640, 480) {
-  *         root = editorCodeArea.view
-  *       }
-  *     }
-  *   }
-  * }}}
-  */
+ * Text area that provides Scala syntax highlighting.
+ *
+ * Example use:
+ * {{{
+ *   object ScalaKeywordsDemo extends JFXApp {
+ *     val editorCodeArea = new EditorCodeArea()
+ *     editorCodeArea.text = ...
+ *     stage = new JFXApp.PrimaryStage {
+ *       title = "Scala Keywords Demo"
+ *       scene = new Scene(640, 480) {
+ *         root = editorCodeArea.view
+ *       }
+ *     }
+ *   }
+ * }}}
+ */
 class EditorCodeArea {
   private val Keywords: Array[String] = Array[String](
-    "abstract", "case", "catch", "class",
-    "def", "do", "else", "extends",
-    "false", "final", "finally", "for",
-    "forSome", "if", "implicit", "import",
-    "lazy", "match", "new", "Null",
-    "object", "override", "package", "private",
-    "protected", "return", "sealed", "super",
-    "this", "throw", "trait", "Try",
-    "true", "type", "val", "Var",
-    "while", "with", "yield",
-    "-", ":", "=", "=>",
-    "<-", "<:", "<%", ">:",
-    "#", "@")
-  private val KeywordPattern: String = """\b(""" + Keywords.mkString("|") + """)\b"""
-  private val ParenPattern: String = """\(|\)"""
-  private val BracePattern: String = """\{|\}"""
-  private val BracketPattern: String = """\[|\]"""
+    "abstract",
+    "case",
+    "catch",
+    "class",
+    "def",
+    "do",
+    "else",
+    "extends",
+    "false",
+    "final",
+    "finally",
+    "for",
+    "forSome",
+    "if",
+    "implicit",
+    "import",
+    "lazy",
+    "match",
+    "new",
+    "Null",
+    "object",
+    "override",
+    "package",
+    "private",
+    "protected",
+    "return",
+    "sealed",
+    "super",
+    "this",
+    "throw",
+    "trait",
+    "Try",
+    "true",
+    "type",
+    "val",
+    "Var",
+    "while",
+    "with",
+    "yield",
+    "-",
+    ":",
+    "=",
+    "=>",
+    "<-",
+    "<:",
+    "<%",
+    ">:",
+    "#",
+    "@"
+  )
+  private val KeywordPattern: String   = """\b(""" + Keywords.mkString("|") + """)\b"""
+  private val ParenPattern: String     = """\(|\)"""
+  private val BracePattern: String     = """\{|\}"""
+  private val BracketPattern: String   = """\[|\]"""
   private val SemicolonPattern: String = """\;"""
-  private val StringPattern: String = """"([^"\\]|\\.)*""""
-  private val CommentPattern: String = "//[^\n]*" + "|" + """/\*(.|\R)*?\*/"""
+  private val StringPattern: String    = """"([^"\\]|\\.)*""""
+  private val CommentPattern: String   = "//[^\n]*" + "|" + """/\*(.|\R)*?\*/"""
   private val ScalaPattern: Pattern = Pattern.compile(
     "(?<KEYWORD>" + KeywordPattern + ")" + "|(?<PAREN>" + ParenPattern + ")" + "|(?<BRACE>" + BracePattern + ")" +
       "|(?<BRACKET>" + BracketPattern + ")" + "|(?<SEMICOLON>" + SemicolonPattern + ")" + "|(?<STRING>" +
-      StringPattern + ")" + "|(?<COMMENT>" + CommentPattern + ")")
+      StringPattern + ")" + "|(?<COMMENT>" + CommentPattern + ")"
+  )
 
   private val codeArea = new CodeArea()
   codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea))
   codeArea.stylesheets += this.getClass.getResource("scala-keywords.css").toExternalForm
 
-  private val filterOp:
-    RichTextChange[util.Collection[String], String, util.Collection[String]] => Boolean =
+  private val filterOp: RichTextChange[util.Collection[String], String, util.Collection[String]] => Boolean =
     ch => !ch.getInserted.equals(ch.getRemoved)
 
   codeArea.richChanges.filter(asJavaPredicate(filterOp)).subscribe(
@@ -94,7 +130,8 @@ class EditorCodeArea {
       override def accept(t: RichTextChange[util.Collection[String], String, util.Collection[String]]): Unit = {
         codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()))
       }
-    })
+    }
+  )
 
   private val _view = new VirtualizedScrollPane(codeArea, ScrollBarPolicy.AsNeeded, ScrollBarPolicy.Always)
 
@@ -107,9 +144,9 @@ class EditorCodeArea {
   def selectedText: String = codeArea.getSelectedText
 
   private def computeHighlighting(text: String): StyleSpans[util.Collection[String]] = {
-    val matcher = ScalaPattern.matcher(text)
+    val matcher        = ScalaPattern.matcher(text)
     var lastKwEnd: Int = 0
-    val spansBuilder = new StyleSpansBuilder[util.Collection[String]]
+    val spansBuilder   = new StyleSpansBuilder[util.Collection[String]]
     while (matcher.find) {
       val styleClass: String = if (matcher.group("KEYWORD") != null) "keyword"
       else if (matcher.group("PAREN") != null) "paren"

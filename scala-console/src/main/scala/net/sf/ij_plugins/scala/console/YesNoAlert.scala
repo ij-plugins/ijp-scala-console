@@ -1,6 +1,6 @@
 /*
  *  ImageJ Plugins
- *  Copyright (C) 2002-2016 Jarek Sacha
+ *  Copyright (C) 2002-2022 Jarek Sacha
  *  Author's email: jpsacha at gmail dot com
  *
  *  This library is free software; you can redistribute it and/or
@@ -28,37 +28,37 @@ import scalafx.scene.control.{Alert, ButtonType}
 import scalafx.stage.Window
 
 /**
-  * Show a confirmation dialog with "Yes", "No", and "Cancel" buttons.
-  */
+ * Show a confirmation dialog with "Yes", "No", and "Cancel" buttons.
+ */
 object YesNoAlert {
-  val ButtonTypeYes = new ButtonType("Yes")
-  val ButtonTypeNo = new ButtonType("No")
+  val ButtonTypeYes    = new ButtonType("Yes")
+  val ButtonTypeNo     = new ButtonType("No")
   val ButtonTypeCancel = new ButtonType("Cancel", ButtonData.CancelClose)
 
   /**
-    * {{{
-    *   val alert = YesNoAlert(
-    *     parent = stage
-    *     title = "Confirmation Dialog with Custom Actions",
-    *     header = "Look, a Confirmation Dialog with Custom Actions.",
-    *     content = "Choose your option."
-    *   )
-    *
-    *   val result = alert.showAndWait()
-    *
-    *   result match {
-    *     case Some(ButtonTypeYes) => println("... user chose \"Yes\"")
-    *     case Some(ButtonTypeNo) => println("... user chose \"No\"")
-    *     case _ => println("... user chose CANCEL or closed the dialog")
-    *   }
-    * }}}
-    *
-    * @param parent  parent window.
-    * @param title   title of the dialog.
-    * @param header  header text.
-    * @param content main content.
-    * @return selected button.
-    */
+   * {{{
+   *   val alert = YesNoAlert(
+   *     parent = stage
+   *     title = "Confirmation Dialog with Custom Actions",
+   *     header = "Look, a Confirmation Dialog with Custom Actions.",
+   *     content = "Choose your option."
+   *   )
+   *
+   *   val result = alert.showAndWait()
+   *
+   *   result match {
+   *     case Some(ButtonTypeYes) => println("... user chose \"Yes\"")
+   *     case Some(ButtonTypeNo) => println("... user chose \"No\"")
+   *     case _ => println("... user chose CANCEL or closed the dialog")
+   *   }
+   * }}}
+   *
+   * @param parent  parent window.
+   * @param title   title of the dialog.
+   * @param header  header text.
+   * @param content main content.
+   * @return selected button.
+   */
   def apply(parent: Window, title: String, header: String, content: String): Alert = {
     val _t = title
 
@@ -71,7 +71,10 @@ object YesNoAlert {
       // with new ones.
       // We could also just add to existing button using `++=`.
       buttonTypes = Seq(
-        ButtonTypeYes, ButtonTypeNo, ButtonType.Cancel)
+        ButtonTypeYes,
+        ButtonTypeNo,
+        ButtonType.Cancel
+      )
     }
   }
 }

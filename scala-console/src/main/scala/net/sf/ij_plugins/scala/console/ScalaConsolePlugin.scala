@@ -22,26 +22,23 @@
 
 package net.sf.ij_plugins.scala.console
 
-import java.io.File
-
 import ij.IJ
 import ij.plugin.PlugIn
 import net.sf.ij_plugins.scala.console
 import org.scalafx.extras._
-
 import scalafx.scene.Scene
 import scalafx.scene.image.Image
 import scalafx.stage.Stage
 
+import java.io.File
 
 private object ScalaConsolePlugin {
   console.addPluginsJarsToClassPath()
 }
 
-
 /**
-  * ImageJ plugin for starting Scala Console.
-  */
+ * ImageJ plugin for starting Scala Console.
+ */
 class ScalaConsolePlugin extends PlugIn {
 
   def run(arg: String): Unit = {
@@ -60,7 +57,7 @@ class ScalaConsolePlugin extends PlugIn {
       try {
         val iconImages = {
           val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
-          val path = "/net/sf/ij_plugins/scala/console/resources/"
+          val path  = "/net/sf/ij_plugins/scala/console/resources/"
           names.map { n => new Image(s"$path$n").delegate }
         }
 
