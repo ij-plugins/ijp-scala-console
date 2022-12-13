@@ -1,25 +1,37 @@
+// @formatter:off
 name := "ijp-scala-console-project"
 
-ThisBuild / organization := "net.sf.ij-plugins"
-ThisBuild / version := "1.5.2-SNAPSHOT"
-ThisBuild / homepage := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
-ThisBuild / startYear := Some(2013)
-ThisBuild / licenses := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.1")))
+lazy val _scalaVersions = Seq("3.2.1", "2.13.10", "2.12.17")
+lazy val _scalaVersion  = _scalaVersions.head
+
+ThisBuild / version             := "1.5.2.1-SNAPSHOT"
+ThisBuild / scalaVersion        := _scalaVersion
+ThisBuild / organization        := "net.sf.ij-plugins"
+ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
+ThisBuild / homepage            := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
+ThisBuild / startYear           := Some(2013)
+ThisBuild / licenses            := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.1")))
 ThisBuild / description :=
   "Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application."
 
-lazy val _scalaVersions = Seq("2.13.10", "2.12.17")
-lazy val _scalaVersion  = _scalaVersions.head
+publishArtifact     := false
+publish / skip      := true
+
+def isScala2(scalaVersion: String): Boolean =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, _)) => true
+    case _            => false
+  }
 
 def isScala2_12(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2, 12)) => true
-    case _ => false
+    case _             => false
   }
 def isScala2_13(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2, 13)) => true
-    case _ => false
+    case _             => false
   }
 
 val commonSettings = Seq(
@@ -27,20 +39,30 @@ val commonSettings = Seq(
   crossScalaVersions := _scalaVersions,
   scalaVersion := _scalaVersion,
   scalacOptions ++= Seq(
-    "-release", "8",
     "-encoding", "UTF-8",
-    "-explaintypes",
     "-unchecked",
+    "-release", "8",
     "-deprecation",
-    "-Xlint",
-    "-Xcheckinit",
-    "-feature",
-    "–optimise",
-    "-Ywarn-dead-code",
-    "-Ywarn-numeric-widen",
-    "-Xlint:missing-interpolator",
-    "-Ywarn-dead-code",
-    "-Ywarn-unused:-patvars,_",
+    ) ++ (
+    if(isScala2(scalaVersion.value))
+      Seq(
+      "-explaintypes",
+      "-feature",
+      "–optimise",
+      "-Xsource:3",
+      "-Xlint",
+      "-Xcheckinit",
+      "-Ywarn-dead-code",
+      "-Ywarn-numeric-widen",
+      "-Xlint:missing-interpolator",
+      "-Ywarn-dead-code",
+      "-Ywarn-unused:-patvars,_",
+    )
+    else
+      Seq(
+        "-explain",
+        "-explain-types"
+      )
     ),
   // fork a new JVM for 'run' and 'test:run'
   fork := true,
@@ -82,17 +104,22 @@ lazy val scala_console = (project in file("scala-console"))
     // set the main class for the main 'run' task
     // change Compile to Test to set it for 'test:run'
     Compile / run / mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp"),
-    // // @formatter:off
+    //
     libraryDependencies ++= Seq(
       "com.beachape"           %% "enumeratum"          % "1.7.2",
       "org.fxmisc.richtext"     % "richtextfx"          % "0.11.0",
-      "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
       "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
-      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
+//      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
       "org.scalatest"          %% "scalatest"           % "3.2.14" % "test"
     ),
+    libraryDependencies ++= (
+      if(isScala2(scalaVersion.value))
+        Seq("org.scala-lang" % "scala-compiler" % scalaVersion.value)
+      else
+        Seq("org.scala-lang" % "scala3-compiler_3" % scalaVersion.value)
+      ),
     // // @formatter:on
     libraryDependencies ++= (
       if (isScala2_12(scalaVersion.value))
