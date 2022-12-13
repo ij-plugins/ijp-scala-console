@@ -20,12 +20,12 @@
  *   Latest release available at https://github.com/ij-plugins
  */
 
-package ij_plugins.scala.console
+package ij_plugins.scala.console.plugins
 
 import ij.IJ
 import ij.plugin.PlugIn
-import ij_plugins.scala.console
-import org.scalafx.extras._
+import ij_plugins.scala.console.ScalaConsolePane
+import org.scalafx.extras.{initFX, onFX}
 import scalafx.scene.Scene
 import scalafx.scene.image.Image
 import scalafx.stage.Stage
@@ -33,7 +33,7 @@ import scalafx.stage.Stage
 import java.io.File
 
 private object ScalaConsolePlugin {
-  console.addPluginsJarsToClassPath()
+  addPluginsJarsToClassPath()
 }
 
 /**

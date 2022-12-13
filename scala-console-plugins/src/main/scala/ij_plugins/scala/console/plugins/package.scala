@@ -20,7 +20,7 @@
  *   Latest release available at https://github.com/ij-plugins
  */
 
-package ij_plugins.scala
+package ij_plugins.scala.console
 
 import ij.Menus
 
@@ -34,7 +34,7 @@ import scala.tools.nsc.io.Path
  * @author Jarek Sacha
  * @since 2/17/12
  */
-package object console {
+package object plugins {
 
   def addPluginsJarsToClassPath(): Unit = {
     // TODO do not add existing entries to the classpath again
