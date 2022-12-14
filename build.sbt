@@ -42,6 +42,10 @@ val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-unused:-patvars,_",
     ),
+  //
+  exportJars := true,
+  //
+  autoCompilerPlugins := true,
   // fork a new JVM for 'run' and 'test:run'
   fork := true,
   // add a JVM option to use when forking a JVM for 'run'
@@ -114,8 +118,13 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
     libraryDependencies ++= Seq(
       "net.imagej" % "ij" % "1.53v",
       "org.scalatest" %% "scalatest" % "3.2.14" % "test"
-      )
+      ),
     //resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
+    // Customize `sbt-imagej` plugin
+    ijRuntimeSubDir         := "sandbox",
+    ijPluginsSubDir         := "ij-plugins",
+    ijCleanBeforePrepareRun := true,
+    cleanFiles += ijPluginsDir.value,
     )
   .dependsOn(scala_console)
 
