@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~  ImageJ Plugins
+  ~  Copyright (C) 2002-2022 Jarek Sacha
+  ~  Author's email: jpsacha at gmail dot com
+  ~
+  ~  This library is free software; you can redistribute it and/or
+  ~  modify it under the terms of the GNU Lesser General Public
+  ~  License as published by the Free Software Foundation; either
+  ~  version 2.1 of the License, or (at your option) any later version.
+  ~
+  ~  This library is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ~  Lesser General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU Lesser General Public
+  ~  License along with this library; if not, write to the Free Software
+  ~  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~   Latest release available at https://github.com/ij-plugins
+  -->
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ij_plugins.scala.console.ScalaConsolePaneView">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu fx:id="fileMenu" mnemonicParsing="false" text="File" />
+                <Menu mnemonicParsing="false" text="Script">
+                    <items>
+                        <MenuItem fx:id="runMenuItem" mnemonicParsing="false" text="Run">
+                            <graphic>
+                                <ImageView>
+                                    <image>
+                                        <Image url="@resources/icons/script_go.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <bottom>
+        <HBox BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="statusLabel" text="&lt;Status&gt;" />
+            </children>
+        </HBox>
+    </bottom>
+    <center>
+        <BorderPane BorderPane.alignment="CENTER">
+            <top>
+                <ToolBar fx:id="toolBar" BorderPane.alignment="CENTER"/>
+            </top>
+            <center>
+                <SplitPane dividerPositions="0.75" orientation="VERTICAL" BorderPane.alignment="CENTER">
+                    <items>
+                        <BorderPane fx:id="editorPane" />
+                        <BorderPane fx:id="outputPane" />
+                    </items>
+                </SplitPane>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

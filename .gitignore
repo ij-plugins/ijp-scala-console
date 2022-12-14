@@ -1,4 +1,6 @@
+.bsp
 .idea
 *.iml
 target
 sandbox
+.DS_Store

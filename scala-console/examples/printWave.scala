@@ -3,13 +3,18 @@ import scala.math._
 //
 // Print a wave to the standard output
 //
-val scale = 2
-for (x <- Range.Double(-Pi / 2, 3.5 * Pi, Pi / 5)) {
+val scale  = 5
+val xRange = Range.BigDecimal(-Pi / 2, 5.5 * Pi, Pi / 20)
+val waveVertical = for (x <- xRange) yield {
   // Prepare empty line
-  val line = Array.fill(scale * 2 + 1)(" ")
-  // Create marker at location `y`
-  val y = round((sin(x) + 1) * scale).toInt
+  val line = Array.fill(scale * 2 + 1) {
+    " "
+  }
+  // Create marker in location `y`
+  val y = round((sin(x.doubleValue) + 1) * scale).toInt
   line(y) = "*"
-  // Print line as string
-  println(line.mkString(" "))
+  line
 }
+
+// Transpose and print the wave
+waveVertical.transpose.foreach(w => println(w.mkString("")))
