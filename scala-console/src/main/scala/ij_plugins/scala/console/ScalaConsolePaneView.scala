@@ -48,19 +48,19 @@ class ScalaConsolePaneView(
   private val model: ScalaConsolePaneModel
 ) extends ControllerFX {
 
-  val runAction = Action(
+  private val runAction = Action(
     name = "Run",
-    icon = new Image("/net/sf/ij_plugins/scala/console/resources/icons/script_go.png"),
+    icon = new Image("/ij_plugins/scala/console/resources/icons/script_go.png"),
     eventHandler = () => model.onRun()
   )
 
   // Create tool bar buttons
-  val runButton = new Button {
+  private val runButton = new Button {
     graphic = runAction.icon
     onAction = runAction.eventHandler
     tooltip = Tooltip(runAction.name)
   }
-  val enabledWhenReady = Seq(runButton)
+  private val enabledWhenReady = Seq(runButton)
 
   model.editor.fileActions.filter(_.icon != null).foreach { a =>
     val b = new Button {

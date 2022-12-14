@@ -42,19 +42,13 @@ object ScalaConsoleApp extends JFXApp3 {
 
     setupUncaughtExceptionHandling(title)
 
-    val iconImages = {
-      val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
-      val path  = "/net/sf/ij_plugins/scala/console/resources/"
-      names.map { n => new Image(s"$path$n").delegate }
-    }
-
     val scalaConsolePane = new ScalaConsolePane()
 
     stage = new PrimaryStage {
       scene = new Scene(640, 480) {
         root = scalaConsolePane.view
       }
-      icons ++= iconImages
+      icons ++= loadIcons()
 
       // Intercept window close request
       onCloseRequest = (event: WindowEvent) => {
@@ -81,6 +75,12 @@ object ScalaConsoleApp extends JFXApp3 {
         scalaConsolePane.model.editor.needsSaving
       )
     }
+  }
+
+  def loadIcons(): Array[javafx.scene.image.Image] = {
+      val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
+      val path  = "/ij_plugins/scala/console/resources/"
+      names.map { n => new Image(s"$path$n").delegate }
   }
 
   private def setupUncaughtExceptionHandling(title: String): Unit = {
