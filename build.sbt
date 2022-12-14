@@ -1,7 +1,7 @@
 name := "ijp-scala-console-project"
 
 ThisBuild / organization := "net.sf.ij-plugins"
-ThisBuild / version := "1.5.2-SNAPSHOT"
+ThisBuild / version := "1.6.0"
 ThisBuild / homepage := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
 ThisBuild / startYear := Some(2013)
 ThisBuild / licenses := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.1")))
