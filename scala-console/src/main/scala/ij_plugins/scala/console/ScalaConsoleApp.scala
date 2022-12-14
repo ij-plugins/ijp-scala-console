@@ -36,11 +36,11 @@ import scalafx.stage.WindowEvent
  */
 object ScalaConsoleApp extends JFXApp3 {
 
-  val title = "Scala Console"
+  val Title = "Scala Console"
 
   override def start(): Unit = {
 
-    setupUncaughtExceptionHandling(title)
+    setupUncaughtExceptionHandling(Title)
 
     val iconImages = {
       val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
@@ -101,6 +101,6 @@ object ScalaConsoleApp extends JFXApp3 {
     // Make sure that FX is initialized
     initFX()
 
-    ShowMessage.exception(title, header, t, null.asInstanceOf[Node])
+    ShowMessage.exception(Title, header, t, null.asInstanceOf[Node])
   }
 }

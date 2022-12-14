@@ -64,7 +64,7 @@ object YesNoAlert {
 
     new Alert(AlertType.Confirmation) {
       initOwner(parent)
-      title = _t
+      this.title = _t
       headerText = header
       contentText = content
       // Note that we override here default dialog buttons, OK and Cancel,
