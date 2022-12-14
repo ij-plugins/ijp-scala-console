@@ -4,7 +4,7 @@ ThisBuild / organization := "net.sf.ij-plugins"
 ThisBuild / version := "1.6.0"
 ThisBuild / homepage := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
 ThisBuild / startYear := Some(2013)
-ThisBuild / licenses := Seq(("LGPL-2.1", new URL("http://opensource.org/licenses/LGPL-2.1")))
+ThisBuild / licenses := Seq(("LGPL-2.1", new URL("https://opensource.org/licenses/LGPL-2.1")))
 ThisBuild / description :=
   "Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application."
 
