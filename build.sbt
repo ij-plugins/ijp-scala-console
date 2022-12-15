@@ -81,10 +81,10 @@ lazy val scala_console = (project in file("scala-console"))
     // set the main class for packaging the main jar
     // 'run' will still auto-detect and prompt
     // change Compile to Test to set it for the test jar
-    Compile / packageBin / mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp"),
+    Compile / packageBin / mainClass := Some("ij_plugins.scala.console.ScalaConsoleApp"),
     // set the main class for the main 'run' task
     // change Compile to Test to set it for 'test:run'
-    Compile / run / mainClass := Some("net.sf.ij_plugins.scala.console.ScalaConsoleApp"),
+    Compile / run / mainClass := Some("ij_plugins.scala.console.ScalaConsoleApp"),
     // // @formatter:off
     libraryDependencies ++= Seq(
       "com.beachape"           %% "enumeratum"          % "1.7.2",
@@ -147,7 +147,8 @@ ijRuntimeSubDir := "sandbox"
 ijPluginsSubDir := "ij-plugins"
 cleanFiles += ijPluginsDir.value
 
-addCommandAlias("ijRun", "scala-console-plugins/ijRun")
+addCommandAlias("ijRun", "scala_console_plugins/ijRun")
+addCommandAlias("run", "scala_console/run")
 
 
 
