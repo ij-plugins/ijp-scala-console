@@ -29,7 +29,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.tools.nsc.io.Path
 
 /**
- * Helper methods used in package `net.sf.ij_plugins.scala.console`.
+ * Helper methods used in package `ij_plugins.scala.console`.
  *
  * @author Jarek Sacha
  * @since 2/17/12

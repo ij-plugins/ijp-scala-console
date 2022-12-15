@@ -27,7 +27,7 @@ package ij_plugins.scala.console.editor.extra
 /**
  * `Subscriber[A, B]` objects may subscribe to events of type `A`
  *  published by an object of type `B`. `B` is typically a subtype of
- *  [[scala.collection.mutable.Publisher]].
+ *  [[ij_plugins.scala.console.editor.extra.Publisher]].
  *
  *  @author  Matthias Zenger
  *  @author  Martin Odersky

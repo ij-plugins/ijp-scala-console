@@ -27,7 +27,6 @@ import ij.plugin.PlugIn
 import ij_plugins.scala.console.ScalaConsolePane
 import org.scalafx.extras.{initFX, onFX}
 import scalafx.scene.Scene
-import scalafx.scene.image.Image
 import scalafx.stage.Stage
 
 import java.io.File
