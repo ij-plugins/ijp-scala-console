@@ -35,7 +35,6 @@ val commonSettings = Seq(
     "-Xlint",
     "-Xcheckinit",
     "-feature",
-    "–optimise",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Xlint:missing-interpolator",
