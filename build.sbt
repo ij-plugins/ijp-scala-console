@@ -1,12 +1,23 @@
+import xerial.sbt.Sonatype.GitHubHosting
+
+// @formatter:off
 name := "ijp-scala-console-project"
 
-ThisBuild / organization := "net.sf.ij-plugins"
-ThisBuild / version := "1.6.0"
-ThisBuild / homepage := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
-ThisBuild / startYear := Some(2013)
-ThisBuild / licenses := Seq(("LGPL-2.1", new URL("https://opensource.org/licenses/LGPL-2.1")))
-ThisBuild / description :=
+ThisBuild / version             := "1.6.0"
+ThisBuild / versionScheme       := Some("early-semver")
+ThisBuild / organization        := "net.sf.ij-plugins"
+ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
+ThisBuild / homepage            := Some(new URL("https://github.com/ij-plugins/ijp-scala-console"))
+ThisBuild / startYear           := Some(2013)
+ThisBuild / licenses            := Seq(("LGPL-2.1", new URL("https://opensource.org/licenses/LGPL-2.1")))
+ThisBuild / description         :=
   "Simple user interface for executing Scala scripts. Can be run stand-alone or embedded in a desktop application."
+ThisBuild / developers          := List(
+  Developer(id="jpsacha", name="Jarek Sacha", email="jpsacha@gmail.com", url=url("https://github.com/jpsacha"))
+)
+
+publishArtifact     := false
+publish / skip      := true
 
 lazy val _scalaVersions = Seq("2.13.10", "2.12.17")
 lazy val _scalaVersion  = _scalaVersions.head
@@ -49,27 +60,12 @@ val commonSettings = Seq(
   fork := true,
   // add a JVM option to use when forking a JVM for 'run'
   javaOptions += "-Xmx2G",
-  publishTo := {
-    val sonatype = "https://oss.sonatype.org/"
-    if (isSnapshot.value)
-      Some("snapshots" at sonatype + "content/repositories/snapshots")
-    else
-      Some("releases" at sonatype + "service/local/staging/deploy/maven2")
-  },
-  // Info needed sync with Maven central.
-  pomExtra in Global := {
-    <scm>
-      <url>https://github.com/ij-plugins/ijp-scala-console</url>
-      <connection>scm:https://github.com/ij-plugins/ijp-scala-console.git</connection>
-    </scm>
-      <developers>
-        <developer>
-          <id>jpsacha</id>
-          <name>Jarek Sacha</name>
-          <url>https://github.com/jpsacha</url>
-        </developer>
-      </developers>
-  }
+  //
+  manifestSetting,
+  // Setup publishing
+  publishMavenStyle := true,
+  publishTo := sonatypePublishToBundle.value,
+  sonatypeProjectHosting := Some(GitHubHosting("ij-plugins", "ijp-scala-console", "jpsacha@gmail.com"))
   )
 
 // The core ijp-color module
@@ -85,7 +81,7 @@ lazy val scala_console = (project in file("scala-console"))
     // set the main class for the main 'run' task
     // change Compile to Test to set it for 'test:run'
     Compile / run / mainClass := Some("ij_plugins.scala.console.ScalaConsoleApp"),
-    // // @formatter:off
+    //
     libraryDependencies ++= Seq(
       "com.beachape"           %% "enumeratum"          % "1.7.2",
       "org.fxmisc.richtext"     % "richtextfx"          % "0.11.0",
@@ -96,7 +92,6 @@ lazy val scala_console = (project in file("scala-console"))
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
       "org.scalatest"          %% "scalatest"           % "3.2.14" % "test"
     ),
-    // // @formatter:on
     libraryDependencies ++= (
       if (isScala2_12(scalaVersion.value))
         Seq(compilerPlugin(
@@ -129,18 +124,19 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
 
 lazy val manifestSetting = packageOptions += {
   Package.ManifestAttributes(
-    "Created-By" -> "Simple Build Tool",
-    "Built-By" -> Option(System.getenv("JAR_BUILT_BY")).getOrElse(System.getProperty("user.name")),
-    "Build-Jdk" -> System.getProperty("java.version"),
-    "Specification-Title" -> name.value,
-    "Specification-Version" -> version.value,
-    "Specification-Vendor" -> organization.value,
-    "Implementation-Title" -> name.value,
-    "Implementation-Version" -> version.value,
+    "Created-By"     -> "Simple Build Tool",
+    "Built-By"  -> Option(System.getenv("JAR_BUILT_BY")).getOrElse(System.getProperty("user.name")),
+    "Build-Jdk"                -> System.getProperty("java.version"),
+    "Specification-Title"      -> name.value,
+    "Specification-Version"    -> version.value,
+    "Specification-Vendor"     -> organization.value,
+    "Implementation-Title"     -> name.value,
+    "Implementation-Version"   -> version.value,
     "Implementation-Vendor-Id" -> organization.value,
-    "Implementation-Vendor" -> organization.value
+    "Implementation-Vendor"    -> organization.value
     )
 }
+
 
 enablePlugins(SbtImageJ)
 ijRuntimeSubDir := "sandbox"
