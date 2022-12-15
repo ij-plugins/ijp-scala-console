@@ -3,7 +3,7 @@ import xerial.sbt.Sonatype.GitHubHosting
 // @formatter:off
 name := "ijp-scala-console-project"
 
-ThisBuild / version             := "1.6.0"
+ThisBuild / version             := "1.6.0.1-SNAPSHOT"
 ThisBuild / versionScheme       := Some("early-semver")
 ThisBuild / organization        := "net.sf.ij-plugins"
 ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
