@@ -35,7 +35,7 @@ import scalafx.scene.image.Image
 import scalafx.scene.{Cursor, Parent}
 
 import javafx.scene.control as jfxsc
-import scalafx.scene.layout as jfxsl
+import javafx.scene.layout as jfxsl
 
 
 
@@ -56,7 +56,7 @@ class ScalaConsolePaneView(  private val model: ScalaConsolePaneModel) extends C
 
   val runAction = Action(
     name = "Run",
-    icon = new Image("/net/sf/ij_plugins/scala/console/resources/icons/script_go.png"),
+    icon = new Image("ij_plugins/scala/console/resources/icons/script_go.png"),
     eventHandler = () => model.onRun()
   )
 
