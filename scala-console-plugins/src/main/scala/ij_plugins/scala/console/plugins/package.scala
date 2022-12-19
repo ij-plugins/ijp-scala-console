@@ -26,7 +26,7 @@ import ij.Menus
 
 import java.io.{File, FileFilter, FilenameFilter}
 import scala.collection.mutable.ArrayBuffer
-import scala.tools.nsc.io.Path
+//import scala.tools.nsc.io.Path
 
 /**
  * Helper methods used in package `ij_plugins.scala.console`.
@@ -48,11 +48,11 @@ package object plugins {
     System.setProperty("java.class.path", classpath)
   }
 
-  def listAllJarFiles(root: File): Array[File] = {
-    val r = new ArrayBuffer[File]()
-    Path(root).walk.filter(e => e.toString().contains(".jar")).foreach(p => r.append(p.jfile))
-    r.toArray
-  }
+//  def listAllJarFiles(root: File): Array[File] = {
+//    val r = new ArrayBuffer[File]()
+//    Path(root).walk.filter(e => e.toString().contains(".jar")).foreach(p => r.append(p.jfile))
+//    r.toArray
+//  }
 
   def listPluginDirectories(): Unit = {
     val jars = listJarFiles(listDirectories(new File(Menus.getPlugInsPath)))

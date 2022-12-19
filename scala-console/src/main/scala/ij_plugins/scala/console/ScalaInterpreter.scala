@@ -22,15 +22,15 @@
 
 package ij_plugins.scala.console
 
-import enumeratum.{EnumEntry, _}
+import enumeratum.{EnumEntry, *}
 import ij_plugins.scala.console.ScalaInterpreter.InterpreterEvent
 import ij_plugins.scala.console.editor.extra.Publisher
+import ij_plugins.scala.console.scripting.Results.Result
+import ij_plugins.scala.console.scripting.{Interpreter, Results}
 
 import java.io.{OutputStream, PrintStream, Writer}
 import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
-import scala.tools.nsc.interpreter.Results.Result
-import scala.tools.nsc.interpreter.{IMain, Results}
 
 object ScalaInterpreter {
 
@@ -128,7 +128,7 @@ class ScalaInterpreter() extends Publisher[InterpreterEvent] {
   }
 
   // Create interpreter
-  val interpreter: IMain = IMainFactory.create(interpreterOut)
+  val interpreter: Interpreter = IMainFactory.create(interpreterOut)
 
   private var _state: State = State.Ready
 

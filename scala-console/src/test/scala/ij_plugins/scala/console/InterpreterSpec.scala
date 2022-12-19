@@ -22,11 +22,11 @@
 
 package ij_plugins.scala.console
 
+import ij_plugins.scala.console.scripting.Results
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.io.{OutputStream, Writer}
-import scala.tools.nsc.interpreter.Results
 
 /**
  * @author Jarek Sacha

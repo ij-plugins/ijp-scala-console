@@ -22,19 +22,12 @@
 
 package ij_plugins.scala.console
 
+import ij_plugins.scala.console.scripting.Interpreter
+
 import java.io.Writer
-import scala.tools.nsc.Settings
-import scala.tools.nsc.interpreter.IMain
-import scala.tools.nsc.{NewLinePrintWriter, Settings}
 
 object IMainFactory {
 
-  def create(writer: Writer): IMain = {
-    val interpreterSettings: Settings = new Settings() {
-      usejavacp.value = true
-      //        classpath.value +=
-    }
+  def create(writer: Writer): Interpreter = new IMainInterpreter(writer)
 
-    new IMain(interpreterSettings, new NewLinePrintWriter(writer, true))
-  }
 }
