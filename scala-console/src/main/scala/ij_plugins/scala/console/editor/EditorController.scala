@@ -52,7 +52,7 @@ private class EditorController(private val ownerWindow: Window, private val mode
 
   private val fileNewAction = Action(
     name = "New...",
-    icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/page.png"),
+    icon = loadIcon("/ij_plugins/scala/console/resources/icons/page.png"),
     eventHandler = () => {
       if (ifModifiedAskAndSave()) {
         model.reset()
@@ -62,7 +62,7 @@ private class EditorController(private val ownerWindow: Window, private val mode
 
   private val fileOpenAction = Action(
     name = "Open...",
-    icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/folder_page.png"),
+    icon = loadIcon("/ij_plugins/scala/console/resources/icons/folder_page.png"),
     eventHandler = () => {
       if (ifModifiedAskAndSave()) {
         val file = fileChooser.showOpenDialog(ownerWindow)
@@ -76,7 +76,7 @@ private class EditorController(private val ownerWindow: Window, private val mode
 
   private val fileSaveAction = Action(
     name = "Save",
-    icon = loadIcon("/net/sf/ij_plugins/scala/console/resources/icons/disk.png"),
+    icon = loadIcon("/ij_plugins/scala/console/resources/icons/disk.png"),
     eventHandler = () => save()
   )
 

@@ -27,7 +27,6 @@ import ij.plugin.PlugIn
 import ij_plugins.scala.console.ScalaConsolePane
 import org.scalafx.extras.{initFX, onFX}
 import scalafx.scene.Scene
-import scalafx.scene.image.Image
 import scalafx.stage.Stage
 
 import java.io.File
@@ -55,11 +54,7 @@ class ScalaConsolePlugin extends PlugIn {
 
     onFX {
       try {
-        val iconImages = {
-          val names = Array("scala16.png", "scala32.png", "scala48.png", "scala64.png")
-          val path  = "/net/sf/ij_plugins/scala/console/resources/"
-          names.map { n => new Image(s"$path$n").delegate }
-        }
+        val iconImages = ij_plugins.scala.console.ScalaConsoleApp.loadIcons()
 
         val scalaConsole = new ScalaConsolePane()
         new Stage {

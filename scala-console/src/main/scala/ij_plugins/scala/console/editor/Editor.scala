@@ -49,7 +49,7 @@ object Editor {
  * Code input area of the console.  Creates MVC components and gives access to the view, and externally relevant
  * parts of the model (selection and text) and controller (actions).
  *
- * Publishes event [[net.sf.ij_plugins.scala.console.editor.Editor.SourceFileEvent]]
+ * Publishes event [[ij_plugins.scala.console.editor.Editor.SourceFileEvent]]
  */
 class Editor extends Publisher[EditorEvent] {
 
