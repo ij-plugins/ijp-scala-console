@@ -86,17 +86,17 @@ object ScalaInterpreter {
  * and to interpreter log.
  *
  * Publishes events:
- * [[console.ScalaInterpreter.StateEvent StateEvent]],
- * [[console.ScalaInterpreter.OutStreamEvent OutStreamEvent]],
- * [[console.ScalaInterpreter.ErrStreamEvent ErrStreamEvent]],
- * [[console.ScalaInterpreter.InterpreterLogEvent InterpreterLogEvent]],
- * [[console.ScalaInterpreter.ResultEvent ResultEvent]].
+ * [[ij_plugins.scala.console.ScalaInterpreter.StateEvent StateEvent]],
+ * [[ij_plugins.scala.console.ScalaInterpreter.OutStreamEvent OutStreamEvent]],
+ * [[ij_plugins.scala.console.ScalaInterpreter.ErrStreamEvent ErrStreamEvent]],
+ * [[ij_plugins.scala.console.ScalaInterpreter.InterpreterLogEvent InterpreterLogEvent]],
+ * [[ij_plugins.scala.console.ScalaInterpreter.ResultEvent ResultEvent]].
  */
-class ScalaInterpreter() extends Publisher[InterpreterEvent] {
+class ScalaInterpreter extends Publisher[InterpreterEvent] {
 
   import ScalaInterpreter._
 
-  val interpreterOutBuffer = new ArrayBuffer[String]
+  private val interpreterOutBuffer = new ArrayBuffer[String]
 
   private class LogOutputStream extends OutputStream {
     def write(b: Int): Unit = {
@@ -128,14 +128,14 @@ class ScalaInterpreter() extends Publisher[InterpreterEvent] {
   }
 
   // Create interpreter
-  val interpreter: IMain = IMainFactory.create(interpreterOut)
+  private val interpreter: IMain = IMainFactory.create(interpreterOut)
 
   private var _state: State = State.Ready
 
   /**
    * Current state.
    */
-  def state: State = _state
+  private def state: State = _state
 
   private def state_=(newState: State): Unit = {
     _state = newState
