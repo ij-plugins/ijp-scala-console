@@ -45,9 +45,7 @@ val commonSettings = Seq(
   crossScalaVersions := _scalaVersions,
   scalaVersion := _scalaVersion,
   scalacOptions ++= Seq(
-    "-release", "8",
     "-encoding", "UTF-8",
-    "-explaintypes",
     "-unchecked",
     "-release", "8",
     "-deprecation",
