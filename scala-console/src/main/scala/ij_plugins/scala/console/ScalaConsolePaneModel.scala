@@ -24,6 +24,7 @@ package ij_plugins.scala.console
 
 import ij_plugins.scala.console.ScalaInterpreter.*
 import ij_plugins.scala.console.ScalaInterpreter.State.Ready
+import ij_plugins.scala.console.ScalaInterpreter._
 import ij_plugins.scala.console.editor.Editor
 import ij_plugins.scala.console.editor.extra.{Publisher, Subscriber}
 import ij_plugins.scala.console.outputarea.OutputArea
