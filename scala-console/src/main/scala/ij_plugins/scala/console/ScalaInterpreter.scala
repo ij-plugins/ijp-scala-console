@@ -128,7 +128,7 @@ class ScalaInterpreter extends Publisher[InterpreterEvent] {
   }
 
   // Create interpreter
-  private val interpreter: IMain = IMainFactory.create(interpreterOut)
+  private val interpreter: Interpreter = IMainFactory.create(interpreterOut)
 
   private var _state: State = State.Ready
 
