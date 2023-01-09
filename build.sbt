@@ -107,7 +107,7 @@ lazy val scala_console = (project in file("scala-console"))
       "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
 //      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
-      "org.scalatest"          %% "scalatest"           % "3.2.14" % "test"
+      "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
     ),
     libraryDependencies ++= (
       if(isScala2(scalaVersion.value))
@@ -134,13 +134,13 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
     description := "Scala Console ImageJ Plugins",
     commonSettings,
     libraryDependencies ++= Seq(
-      "net.imagej" % "ij" % "1.53v",
-      "org.scalatest" %% "scalatest" % "3.2.14" % "test"
+      "net.imagej" % "ij" % "1.54b",
+      "org.scalatest" %% "scalatest" % "3.2.15" % "test"
       ),
     //resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
     // Customize `sbt-imagej` plugin
-    ijRuntimeSubDir         := "sandbox",
-    ijPluginsSubDir         := "ij-plugins",
+    ijRuntimeSubDir := "sandbox",
+    ijPluginsSubDir := "ij-plugins",
     ijCleanBeforePrepareRun := true,
     cleanFiles += ijPluginsDir.value,
     )
@@ -148,16 +148,16 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
 
 lazy val manifestSetting = packageOptions += {
   Package.ManifestAttributes(
-    "Created-By"     -> "Simple Build Tool",
-    "Built-By"  -> Option(System.getenv("JAR_BUILT_BY")).getOrElse(System.getProperty("user.name")),
-    "Build-Jdk"                -> System.getProperty("java.version"),
-    "Specification-Title"      -> name.value,
-    "Specification-Version"    -> version.value,
-    "Specification-Vendor"     -> organization.value,
-    "Implementation-Title"     -> name.value,
-    "Implementation-Version"   -> version.value,
+    "Created-By" -> "Simple Build Tool",
+    "Built-By" -> Option(System.getenv("JAR_BUILT_BY")).getOrElse(System.getProperty("user.name")),
+    "Build-Jdk" -> System.getProperty("java.version"),
+    "Specification-Title" -> name.value,
+    "Specification-Version" -> version.value,
+    "Specification-Vendor" -> organization.value,
+    "Implementation-Title" -> name.value,
+    "Implementation-Version" -> version.value,
     "Implementation-Vendor-Id" -> organization.value,
-    "Implementation-Vendor"    -> organization.value
+    "Implementation-Vendor" -> organization.value
     )
 }
 
