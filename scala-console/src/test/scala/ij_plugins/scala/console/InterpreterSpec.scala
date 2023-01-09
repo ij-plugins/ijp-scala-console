@@ -33,8 +33,10 @@ import java.io.{OutputStream, Writer}
  */
 class InterpreterSpec extends AnyFlatSpec with Matchers {
 
+  behavior of "Interpreter"
+
   private trait Buffer {
-    protected lazy val _buffer = new StringBuffer
+    protected lazy val _buffer = new StringBuffer()
 
     def buffer: String = _buffer.toString
   }
@@ -59,11 +61,11 @@ class InterpreterSpec extends AnyFlatSpec with Matchers {
     }
   }
 
-  "Interpreter" should "capture output streams" in {
+  it should "capture output streams" in {
 
     // Capture output streams
-    val outStream = new BufferOutputStream
-    val errStream = new BufferOutputStream
+    val outStream = new BufferOutputStream()
+    val errStream = new BufferOutputStream()
 
     val outString = "Hello"
 
@@ -84,8 +86,72 @@ class InterpreterSpec extends AnyFlatSpec with Matchers {
     // Verify
     result should equal(Results.Success)
     outStream.buffer should equal(outString)
-    result should equal(Results.Success)
     errStream.buffer.isEmpty should equal(true)
     bufferWriter.buffer.isEmpty should equal(true)
   }
+
+  it should "capture errors" in {
+
+    // Capture output streams
+    val outStream = new BufferOutputStream()
+    val errStream = new BufferOutputStream()
+
+    val result =
+      Console.withOut(outStream) {
+        Console.withErr(errStream) {
+
+          // Create interpreter
+          val interpreter = IMainFactory.create(bufferWriter)
+
+          // Interpret simple code
+
+          val code = "xyz"
+          interpreter.interpret(code)
+        }
+      }
+
+//    println(s"OUT: <${outStream.buffer}>")
+//    println(s"ERR: <${errStream.buffer}>")
+//    println(s"bufferWriter: <${bufferWriter.buffer}>")
+
+    // Verify
+    result should equal(Results.Error)
+    outStream.buffer.isEmpty should equal(true)
+    errStream.buffer.isEmpty should equal(true)
+    bufferWriter.buffer.isEmpty should equal(false)
+  }
+
+  ignore should "capture errors after initial correct execution" in {
+
+    // Capture output streams
+    val outStream = new BufferOutputStream()
+    val errStream = new BufferOutputStream()
+
+    val result =
+      Console.withOut(outStream) {
+        Console.withErr(errStream) {
+
+          // Create interpreter
+          val interpreter = IMainFactory.create(bufferWriter)
+
+          // Interpret simple code
+
+          interpreter.interpret("2*3")
+
+          val code = "xyz"
+          interpreter.interpret(code)
+        }
+      }
+
+    //        println(s"OUT: <${outStream.buffer}>")
+    //        println(s"ERR: <${errStream.buffer}>")
+    //        println(s"bufferWriter: <${bufferWriter.buffer}>")
+
+    // Verify
+    result should equal(Results.Error)
+    outStream.buffer.isEmpty should equal(true)
+    errStream.buffer.isEmpty should equal(true)
+    bufferWriter.buffer.isEmpty should equal(false)
+  }
+
 }
