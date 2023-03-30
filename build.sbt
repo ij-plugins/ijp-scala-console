@@ -3,7 +3,7 @@ import xerial.sbt.Sonatype.GitHubHosting
 // @formatter:off
 name := "ijp-scala-console-project"
 
-lazy val _scalaVersions = Seq("3.2.1", "2.13.10", "2.12.17")
+lazy val _scalaVersions = Seq("3.2.2", "2.13.10", "2.12.17")
 lazy val _scalaVersion  = _scalaVersions.head
 
 ThisBuild / version             := "1.6.0.1-SNAPSHOT"
