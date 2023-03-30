@@ -3,9 +3,9 @@ ijp-scala-console
 
 IJP Scala Console is simple user interface for executing Scala scripts.
 
-[![Actions Status](https://github.com/ij-plugins/ijp-scala-console/workflows/Scala%20CI/badge.svg)](https://github.com/ij-plugins/ijp-scala-console/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/ijp-scala-console_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/ijp-scala-console_2.12)
-[![Scaladoc](https://javadoc.io/badge2/net.sf.ij-plugins/ijp-scala-console_2.12/scaladoc.svg)](https://javadoc.io/doc/net.sf.ij-plugins/ijp-scala-console_2.12)
+[![Actions Status](https://github.com/ij-plugins/ijp-scala-console/workflows/Scala%20CI/badge.svg)](https://github.com/ij-plugins/scala-console/actions)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/scala-console_3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/scala-console_3)
+[![Scaladoc](https://javadoc.io/badge2/net.sf.ij-plugins/scala-console_3/scaladoc.svg)](https://javadoc.io/doc/net.sf.ij-plugins/scala-console_3)
 
 The Scala Console can be run stand-alone, embedded in a desktop application, or [ImageJ] plugin. UI is build with
 ScalaFX.
