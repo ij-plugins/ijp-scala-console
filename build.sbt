@@ -6,7 +6,7 @@ name := "ijp-scala-console-project"
 lazy val _scalaVersions = Seq("3.2.2", "2.13.10", "2.12.17")
 lazy val _scalaVersion  = _scalaVersions.head
 
-ThisBuild / version             := "1.6.0.1-SNAPSHOT"
+ThisBuild / version             := "1.7.0"
 ThisBuild / versionScheme       := Some("early-semver")
 ThisBuild / organization        := "net.sf.ij-plugins"
 ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
@@ -54,7 +54,7 @@ val commonSettings = Seq(
       Seq(
       "-explaintypes",
       "-feature",
-      "–optimise",
+//      "–optimise",
       "-Xsource:3",
       "-Xlint",
       "-Xcheckinit",
