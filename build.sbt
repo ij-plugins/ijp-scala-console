@@ -3,7 +3,10 @@ import xerial.sbt.Sonatype.GitHubHosting
 // @formatter:off
 name := "ijp-scala-console-project"
 
-ThisBuild / version             := "1.6.0"
+lazy val _scalaVersions = Seq("3.2.2", "2.13.10", "2.12.17")
+lazy val _scalaVersion  = _scalaVersions.head
+
+ThisBuild / version             := "1.6.0.1-SNAPSHOT"
 ThisBuild / versionScheme       := Some("early-semver")
 ThisBuild / organization        := "net.sf.ij-plugins"
 ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
@@ -19,18 +22,22 @@ ThisBuild / developers          := List(
 publishArtifact     := false
 publish / skip      := true
 
-lazy val _scalaVersions = Seq("2.13.10", "2.12.17")
-lazy val _scalaVersion  = _scalaVersions.head
+
+def isScala2(scalaVersion: String): Boolean =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, _)) => true
+    case _            => false
+  }
 
 def isScala2_12(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2, 12)) => true
-    case _ => false
+    case _             => false
   }
 def isScala2_13(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2, 13)) => true
-    case _ => false
+    case _             => false
   }
 
 val commonSettings = Seq(
@@ -38,19 +45,30 @@ val commonSettings = Seq(
   crossScalaVersions := _scalaVersions,
   scalaVersion := _scalaVersion,
   scalacOptions ++= Seq(
-    "-release", "8",
     "-encoding", "UTF-8",
-    "-explaintypes",
     "-unchecked",
+    "-release", "8",
     "-deprecation",
-    "-Xlint",
-    "-Xcheckinit",
-    "-feature",
-    "-Ywarn-dead-code",
-    "-Ywarn-numeric-widen",
-    "-Xlint:missing-interpolator",
-    "-Ywarn-dead-code",
-    "-Ywarn-unused:-patvars,_",
+    ) ++ (
+    if(isScala2(scalaVersion.value))
+      Seq(
+      "-explaintypes",
+      "-feature",
+      "–optimise",
+      "-Xsource:3",
+      "-Xlint",
+      "-Xcheckinit",
+      "-Ywarn-dead-code",
+      "-Ywarn-numeric-widen",
+      "-Xlint:missing-interpolator",
+      "-Ywarn-dead-code",
+      "-Ywarn-unused:-patvars,_",
+    )
+    else
+      Seq(
+        "-explain",
+        "-explain-types"
+      )
     ),
   //
   exportJars := true,
@@ -85,13 +103,19 @@ lazy val scala_console = (project in file("scala-console"))
     libraryDependencies ++= Seq(
       "com.beachape"           %% "enumeratum"          % "1.7.2",
       "org.fxmisc.richtext"     % "richtextfx"          % "0.11.0",
-      "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
       "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
-      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
+//      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
-      "org.scalatest"          %% "scalatest"           % "3.2.14" % "test"
+      "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
     ),
+    libraryDependencies ++= (
+      if(isScala2(scalaVersion.value))
+        Seq("org.scala-lang" % "scala-compiler" % scalaVersion.value)
+      else
+        Seq("org.scala-lang" % "scala3-compiler_3" % scalaVersion.value)
+      ),
+    // // @formatter:on
     libraryDependencies ++= (
       if (isScala2_12(scalaVersion.value))
         Seq(compilerPlugin(
@@ -110,13 +134,13 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
     description := "Scala Console ImageJ Plugins",
     commonSettings,
     libraryDependencies ++= Seq(
-      "net.imagej" % "ij" % "1.53v",
-      "org.scalatest" %% "scalatest" % "3.2.14" % "test"
+      "net.imagej" % "ij" % "1.54c",
+      "org.scalatest" %% "scalatest" % "3.2.15" % "test"
       ),
     //resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
     // Customize `sbt-imagej` plugin
-    ijRuntimeSubDir         := "sandbox",
-    ijPluginsSubDir         := "ij-plugins",
+    ijRuntimeSubDir := "sandbox",
+    ijPluginsSubDir := "ij-plugins",
     ijCleanBeforePrepareRun := true,
     cleanFiles += ijPluginsDir.value,
     )
@@ -124,16 +148,16 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
 
 lazy val manifestSetting = packageOptions += {
   Package.ManifestAttributes(
-    "Created-By"     -> "Simple Build Tool",
-    "Built-By"  -> Option(System.getenv("JAR_BUILT_BY")).getOrElse(System.getProperty("user.name")),
-    "Build-Jdk"                -> System.getProperty("java.version"),
-    "Specification-Title"      -> name.value,
-    "Specification-Version"    -> version.value,
-    "Specification-Vendor"     -> organization.value,
-    "Implementation-Title"     -> name.value,
-    "Implementation-Version"   -> version.value,
+    "Created-By" -> "Simple Build Tool",
+    "Built-By" -> Option(System.getenv("JAR_BUILT_BY")).getOrElse(System.getProperty("user.name")),
+    "Build-Jdk" -> System.getProperty("java.version"),
+    "Specification-Title" -> name.value,
+    "Specification-Version" -> version.value,
+    "Specification-Vendor" -> organization.value,
+    "Implementation-Title" -> name.value,
+    "Implementation-Version" -> version.value,
     "Implementation-Vendor-Id" -> organization.value,
-    "Implementation-Vendor"    -> organization.value
+    "Implementation-Vendor" -> organization.value
     )
 }
 

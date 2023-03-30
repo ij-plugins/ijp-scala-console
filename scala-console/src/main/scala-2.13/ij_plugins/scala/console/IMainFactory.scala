@@ -22,24 +22,12 @@
 
 package ij_plugins.scala.console
 
-import java.io.{PrintWriter, Writer}
-import scala.tools.nsc.Settings
-import scala.tools.nsc.interpreter.IMain
-import scala.tools.nsc.interpreter.shell.{ReplReporterImpl, ShellConfig}
+import ij_plugins.scala.console.scripting.Interpreter
+
+import java.io.Writer
 
 object IMainFactory {
 
-  def create(writer: Writer): IMain = {
-    val interpreterSettings: Settings = new Settings() {
-      usejavacp.value = true
-      //        classpath.value +=
-    }
-
-    val shellConfig  = ShellConfig(interpreterSettings)
-    val replReporter = new ReplReporterImpl(shellConfig, writer = new PrintWriter(writer))
-
-    new IMain(interpreterSettings, replReporter)
-
-  }
+  def create(writer: Writer): Interpreter = new IMainInterpreter(writer)
 
 }

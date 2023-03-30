@@ -7,10 +7,10 @@ import ij.IJ
 process()
 
 /**
-  * Get a reference to currently selected image in ImageJ then apply median filter to it.
-  * If no image is opened show "No image" error message.
-  */
-def process() {
+ * Get a reference to currently selected image in ImageJ then apply median filter to it.
+ * If no image is opened show "No image" error message.
+ */
+def process(): Unit = {
   // Get currently selected image
   val imp = IJ.getImage
   if (imp == null) {

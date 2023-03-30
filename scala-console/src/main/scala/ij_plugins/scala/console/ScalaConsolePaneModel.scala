@@ -22,18 +22,16 @@
 
 package ij_plugins.scala.console
 
-import ij_plugins.scala.console.ScalaInterpreter.InterpreterEvent
+import ij_plugins.scala.console.ScalaInterpreter.*
 import ij_plugins.scala.console.ScalaInterpreter.State.Ready
 import ij_plugins.scala.console.editor.Editor
 import ij_plugins.scala.console.editor.extra.{Publisher, Subscriber}
 import ij_plugins.scala.console.outputarea.OutputArea
-import ScalaInterpreter._
+import ij_plugins.scala.console.scripting.Results
 import org.scalafx.extras.mvcfx.ModelFX
 import org.scalafx.extras.onFX
 import scalafx.application.Platform
 import scalafx.beans.property.{ReadOnlyBooleanProperty, ReadOnlyBooleanWrapper, StringProperty}
-
-import scala.tools.nsc.interpreter.Results
 
 /**
  * UI model for the Scala Console main pane.

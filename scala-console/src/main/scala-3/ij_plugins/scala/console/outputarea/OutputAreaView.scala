@@ -20,14 +20,25 @@
  *   Latest release available at https://github.com/ij-plugins
  */
 
-package ij_plugins.scala.console
+package ij_plugins.scala.console.outputarea
 
-import ij_plugins.scala.console.scripting.Interpreter
+import javafx.fxml as jfxf
+import javafx.scene.layout as jfxsl
+import org.fxmisc.flowless.VirtualizedScrollPane
+import org.scalafx.extras.mvcfx.ControllerFX
+import scalafx.Includes.*
+import scalafx.scene.control.ScrollPane.ScrollBarPolicy
+import scalafx.scene.layout.BorderPane
 
-import java.io.Writer
+/**
+ */
 
-object IMainFactory {
+class OutputAreaView(private val model: OutputAreaModel) extends ControllerFX {
 
-  def create(writer: Writer): Interpreter = new IMainInterpreter(writer)
+  @jfxf.FXML
+  private var borderPane: jfxsl.BorderPane = _
 
+  override def initialize(): Unit = {
+    borderPane.center = new VirtualizedScrollPane(model.codeArea, ScrollBarPolicy.AsNeeded, ScrollBarPolicy.Always)
+  }
 }

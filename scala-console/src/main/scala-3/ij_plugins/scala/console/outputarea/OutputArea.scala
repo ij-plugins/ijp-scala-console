@@ -20,14 +20,14 @@
  *   Latest release available at https://github.com/ij-plugins
  */
 
-package ij_plugins.scala.console
+package ij_plugins.scala.console.outputarea
 
-import ij_plugins.scala.console.scripting.Interpreter
+import org.scalafx.extras.mvcfx.MVCfx
 
-import java.io.Writer
+/**
+ */
+class OutputArea extends MVCfx[OutputAreaView]("OutputArea.fxml") {
+  override lazy val model: OutputAreaModel = new OutputAreaModel()
 
-object IMainFactory {
-
-  def create(writer: Writer): Interpreter = new IMainInterpreter(writer)
-
+  def controllerInstance: OutputAreaView = new OutputAreaView(model)
 }

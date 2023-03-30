@@ -22,12 +22,23 @@
 
 package ij_plugins.scala.console
 
-import ij_plugins.scala.console.scripting.Interpreter
+import ij_plugins.scala.console.outputarea.OutputArea
+import org.scalafx.extras.mvcfx.MVCfx
 
-import java.io.Writer
+import java.io.File
 
-object IMainFactory {
+/**
+ * Loader for the Scala Console main pane.
+ */
+class ScalaConsolePane extends MVCfx[ScalaConsolePaneView]("ScalaConsolePane.fxml") {
 
-  def create(writer: Writer): Interpreter = new IMainInterpreter(writer)
+  val outputArea: OutputArea = new OutputArea()
 
+  override lazy val model: ScalaConsolePaneModel = new ScalaConsolePaneModel()
+
+  def controllerInstance: ScalaConsolePaneView = new ScalaConsolePaneView(model)
+
+  def loadScriptFile(file: File): Unit = {
+    model.editor.read(file)
+  }
 }
