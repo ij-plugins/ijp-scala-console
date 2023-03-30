@@ -109,11 +109,12 @@ lazy val scala_console = (project in file("scala-console"))
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
       "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
     ),
+    // Exclude due to security issue with its dependency  "com.google.protobuf":"protobuf-java":"3.7.0"
     libraryDependencies ++= (
       if(isScala2(scalaVersion.value))
-        Seq("org.scala-lang" % "scala-compiler" % scalaVersion.value)
+        Seq("org.scala-lang" % "scala-compiler" % scalaVersion.value exclude("org.scala-sbt", "compiler-interface"))
       else
-        Seq("org.scala-lang" % "scala3-compiler_3" % scalaVersion.value)
+        Seq("org.scala-lang" % "scala3-compiler_3" % scalaVersion.value exclude("org.scala-sbt", "compiler-interface"))
       ),
     // // @formatter:on
     libraryDependencies ++= (
