@@ -135,7 +135,7 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
     description := "Scala Console ImageJ Plugins",
     commonSettings,
     libraryDependencies ++= Seq(
-      "net.imagej" % "ij" % "1.54c",
+      "net.imagej" % "ij" % "1.54d",
       "org.scalatest" %% "scalatest" % "3.2.15" % "test"
       ),
     //resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
