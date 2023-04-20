@@ -104,7 +104,7 @@ lazy val scala_console = (project in file("scala-console"))
       "com.beachape"           %% "enumeratum"          % "1.7.2",
       "org.fxmisc.richtext"     % "richtextfx"          % "0.11.0",
       "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
-      "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
+      "org.scalafx"            %% "scalafx"             % "20.0.0-R31",
 //      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
       "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
