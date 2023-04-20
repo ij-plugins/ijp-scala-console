@@ -38,14 +38,14 @@ import scalafx.beans.property.{ReadOnlyBooleanProperty, ReadOnlyBooleanWrapper, 
  */
 class ScalaConsolePaneModel extends ModelFX {
 
-  val statusText = new StringProperty("Welcome to Scala Console")
-  val editor     = new Editor()
-  val outputArea = new OutputArea()
+  private val listCodeOnRun: Boolean = false
+  private val _isReady               = new ReadOnlyBooleanWrapper(this, "isReady", true)
+  private val scalaInterpreter       = new ScalaInterpreter()
 
-  private val _isReady                 = new ReadOnlyBooleanWrapper(this, "isReady", true)
+  val statusText                       = new StringProperty("Welcome to Scala Console")
+  val editor                           = new Editor()
+  val outputArea                       = new OutputArea()
   val isReady: ReadOnlyBooleanProperty = _isReady.readOnlyProperty
-
-  private val scalaInterpreter = new ScalaInterpreter()
 
   private val interpreterReactions =
     new Subscriber[InterpreterEvent, Publisher[InterpreterEvent]] {
@@ -89,7 +89,7 @@ class ScalaConsolePaneModel extends ModelFX {
     val code      = if (selection != null && selection.nonEmpty) selection else editor.text
 
     // Show which code will be run
-    outputArea.model.list(code)
+    if (listCodeOnRun) outputArea.model.list(code)
 
     // Run the code
     scalaInterpreter.run(code)
