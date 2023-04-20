@@ -3,7 +3,7 @@ package dotty.tools.repl
 import dotty.tools.dotc.core.StdNames.str
 
 import java.io.PrintStream
-import java.lang.reflect.Method
+import java.lang.reflect.{InvocationTargetException, Method}
 import scala.annotation.tailrec
 import scala.util.control.NonFatal
 import scala.util.{Failure, Success, Try}
@@ -55,13 +55,23 @@ class SCIMain(out: PrintStream, loader: ClassLoader) {
         else
           SCResults.Success
       case Failure(ex) =>
-        if wasCausedByImageJMacroAbort(ex) then
-          out.println(s"WARNING: Detected ImageJ's \"$IMAGEJ_MACRO_CANCELED\" request. Stopping script execution.")
-          SCResults.Success
-        else
-          // ex.printStackTrace()
-          // ex.printStackTrace(out)
-          SCResults.Error
+        ex match {
+          case ex1 if wasCausedByImageJMacroAbort(ex1) =>
+            out.println(s"WARNING: Detected ImageJ's \"$IMAGEJ_MACRO_CANCELED\" request. Stopping script execution.")
+            SCResults.Success
+          // Attempt to unwrap the exception that may be thrown in the interpreted scripts, skip the wrapping
+          case e1: InvocationTargetException =>
+            e1.getCause match {
+              case ex2: ExceptionInInitializerError =>
+                Option(ex2.getCause).foreach(_.printStackTrace(out))
+              case _ =>
+              // ???
+            }
+            SCResults.Error
+          case _ =>
+            // ???
+            SCResults.Error
+        }
   }
 
   private def evalToMethod(script: String): Option[Method] = {
