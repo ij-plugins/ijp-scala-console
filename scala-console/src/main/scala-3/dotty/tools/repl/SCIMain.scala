@@ -49,7 +49,11 @@ class SCIMain(out: PrintStream, loader: ClassLoader) {
     // Interpret script execution result
     result match
       case Success(_) =>
-        SCResults.Success
+        // Check if the states indicate that there errors during parsing
+        if state.context.reporter.hasErrors then
+          SCResults.Error
+        else
+          SCResults.Success
       case Failure(ex) =>
         if wasCausedByImageJMacroAbort(ex) then
           out.println(s"WARNING: Detected ImageJ's \"$IMAGEJ_MACRO_CANCELED\" request. Stopping script execution.")
@@ -58,7 +62,6 @@ class SCIMain(out: PrintStream, loader: ClassLoader) {
           // ex.printStackTrace()
           // ex.printStackTrace(out)
           SCResults.Error
-
   }
 
   private def evalToMethod(script: String): Option[Method] = {
