@@ -3,37 +3,105 @@ ijp-scala-console
 
 IJP Scala Console is simple user interface for executing Scala scripts.
 
-[![Actions Status](https://github.com/ij-plugins/ijp-scala-console/workflows/Scala%20CI/badge.svg)](https://github.com/ij-plugins/ijp-scala-console/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/ijp-scala-console_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/ijp-scala-console_2.12)
-[![Scaladoc](https://javadoc.io/badge2/net.sf.ij-plugins/ijp-scala-console_2.12/scaladoc.svg)](https://javadoc.io/doc/net.sf.ij-plugins/ijp-scala-console_2.12)
+[![Actions Status](https://github.com/ij-plugins/ijp-scala-console/workflows/Scala%20CI/badge.svg)](https://github.com/ij-plugins/scala-console/actions)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/scala-console_3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.sf.ij-plugins/scala-console_3)
+[![Scaladoc](https://javadoc.io/badge2/net.sf.ij-plugins/scala-console_3/scaladoc.svg)](https://javadoc.io/doc/net.sf.ij-plugins/scala-console_3)
+
+**Contents**
+
+<!-- TOC -->
+
+* [ijp-scala-console](#ijp-scala-console)
+    * [ImageJ Script Examples](#imagej-script-examples)
+    * [ImageJ Plugin Download](#imagej-plugin-download)
+    * [Related Projects](#related-projects)
+    * [License](#license)
+
+<!-- TOC -->
+
+Overview
+--------
 
 The Scala Console can be run stand-alone, embedded in a desktop application, or [ImageJ] plugin. UI is build with
 ScalaFX.
 
 ![Screenshot](docs/images/Scala-Console-2_screenshot.png)
 
-ImageJ Script Examples
-----------------------
-
-Example of an ImageJ script that get a handle to currently selected image and runs the "Median" filter plugin. If there
-is no image an error dialog is shown:
-
-```scala
-import ij.IJ._
-
-Option(getImage) match {
-  case Some(imp) => run(imp, "Median...", "radius=4")
-  case None => noImage()
-}
-```
-
-Additional example scripts can be found the [examples] directory.
-
 ImageJ Plugin Download
 ----------------------
 
 Binaries can be downloaded from the [releases] page. Extract the binaries to the ImageJ plugins directory. The plugin
-install `Plugins` > `Scripting` > `Scala Console`.
+will be available through ImageJ menu: `Plugins` > `Scripting` > `Scala Console`.
+
+ImageJ Script Examples
+----------------------
+
+### Get Access to Current Image
+
+Assume that you opened an image in ImageJ, for instance, using `File` > `Open Samples` > `Leaf`
+
+The following script will get a handle to the current activa image (`IJ.getImage`), assign it to a value `imp`, and then
+print it:
+
+```scala
+import ij.IJ
+
+val imp = IJ.getImage
+println(imp)
+```
+
+Note: if there is no image open a "No image" dialog will be shown and execution will be aborted
+
+Note: that the first thing the script does is to import ImageJ's object `IJ` from package `ij`. Object `IJ` contains
+many
+frequently used ImageJ methods, like:
+
+* `getImage` - get current image
+* `openImage` - load image from a file
+* `run` - run a plugin or a command
+* `save`  - save current image
+* `setSlice` - select slice in current image
+* `showMessage` - display dialog with a message
+
+Full list can be found here: https://imagej.nih.gov/ij/developer/api/ij/ij/IJ.html
+
+Note: you can use methods contained in `IJ` directly, without prefixing with `IJ`. To do that import a specific method,
+for instance, `import ij.IJ.getImage` or all the available methods `import ij.IJ.*`. Here is a shorted version of the
+above example:
+
+```scala
+import ij.IJ.*
+
+println(getImage)
+```
+
+### Run a command "Median..." to process current image  
+
+You can execute any menu command using `IJ.run` method and providing command name. In simplest form you only provide command name, it will run on the current open image:
+```scala
+import ij.IJ.*
+
+run("Median...")
+```
+The command may open additional dialog asking for options. If you know what options you want to pass you can do that:
+```scala
+import ij.IJ.*
+
+run("Median...", "radius=4")
+```
+If you want to control on which image the command runs, you can do that too: 
+```scala
+import ij.IJ.*
+
+val imp = getImage
+run(imp, "Median...", "radius=4")
+```
+The options are listed in a single string using names of fields in the dialog. For boolean values, you use only filed name if value is true (checkbox is checked), you skip the field name of value is false.
+
+Hint: You can use Macro Recorder (`Plugins` > `Macros` > `Record`) to record a command then copy it to your script.
+
+Additional example scripts can be found the [examples] directory.
+
 
 Related Projects
 ----------------

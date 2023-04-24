@@ -6,7 +6,7 @@ name := "ijp-scala-console-project"
 lazy val _scalaVersions = Seq("3.2.2", "2.13.10", "2.12.17")
 lazy val _scalaVersion  = _scalaVersions.head
 
-ThisBuild / version             := "1.7.1"
+ThisBuild / version             := "1.7.1.1-SNAPSHOT"
 ThisBuild / versionScheme       := Some("early-semver")
 ThisBuild / organization        := "net.sf.ij-plugins"
 ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
@@ -104,7 +104,7 @@ lazy val scala_console = (project in file("scala-console"))
       "com.beachape"           %% "enumeratum"          % "1.7.2",
       "org.fxmisc.richtext"     % "richtextfx"          % "0.11.0",
       "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
-      "org.scalafx"            %% "scalafx"             % "19.0.0-R30",
+      "org.scalafx"            %% "scalafx"             % "20.0.0-R31",
 //      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
       "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
       "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
@@ -135,7 +135,7 @@ lazy val scala_console_plugins = (project in file("scala-console-plugins"))
     description := "Scala Console ImageJ Plugins",
     commonSettings,
     libraryDependencies ++= Seq(
-      "net.imagej" % "ij" % "1.54c",
+      "net.imagej" % "ij" % "1.54d",
       "org.scalatest" %% "scalatest" % "3.2.15" % "test"
       ),
     //resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
