@@ -106,7 +106,7 @@ lazy val scala_console = (project in file("scala-console"))
       "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
       "org.scalafx"            %% "scalafx"             % "20.0.0-R31",
 //      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
-      "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
+      "org.scalafx"            %% "scalafx-extras"      % "0.8.0",
       "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
     ),
     // Exclude due to security issue with its dependency  "com.google.protobuf":"protobuf-java":"3.7.0"
