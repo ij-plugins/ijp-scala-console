@@ -36,7 +36,7 @@ will be available through ImageJ menu: `Plugins` > `Scripting` > `Scala Console`
 ImageJ Script Examples
 ----------------------
 
-### Get Access to Current Image
+### Get Access to the Current Image
 
 Assume that you opened an image in ImageJ, for instance, using `File` > `Open Samples` > `Leaf`
 
@@ -75,33 +75,74 @@ import ij.IJ.*
 println(getImage)
 ```
 
-### Run a command "Median..." to process current image  
+### Run Command "Median..." to Process Current Image
 
-You can execute any menu command using `IJ.run` method and providing command name. In simplest form you only provide command name, it will run on the current open image:
+You can execute any menu command using `IJ.run` method and providing command name. In simplest form you only provide
+command name, it will run on the current open image:
+
 ```scala
 import ij.IJ.*
 
 run("Median...")
 ```
+
 The command may open additional dialog asking for options. If you know what options you want to pass you can do that:
+
 ```scala
 import ij.IJ.*
 
 run("Median...", "radius=4")
 ```
-If you want to control on which image the command runs, you can do that too: 
+
+If you want to control on which image the command runs, you can do that too:
+
 ```scala
 import ij.IJ.*
 
 val imp = getImage
 run(imp, "Median...", "radius=4")
 ```
-The options are listed in a single string using names of fields in the dialog. For boolean values, you use only filed name if value is true (checkbox is checked), you skip the field name of value is false.
+
+The options are listed in a single string using names of fields in the dialog. 
+For boolean values, you use only filed name if value is true (checkbox is checked), 
+you skip the field name of value is false.
 
 Hint: You can use Macro Recorder (`Plugins` > `Macros` > `Record`) to record a command then copy it to your script.
 
 Additional example scripts can be found the [examples] directory.
 
+## More examples
+
+#### Create Image of a Sphere
+
+Creates an image of a sphere using discontinuity in "Red/Green" lookup table:
+
+```scala
+import ij.*
+import ij.process.*
+
+def sphere(): Unit = {
+  val size = 1024
+  val ip   = new FloatProcessor(size, size)
+  val t0   = System.currentTimeMillis()
+  for (y <- 0 until size) {
+    val dy = y - size / 2
+    for (x <- 0 until size) {
+      val dx = x - size / 2
+      val d  = Math.sqrt(dx * dx + dy * dy).toFloat
+      ip.setf(x, y, -d)
+    }
+  }
+  val time = (System.currentTimeMillis() - t0) / 1000
+  val img  = new ImagePlus(s"$time seconds", ip)
+  // Apply "Red/Green" lookup table
+  IJ.run(img, "Red/Green", "")
+  img.show()
+}
+
+sphere()
+```
+![example sphere](docs/images/example_sphere.png)
 
 Related Projects
 ----------------
