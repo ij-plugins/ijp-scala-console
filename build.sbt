@@ -47,7 +47,7 @@ val commonSettings = Seq(
   scalacOptions ++= Seq(
     "-encoding", "UTF-8",
     "-unchecked",
-    "-release", "8",
+    "-release", "17",
     "-deprecation",
     ) ++ (
     if(isScala2(scalaVersion.value))
