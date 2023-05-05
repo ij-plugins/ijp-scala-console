@@ -6,7 +6,7 @@ name := "ijp-scala-console-project"
 lazy val _scalaVersions = Seq("3.2.2", "2.13.10", "2.12.17")
 lazy val _scalaVersion  = _scalaVersions.head
 
-ThisBuild / version             := "1.7.1.1-SNAPSHOT"
+ThisBuild / version             := "1.8.0"
 ThisBuild / versionScheme       := Some("early-semver")
 ThisBuild / organization        := "net.sf.ij-plugins"
 ThisBuild / sonatypeProfileName := "net.sf.ij-plugins"
@@ -106,7 +106,7 @@ lazy val scala_console = (project in file("scala-console"))
       "org.scala-lang.modules" %% "scala-java8-compat"  % "1.0.2",
       "org.scalafx"            %% "scalafx"             % "20.0.0-R31",
 //      "org.scalafx"            %% "scalafxml-core-sfx8" % "0.5",
-      "org.scalafx"            %% "scalafx-extras"      % "0.7.0",
+      "org.scalafx"            %% "scalafx-extras"      % "0.8.0",
       "org.scalatest"          %% "scalatest"           % "3.2.15" % "test"
     ),
     // Exclude due to security issue with its dependency  "com.google.protobuf":"protobuf-java":"3.7.0"
