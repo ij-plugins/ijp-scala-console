@@ -25,7 +25,7 @@ package ij_plugins.scala.console.editor
 import org.fxmisc.flowless.VirtualizedScrollPane
 import org.fxmisc.richtext.model.{RichTextChange, StyleSpans, StyleSpansBuilder}
 import org.fxmisc.richtext.{CodeArea, LineNumberFactory}
-import scalafx.Includes._
+import scalafx.Includes.*
 import scalafx.beans.value.ObservableValue
 import scalafx.scene.Parent
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
@@ -34,7 +34,7 @@ import java.util
 import java.util.Collections
 import java.util.function.Consumer
 import java.util.regex.Pattern
-import scala.compat.java8.FunctionConverters._
+import scala.compat.java8.FunctionConverters.*
 
 /**
  * Text area that provides Scala syntax highlighting.
@@ -56,26 +56,36 @@ import scala.compat.java8.FunctionConverters._
 class EditorCodeArea {
   private val Keywords: Array[String] = Array[String](
     "abstract",
+    "as",
     "case",
     "catch",
     "class",
     "def",
+    "derives",
     "do",
     "else",
+    "end",
+    "enum",
+    "export",
     "extends",
+    "extension",
     "false",
     "final",
     "finally",
     "for",
     "forSome",
     "if",
+    "infix",
+    "inline",
     "implicit",
     "import",
     "lazy",
     "match",
     "new",
-    "Null",
+    "null",
     "object",
+    "opaque",
+    "open",
     "override",
     "package",
     "private",
@@ -83,14 +93,17 @@ class EditorCodeArea {
     "return",
     "sealed",
     "super",
+    "then",
     "this",
     "throw",
     "trait",
-    "Try",
+    "transparent",
+    "try",
     "true",
     "type",
+    "using",
     "val",
-    "Var",
+    "var",
     "while",
     "with",
     "yield",
@@ -103,7 +116,12 @@ class EditorCodeArea {
     "<%",
     ">:",
     "#",
-    "@"
+    "@",
+    "=>>",
+//    "?=>",
+//    "|",
+//    "*",
+//    "+"
   )
   private val KeywordPattern: String   = """\b(""" + Keywords.mkString("|") + """)\b"""
   private val ParenPattern: String     = """\(|\)"""
@@ -126,10 +144,8 @@ class EditorCodeArea {
     ch => !ch.getInserted.equals(ch.getRemoved)
 
   codeArea.richChanges.filter(asJavaPredicate(filterOp)).subscribe(
-    new Consumer[RichTextChange[util.Collection[String], String, util.Collection[String]]] {
-      override def accept(t: RichTextChange[util.Collection[String], String, util.Collection[String]]): Unit = {
-        codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()))
-      }
+    (t: RichTextChange[util.Collection[String], String, util.Collection[String]]) => {
+      codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()))
     }
   )
 
