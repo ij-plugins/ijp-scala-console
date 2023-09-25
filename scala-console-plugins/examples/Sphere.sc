@@ -1,5 +1,5 @@
-import ij.*
-import ij.process.*
+import ij._
+import ij.process._
 
 /** Creates an image of a sphere using discontinuity in "Red/Green" lookup table */
 def sphere(): Unit = {
